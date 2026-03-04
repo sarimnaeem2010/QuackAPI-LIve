@@ -155,7 +155,7 @@ function HeroSection({ onNavigate }: { onNavigate: (path: string) => void }) {
           className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-8"
         >
           <Zap className="w-4 h-4" />
-          The Ultimate WhatsApp Automation Stack for 2026
+          The Ultimate WhatsApp Automation Stack
         </motion.div>
         
         <motion.h1

@@ -1,3 +1,4 @@
+import "dotenv/config";
 import express, { type Request, Response, NextFunction } from "express";
 import { createServer } from "http";
 import path from "path";
@@ -75,7 +76,7 @@ try {
   cachedIndexHtml = fs.readFileSync(indexHtmlPath, "utf-8");
   console.log("index.html cached from:", indexHtmlPath);
 } catch {
-  console.warn("index.html not found at startup:", indexHtmlPath);
+  console.log("index.html not found at startup (non-fatal):", indexHtmlPath);
 }
 
 // Health routes registered FIRST — before any middleware, before any async code.
@@ -83,8 +84,16 @@ app.get("/health", (_req, res) => res.status(200).json({ status: "ok" }));
 app.get("/healthz", (_req, res) => res.status(200).json({ status: "ok" }));
 
 app.get("/", (_req, res) => {
-  if (cachedIndexHtml) {
-    res.status(200).type("html").send(cachedIndexHtml);
+  let html = cachedIndexHtml;
+  if (process.env.NODE_ENV !== "production" && indexHtmlPath) {
+    try {
+      html = fs.readFileSync(indexHtmlPath, "utf-8");
+    } catch {
+      // use cache or fallback
+    }
+  }
+  if (html) {
+    res.status(200).type("html").send(html);
   } else {
     res.status(200).send("OK");
   }
@@ -136,9 +145,12 @@ app.use((req, res, next) => {
 });
 
 // Start listening IMMEDIATELY — before routes are registered.
-const port = parseInt(process.env.PORT || "5000", 10);
+const port = parseInt(process.env.PORT || "3000", 10);
+const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1";
+const listenOpts: { port: number; host: string; reusePort?: boolean } = { port, host };
+if (process.env.NODE_ENV === "production") listenOpts.reusePort = true;
 httpServer.listen(
-  { port, host: "0.0.0.0", reusePort: true },
+  listenOpts,
   () => {
     console.log(`Server started on port ${port}`);
 

@@ -7,6 +7,7 @@ import path from "path";
 import fs from "fs";
 import QRCode from "qrcode";
 import { storage } from "./storage";
+import { sendDeviceDisconnectNotification } from "./email";
 
 const logger = pino({ level: "warn" });
 
@@ -128,6 +129,16 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           activeSockets.delete(deviceId);
           await storage.updateDeviceSession(deviceId, null, "disconnected", null);
+
+          const device = await storage.getDevice(deviceId);
+          if (device) {
+            const user = await storage.getUser(device.userId);
+            if (user?.email) {
+              sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+                console.error("[Email] Disconnect notification failed:", err)
+              );
+            }
+          }
 
           if (shouldReconnect) {
             const attempts = reconnectAttempts.get(deviceId) || 0;

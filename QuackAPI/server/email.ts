@@ -146,3 +146,21 @@ export async function sendPasswordResetOTP(to: string, name: string, otp: string
   `);
   await sendEmail(to, `${otp} is your QuackAPI password reset code`, html);
 }
+
+export async function sendDeviceDisconnectNotification(to: string, userName: string, deviceName: string) {
+  const appUrl = process.env.APP_URL || "";
+  const reconnectHint = appUrl
+    ? `Log in to your dashboard and scan the QR code to reconnect your device.`
+    : "Log in to your QuackAPI dashboard and open Devices to scan the QR code and reconnect.";
+  const ctaHtml = appUrl
+    ? `<a href="${appUrl}" style="display:inline-block;background:#6c47ff;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:600;">Reconnect device</a>`
+    : "";
+  const html = emailWrapper(`
+    <h1 style="color:#1a1a2e;font-size:26px;font-weight:700;margin:0 0 8px 0;">WhatsApp device disconnected</h1>
+    <p style="color:#6c757d;font-size:15px;margin:0 0 16px 0;">Hi ${userName}, your WhatsApp device <strong>${deviceName}</strong> has been disconnected.</p>
+    <p style="color:#6c757d;font-size:15px;margin:0 0 24px 0;">${reconnectHint}</p>
+    ${ctaHtml ? `<p style="margin:0 0 24px 0;">${ctaHtml}</p>` : ""}
+    <p style="color:#6c757d;font-size:13px;margin:0;">If you did not expect this, check your internet connection or re-scan the QR code in the dashboard.</p>
+  `);
+  await sendEmail(to, "Your WhatsApp device has disconnected – reconnect required", html);
+}

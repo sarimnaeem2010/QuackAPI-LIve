@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "install": "cd QuackAPI && npm install",
+    "dev": "cd QuackAPI && npm run dev",
     "build": "cd QuackAPI && npm run build",
     "start": "cd QuackAPI && npm run start"
   }
