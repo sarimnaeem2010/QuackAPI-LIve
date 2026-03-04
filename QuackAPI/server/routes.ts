@@ -924,7 +924,9 @@ export async function registerRoutes(
       const { requireEmailOtp } = req.body;
       const updates: Record<string, any> = {};
       if (typeof requireEmailOtp === "boolean") updates.requireEmailOtp = requireEmailOtp;
-      const updated = await storage.updateAdminSettings(updates);
+      const updated = Object.keys(updates).length > 0
+        ? await storage.updateAdminSettings(updates)
+        : await storage.getAdminSettings();
       res.json({
         id: updated.id,
         requireEmailOtp: updated.requireEmailOtp,
