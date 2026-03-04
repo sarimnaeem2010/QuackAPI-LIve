@@ -46,5 +46,5 @@ externalPort = 3000
 
 [deployment]
 deploymentTarget = "vm"
-run = ["bash", "-c", "cd QuackAPI && npm run start"]
-build = ["bash", "-c", "cd QuackAPI && npm install && npm run build"]
+run = ["npm", "run", "start"]
+build = ["npm", "run", "build"]

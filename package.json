@@ -1,0 +1,10 @@
+{
+  "name": "quackapi-workspace",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "install": "cd QuackAPI && npm install",
+    "build": "cd QuackAPI && npm run build",
+    "start": "cd QuackAPI && npm run start"
+  }
+}
