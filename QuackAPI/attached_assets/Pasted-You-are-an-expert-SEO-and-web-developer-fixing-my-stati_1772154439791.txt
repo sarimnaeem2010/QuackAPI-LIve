@@ -1,0 +1,31 @@
+You are an expert SEO and web developer fixing my static HTML site on Replit (https://quackkapi.com or similar domain). The site promotes QuackAPI: an enterprise WhatsApp Business API platform with REST API, multi-device support, real-time webhooks, etc.
+
+From my recent SEO audits (seositecheckup & seobility), the main remaining issues are:
+- HIGH: URL canonicalization → add <link rel="canonical" href="https://quackkapi.com/" /> in <head> of index.html (use https://quackkapi.com/ as primary)
+- Improve meta description: make it compelling, 120-160 chars, keyword-rich (include "WhatsApp Business API", "REST API", "webhooks", "send messages", "multi-device")
+- Make page title better match content (current is something like "WhatsApp API For Your Business" → suggest/improve to e.g. "QuackAPI: WhatsApp Business API | REST Messaging & Webhooks")
+- MEDIUM: Add custom 404 page → create 404.html in root with helpful content: branded 404 message, links back to home, features, pricing, FAQ, search suggestion if possible
+- LOW: Enable HTML compression → Replit Static usually has gzip/Brotli auto-enabled; confirm and if needed suggest pre-compressing files or minifying
+- Add more internal links (audit said very few) → suggest adding 5-10 relevant <a> links in content to sections like #features, #pricing, #faq, blog if exists
+- MEDIUM: Add Google Analytics (GA4) script → insert the standard GA4 tracking code just before </head> (use placeholder like G-XXXXXX and instruct me to replace with my real ID)
+- General: Ensure only one H1, good heading structure (already has H1 "WhatsApp API For Your Business" and several H2s like "How It Works"), keywords well distributed (whatsapp, messages, send, quackapi, device)
+
+Please do the following in my Replit project step-by-step:
+1. Edit index.html:
+   - Add canonical link tag in <head>
+   - Update or add <meta name="description" content="..."> with a great optimized description
+   - Update <title> if needed for better SEO & CTR
+   - Insert GA4 script placeholder before </head> (tell me to replace the measurement ID)
+   - Add or suggest more internal <a href="#section"> links in body content to improve navigation & SEO
+   - Minify HTML slightly if it makes sense (remove extra whitespace/comments without breaking JS)
+2. Create a new file 404.html in root directory with nice custom content:
+   - Simple, branded design
+   - Message: "404 - Page Not Found"
+   - Helpful links: Home, Features, Pricing, FAQ, Contact
+   - Call-to-action back to main site
+3. After changes:
+   - Tell me to redeploy the Static Deployment
+   - Suggest testing: visit non-existent URL to see 404, check source for canonical/meta/GA, test compression via online tool like giftOfSpeed or gtmetrix
+   - Remind to submit sitemap.xml to Google Search Console if not done
+
+Implement these fixes safely in my code without breaking anything. Show me diffs or explain exactly what you changed. If something can't be done automatically (e.g. GA ID), give clear instructions.

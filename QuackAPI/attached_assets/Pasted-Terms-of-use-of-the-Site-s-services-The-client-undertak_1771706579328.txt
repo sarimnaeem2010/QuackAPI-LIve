@@ -1,0 +1,36 @@
+Terms of use of the Site's services
+The client undertakes to obtain in advance from the user to whom the message is to be sent consent in any form, such as oral, written,Email.etc
+
+The customer is obligated not to send any message that falls under the following items :
+
+for Spam or bulk messages
+for send messages that may cause malfunction of the Developer's equipment
+for sending messages via pornographic or other reprehensible messengers
+for sending messages via messengers that mislead users, such as those sent from someone else's name or giving false information
+for transmitting inaccurate, confidential information
+for transfer of information that has been unlawfully obtained by the Customer and/or violates the copyrights or related rights of third parties
+for advertising alcohol, tobacco and drugs , or other illegal means
+for transmission of information that violates the norms of the current legislation or international law
+Communication with WhatsApp Inc. and guarantees
+- The Service and the ultramsg.com Site are not supported or approved in any way by WhatsApp Inc . The Customer understands all risks associated with the use of the Service/Site/Api.
+
+- The developer is not responsible for the Customer's inability to get access to the service, to Api, to accounts, etc. for reasons related to the disruption of the Internet channel, equipment or software of the Customer.
+
+- The customer agrees that his account may be blocked and/or banned by WhatsApp and/or WhatsApp Inc.
+
+- The developer is not responsible for the Customer's inability to access the service, to Api due to software changes by WhatsApp Inc.
+
+Website usage
+You are permitted to print and download extracts from the Website for Your own use on the following basis :
+
+no documents or related graphics on the Website are modified in any way
+no graphics on the Website are used separately from accompanying text
+our copyright and trade mark notices and this permission notice appear in all copies
+REFUNDS / cancel the subscription
+You can open a trial account for free days, Therefore paid Subscription fees are non-refundable.
+
+You can cancel the subscription anytime, and the instance will remain active until the end of the subscription term, Cancellation of the subscription must be before the start date of the next bill.
+
+Miscellaneous
+If any part of these terms of use are unenforceable (including any provision in which we exclude our liability to you) the enforceability of any other part of these terms of use will not be affected
+These terms of use set out the whole of Our agreement relating to use of and access to the Website. They may not be varied by You at any time. Nothing said by any person on Our behalf should be understood as a variation of these terms of use or an authorised representation about the Website or the nature and quality of items displayed thereon. We shall have no liability for any such representation being untrue or misleading.

@@ -1,0 +1,123 @@
+Perfect. Here’s the complete, ready-to-use Replit AI prompt for generating your multi-user WhatsApp API SaaS with webhook + payments, fully detailed for Node.js + SQLite + Baileys.
+
+You can copy-paste this into Replit AI and it will generate the full system automatically.
+
+⸻
+
+🔥 Complete Replit AI Prompt – Multi-User WhatsApp API SaaS with Payments
+
+You are going to generate a **complete WhatsApp API SaaS system** (like UltraMsg) with **multi-user, multi-device, webhooks, and payment integration**, ready to deploy on Replit.  
+
+---
+
+## Features Required
+
+1. **Multi-user**
+- Users can register/login
+- Each user gets an **API key**
+- API key used to access endpoints
+
+2. **Multi-device**
+- Users can connect multiple WhatsApp numbers
+- Each device has its own session
+- QR login page for each device
+- Device status endpoint
+
+3. **Webhook Support**
+- Forward incoming messages to user-defined webhook URL
+- Webhook format: JSON containing from, message, type, timestamp
+
+4. **Persistent Sessions**
+- WhatsApp sessions saved in `/sessions/deviceId.json`
+- No QR required after login unless logged out
+
+5. **Message Sending API**
+- `/message/send` endpoint
+- Supports: text, images, buttons, PDFs, OTP
+- Multi-device support
+
+6. **Backend**
+- Node.js + Express
+- Modular structure: `/controllers`, `/routes`, `/models`, `/helpers`
+- `server.js` as entry point
+
+7. **Database**
+- SQLite database `db.sqlite` (via Sequelize)
+- Tables:
+  - `users`: id, name, email, password(hashed), api_key
+  - `devices`: id, user_id, device_name, session_data(JSON), status
+  - `messages`: id, device_id, to, message, status, type
+  - `payments`: id, user_id, amount, gateway, status, transaction_id, created_at
+
+8. **Authentication**
+- JWT-based authentication for login
+- API key middleware to protect endpoints
+
+9. **WhatsApp Integration**
+- Use **Baileys MD**
+- Device session management
+- QR code login page `/device/:id/qr`
+- Handle sending and receiving messages
+- Forward incoming messages to webhook
+
+10. **Frontend**
+- Minimal HTML/JS dashboard page
+- QR code display page `/public/qr.html`
+- Payment page for user to select subscription plan
+
+11. **Payment Integration**
+- Users must pay before activating WhatsApp devices/API
+- Payment options:
+  - **JazzCash / Easypaisa** (local Pakistan)
+  - Optional: **Stripe** (international users)
+- Payments recorded in `payments` table
+- Device/API activated only if payment confirmed
+- API endpoint `/payment/status` to check payment status
+- Handle payment gateway webhooks to update status automatically
+
+12. **File Structure**
+
+/project-root
+├── server.js
+├── config.js
+├── db.sqlite
+├── /models
+│   ├── User.js
+│   ├── Device.js
+│   ├── Message.js
+│   └── Payment.js
+├── /controllers
+│   ├── authController.js
+│   ├── deviceController.js
+│   ├── messageController.js
+│   └── paymentController.js
+├── /routes
+│   ├── auth.js
+│   ├── device.js
+│   ├── message.js
+│   └── payment.js
+├── /helpers
+│   └── baileys.js
+├── /sessions
+│   └── deviceId.json
+└── /public
+└── qr.html
+
+13. **Additional Requirements**
+- Modular and clean code with comments
+- `.env` config file:
+  - PORT
+  - JWT_SECRET
+  - BASE_URL
+- Compatible with Replit (`npm install` → `npm start`)
+- Include instructions to run on Replit
+- Fully ready to generate multi-user WhatsApp API SaaS with payments
+
+---
+
+**Goal:** After generating, I can run the project on Replit, register users, connect multiple devices, scan QR codes, send messages, receive webhooks, and accept payments from Pakistani customers (JazzCash/Easypaisa) and international users (Stripe) — fully functional and free to run.
+
+Also create admin dashboard from where i can get all users database
+
+Can enable disable payment mode
+Can add or replace payment api

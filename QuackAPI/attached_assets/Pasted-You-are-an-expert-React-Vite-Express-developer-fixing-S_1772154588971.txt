@@ -1,0 +1,34 @@
+You are an expert React/Vite/Express developer fixing SEO issues in my QuackAPI project (WhatsApp Business API platform at https://quackapi.com).
+
+Current setup: Vite + React frontend, react-helmet-async for head management (title, meta, canonical, OG, Twitter, JSON-LD), React Router for routing, Express backend. App is deployed via Replit Static or Autoscale.
+
+Fix these three specific issues:
+
+1. Canonical URL fix:
+   - Currently using window.location.origin as base → can output www.quackapi.com or localhost in dev.
+   - Hardcode the base to "https://quackapi.com" everywhere canonical is set.
+   - In components/pages where <Helmet> sets <link rel="canonical" href={...} />, change to use const CANONICAL_BASE = "https://quackapi.com"; then href={`${CANONICAL_BASE}${location.pathname}${location.search}` || CANONICAL_BASE + '/'}.
+   - Ideally create a constant in a config file (e.g. src/config.ts or src/constants.ts) like export const SITE_URL = "https://quackapi.com"; and use it site-wide for canonical, OG:url, etc.
+   - Also update any JSON-LD @id or url fields to use this hardcoded base.
+
+2. Add Google Analytics GA4:
+   - Use the official gtag.js method (lightweight, no extra package needed initially).
+   - In public/index.html (or vite's entry), add the GA4 script in <head> AFTER any existing scripts:
+     <!-- Google tag (gtag.js) -->
+     <script async src="https://www.googletagmanager.com/gtag/js?id=G-XXXXXXXXXX"></script>
+     <script>
+       window.dataLayer = window.dataLayer || [];
+       function gtag(){dataLayer.push(arguments);}
+       gtag('js', new Date());
+       gtag('config', 'G-XXXXXXXXXX');
+     </script>
+   - Use environment variable: In .env add VITE_GA4_MEASUREMENT_ID=G-XXXXXXXXXX
+   - Then in index.html use import.meta.env.VITE_GA4_MEASUREMENT_ID (but since it's static script, hardcode for now or use a replacement plugin if needed; simplest: instruct user to replace placeholder).
+   - For SPA page views: In main.tsx or App.tsx, add useEffect to send page_view on route change (using react-router's useLocation):
+     import { useLocation } from 'react-router-dom';
+     useEffect(() => {
+       if (window.gtag) {
+         window.gtag('config', import.meta.env.VITE_GA4_MEASUREMENT_ID, { page_path: location.pathname + location.search });
+       }
+     }, [location]);
+   - If you prefer, install react-ga4

@@ -1,0 +1,2308 @@
+import { useState } from "react";
+import { useRoute, useLocation, Link } from "wouter";
+import { Calendar, Clock, ArrowLeft, ChevronRight, BookOpen, Tag } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import SEO from "@/components/seo";
+import Navbar from "@/components/navbar";
+
+interface ArticleSection {
+  heading: string;
+  headingLevel: "h2" | "h3";
+  content: string[];
+  code?: { language: string; snippet: string };
+}
+
+interface Article {
+  slug: string;
+  title: string;
+  description: string;
+  category: string;
+  date: string;
+  readTime: string;
+  sections: ArticleSection[];
+}
+
+const articles: Article[] = [
+  {
+    slug: "send-whatsapp-messages-python",
+    title: "How to Send WhatsApp Messages with Python",
+    description: "Learn how to integrate WhatsApp messaging into your Python applications using the QuackAPI REST API. Covers text, image, and document messages with complete code examples.",
+    category: "Tutorial",
+    date: "2026-02-15",
+    readTime: "5 min read",
+    sections: [
+      {
+        heading: "Prerequisites & Installation",
+        headingLevel: "h2",
+        content: [
+          "Before you start sending WhatsApp messages with Python, you need to install the requests library and set up your QuackAPI account. The requests library makes HTTP calls simple and intuitive.",
+          "Make sure you have Python 3.7 or higher installed on your system. You can verify your Python version by running python --version in your terminal.",
+        ],
+        code: {
+          language: "bash",
+          snippet: `pip install requests`,
+        },
+      },
+      {
+        heading: "Getting Your API Key",
+        headingLevel: "h2",
+        content: [
+          "After creating your QuackAPI account, navigate to your Profile Settings page. Your unique API key starts with wa_ and is used to authenticate all API requests.",
+          "Store your API key securely as an environment variable. Never hardcode API keys directly in your source code or commit them to version control.",
+        ],
+        code: {
+          language: "python",
+          snippet: `import os
+
+API_KEY = os.environ.get("WAPISTACK_API_KEY")
+BASE_URL = "https://your-domain.com/api/messages/send"`,
+        },
+      },
+      {
+        heading: "Sending Text Messages",
+        headingLevel: "h2",
+        content: [
+          "The simplest message type is a plain text message. You need to specify the device ID, recipient phone number in international format, the message content, and the message type.",
+        ],
+        code: {
+          language: "python",
+          snippet: `import requests
+
+headers = {
+    "Content-Type": "application/json",
+    "x-api-key": API_KEY
+}
+
+payload = {
+    "deviceId": 1,
+    "to": "923001234567",
+    "content": "Hello from Python!",
+    "type": "text"
+}
+
+response = requests.post(BASE_URL, json=payload, headers=headers)
+print(response.json())`,
+        },
+      },
+      {
+        heading: "Sending Images and Documents",
+        headingLevel: "h2",
+        content: [
+          "QuackAPI supports sending images with optional captions, as well as PDF and other document files. For images, set the type to image and provide the image URL in the content field. For documents, use the pdf type and include a filename.",
+        ],
+        code: {
+          language: "python",
+          snippet: `# Send an image with caption
+image_payload = {
+    "deviceId": 1,
+    "to": "923001234567",
+    "content": "https://example.com/photo.jpg",
+    "type": "image",
+    "caption": "Check out this photo!"
+}
+requests.post(BASE_URL, json=image_payload, headers=headers)
+
+# Send a PDF document
+doc_payload = {
+    "deviceId": 1,
+    "to": "923001234567",
+    "content": "https://example.com/invoice.pdf",
+    "type": "pdf",
+    "filename": "invoice.pdf"
+}
+requests.post(BASE_URL, json=doc_payload, headers=headers)`,
+        },
+      },
+      {
+        heading: "Error Handling",
+        headingLevel: "h2",
+        content: [
+          "Production applications should always include proper error handling. Check the HTTP status code and parse the error response to handle common issues like invalid API keys, offline devices, or rate limiting.",
+        ],
+        code: {
+          language: "python",
+          snippet: `try:
+    response = requests.post(BASE_URL, json=payload, headers=headers)
+    response.raise_for_status()
+    result = response.json()
+    print(f"Message sent! ID: {result['id']}")
+except requests.exceptions.HTTPError as e:
+    error_data = e.response.json()
+    print(f"API Error: {error_data.get('message', 'Unknown error')}")
+except requests.exceptions.ConnectionError:
+    print("Failed to connect to the API server")`,
+        },
+      },
+      {
+        heading: "Complete Working Example",
+        headingLevel: "h2",
+        content: [
+          "Here is a complete, production-ready Python script that wraps the QuackAPI API in a reusable class. You can import this module into any Python project to start sending WhatsApp messages immediately.",
+        ],
+        code: {
+          language: "python",
+          snippet: `import os
+import requests
+
+class QuackAPIClient:
+    def __init__(self, api_key=None):
+        self.api_key = api_key or os.environ.get("WAPISTACK_API_KEY")
+        self.base_url = "https://your-domain.com/api/messages/send"
+        self.headers = {
+            "Content-Type": "application/json",
+            "x-api-key": self.api_key
+        }
+
+    def send_text(self, device_id, to, message):
+        payload = {"deviceId": device_id, "to": to, "content": message, "type": "text"}
+        return self._send(payload)
+
+    def send_image(self, device_id, to, image_url, caption=""):
+        payload = {"deviceId": device_id, "to": to, "content": image_url, "type": "image", "caption": caption}
+        return self._send(payload)
+
+    def _send(self, payload):
+        response = requests.post(self.base_url, json=payload, headers=self.headers)
+        response.raise_for_status()
+        return response.json()
+
+# Usage
+client = QuackAPIClient()
+result = client.send_text(1, "923001234567", "Hello from QuackAPI!")
+print(result)`,
+        },
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-vs-sms",
+    title: "WhatsApp API vs SMS: Which is Better for Business?",
+    description: "A detailed comparison of WhatsApp API and traditional SMS for business messaging. Compare delivery rates, costs, features, and engagement to choose the right channel.",
+    category: "Comparison",
+    date: "2026-02-10",
+    readTime: "7 min read",
+    sections: [
+      {
+        heading: "Delivery Rates and Reliability",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp messages boast a delivery rate of over 95% globally, significantly higher than SMS which averages around 82% in many regions. WhatsApp messages are delivered over the internet, bypassing carrier networks that can filter or delay SMS messages.",
+          "SMS delivery depends heavily on carrier agreements, regional regulations, and spam filters. Messages can be silently dropped without notification. WhatsApp provides delivery receipts and read confirmations, giving you full visibility into message status.",
+        ],
+      },
+      {
+        heading: "Cost Comparison",
+        headingLevel: "h2",
+        content: [
+          "SMS pricing varies dramatically by country. Sending messages to international numbers can cost anywhere from $0.01 to $0.15 per message. These costs add up quickly for businesses sending thousands of messages daily.",
+          "WhatsApp API pricing through platforms like QuackAPI is typically flat-rate or subscription-based, making costs more predictable. With the Professional plan at $29/month for unlimited messages, high-volume senders save significantly compared to per-message SMS pricing.",
+        ],
+      },
+      {
+        heading: "Rich Media Support",
+        headingLevel: "h2",
+        content: [
+          "SMS is limited to 160 characters of plain text per segment. Multimedia messaging (MMS) exists but has inconsistent support across carriers and devices, and costs significantly more per message.",
+          "WhatsApp supports rich media natively including images, videos, documents (PDF, DOC), audio messages, location sharing, and contact cards. Messages can be up to 65,536 characters long. Interactive buttons and quick replies further enhance the messaging experience.",
+        ],
+      },
+      {
+        heading: "Global Reach and Adoption",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp has over 2 billion active users across 180+ countries, making it the most popular messaging platform globally. In regions like South America, Southeast Asia, Europe, and Africa, WhatsApp is the primary communication tool.",
+          "SMS has universal device compatibility since it works on every phone with cellular service. However, in markets where WhatsApp dominates, users are far more likely to read and respond to WhatsApp messages than SMS.",
+        ],
+      },
+      {
+        heading: "User Engagement Metrics",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp messages achieve open rates of 90-98%, compared to SMS open rates of around 90%. However, the key difference is in response rates: WhatsApp messages see 40-60% response rates versus 6-8% for SMS.",
+          "The rich media capabilities of WhatsApp drive significantly higher click-through rates on links and calls to action. Businesses report 3-5x higher conversion rates when using WhatsApp compared to SMS for promotional messages.",
+        ],
+      },
+      {
+        heading: "When to Use Each Channel",
+        headingLevel: "h2",
+        content: [
+          "Use WhatsApp API when you need rich media support, high engagement rates, cost-effective international messaging, or when targeting markets where WhatsApp is dominant. It is ideal for customer support, marketing campaigns, and transactional notifications.",
+          "Use SMS when you need to reach users who may not have WhatsApp installed, for time-critical alerts where internet connectivity might be an issue, or for markets where SMS remains the primary messaging channel like parts of North America.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-webhook-setup-guide",
+    title: "Complete Guide to WhatsApp Webhooks",
+    description: "Learn how to set up and configure WhatsApp webhooks to receive real-time incoming messages. Covers endpoint setup, message handling, security, and testing.",
+    category: "Guide",
+    date: "2026-02-05",
+    readTime: "6 min read",
+    sections: [
+      {
+        heading: "What Are Webhooks?",
+        headingLevel: "h2",
+        content: [
+          "Webhooks are HTTP callbacks that send real-time data to your application when specific events occur. Instead of continuously polling an API for new messages, webhooks push data to your server the moment a new message arrives.",
+          "In the context of WhatsApp API, webhooks notify your application whenever a connected device receives an incoming message. This enables you to build real-time chatbots, support systems, and automated workflows.",
+        ],
+      },
+      {
+        heading: "Setting Up Your Webhook Endpoint",
+        headingLevel: "h2",
+        content: [
+          "Your webhook endpoint needs to be a publicly accessible HTTPS URL that can receive POST requests. The endpoint should respond with a 200 status code quickly to acknowledge receipt of the webhook payload.",
+          "Here is a basic Express.js endpoint that receives incoming WhatsApp messages:",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const express = require("express");
+const app = express();
+
+app.use(express.json());
+
+app.post("/webhook/whatsapp", (req, res) => {
+  const { event, deviceId, from, message } = req.body;
+  
+  console.log(\`New message from \${from} on device \${deviceId}\`);
+  console.log(\`Type: \${message.type}, Content: \${message.content}\`);
+  
+  // Process the message (save to DB, trigger response, etc.)
+  
+  res.status(200).json({ received: true });
+});
+
+app.listen(3000, () => console.log("Webhook server running on port 3000"));`,
+        },
+      },
+      {
+        heading: "Handling Incoming Messages",
+        headingLevel: "h2",
+        content: [
+          "The webhook payload contains the event type, device ID, sender phone number, and message details including type, content, timestamp, and a unique message ID. You should validate and parse this data before processing.",
+          "Different message types require different handling. Text messages contain plain string content, while media messages include URLs to the media files. Build a message handler that routes each type appropriately.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `function handleMessage(payload) {
+  const { event, from, message } = payload;
+  
+  switch (message.type) {
+    case "text":
+      handleTextMessage(from, message.content);
+      break;
+    case "image":
+      handleImageMessage(from, message.content);
+      break;
+    default:
+      console.log(\`Unhandled message type: \${message.type}\`);
+  }
+}
+
+function handleTextMessage(from, content) {
+  // Auto-reply, save to database, forward to support agent
+  if (content.toLowerCase().includes("help")) {
+    sendAutoReply(from, "How can we assist you today?");
+  }
+}`,
+        },
+      },
+      {
+        heading: "Security Best Practices",
+        headingLevel: "h2",
+        content: [
+          "Always use HTTPS for your webhook endpoint to encrypt data in transit. Validate the incoming request to ensure it originates from QuackAPI by checking request headers or implementing a shared secret.",
+          "Rate-limit your webhook endpoint to prevent abuse. Implement request validation to reject malformed payloads. Store webhook data in a queue for async processing to avoid blocking the response and causing timeout issues.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `// Validate webhook requests
+app.post("/webhook/whatsapp", (req, res) => {
+  const signature = req.headers["x-webhook-signature"];
+  
+  if (!isValidSignature(signature, req.body)) {
+    return res.status(401).json({ error: "Invalid signature" });
+  }
+  
+  // Queue for async processing
+  messageQueue.add(req.body);
+  
+  // Respond quickly
+  res.status(200).json({ received: true });
+});`,
+        },
+      },
+      {
+        heading: "Testing Your Webhooks",
+        headingLevel: "h2",
+        content: [
+          "During development, use tools like ngrok to expose your local server to the internet. This lets you test webhook delivery without deploying to a production server. Run ngrok http 3000 and use the generated HTTPS URL as your webhook endpoint.",
+          "Configure your webhook URL in the QuackAPI device settings. Send a test message to the connected WhatsApp number and verify that your endpoint receives the payload correctly. Check your server logs to confirm the data structure matches your expectations.",
+        ],
+        code: {
+          language: "bash",
+          snippet: `# Expose local server via ngrok
+ngrok http 3000
+
+# Test with curl
+curl -X POST http://localhost:3000/webhook/whatsapp \\
+  -H "Content-Type: application/json" \\
+  -d '{"event":"message.received","deviceId":1,"from":"923001234567","message":{"type":"text","content":"Test message"}}'`,
+        },
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-otp-verification-nodejs",
+    title: "Implement WhatsApp OTP Verification in Node.js",
+    description: "Build a complete WhatsApp OTP verification system in Node.js. Generate secure codes, send them via the QuackAPI API, verify user input, and handle code expiry.",
+    category: "Tutorial",
+    date: "2026-01-28",
+    readTime: "8 min read",
+    sections: [
+      {
+        heading: "Why WhatsApp OTP?",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp OTP verification offers higher delivery rates than SMS-based OTP, reaching 95%+ globally. Users are more likely to see and act on WhatsApp messages quickly, reducing verification drop-off rates.",
+          "WhatsApp OTP is also more cost-effective than SMS OTP for international users. With QuackAPI, you can send OTP messages at a flat subscription rate rather than paying per-message carrier fees.",
+        ],
+      },
+      {
+        heading: "Generating Secure OTP Codes",
+        headingLevel: "h2",
+        content: [
+          "Use cryptographically secure random number generation for OTP codes. Never use Math.random() as it is not cryptographically secure. The crypto module in Node.js provides the randomInt function for generating secure random integers.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const crypto = require("crypto");
+
+function generateOTP(length = 6) {
+  const min = Math.pow(10, length - 1);
+  const max = Math.pow(10, length) - 1;
+  return crypto.randomInt(min, max).toString();
+}
+
+// Generate a 6-digit OTP
+const otp = generateOTP();
+console.log(otp); // e.g., "847293"`,
+        },
+      },
+      {
+        heading: "Sending OTP via QuackAPI API",
+        headingLevel: "h2",
+        content: [
+          "Once you have generated the OTP code, send it to the user via the QuackAPI messaging API. Format the message clearly so users can easily identify and copy the verification code.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const axios = require("axios");
+
+async function sendOTP(phoneNumber, otpCode) {
+  const message = \`Your verification code is: \${otpCode}\\n\\nThis code expires in 5 minutes. Do not share this code with anyone.\`;
+  
+  const response = await axios.post(
+    "https://your-domain.com/api/messages/send",
+    {
+      deviceId: 1,
+      to: phoneNumber,
+      content: message,
+      type: "text"
+    },
+    {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.WAPISTACK_API_KEY
+      }
+    }
+  );
+  
+  return response.data;
+}`,
+        },
+      },
+      {
+        heading: "Storing and Verifying Codes",
+        headingLevel: "h2",
+        content: [
+          "Store OTP codes with their associated phone number, creation timestamp, and attempt count. Use an in-memory store like Redis for fast lookups, or a database if you need persistence. Hash the OTP before storing for added security.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const otpStore = new Map();
+
+function storeOTP(phoneNumber, otpCode) {
+  otpStore.set(phoneNumber, {
+    code: otpCode,
+    createdAt: Date.now(),
+    attempts: 0,
+    maxAttempts: 3
+  });
+}
+
+function verifyOTP(phoneNumber, inputCode) {
+  const stored = otpStore.get(phoneNumber);
+  
+  if (!stored) {
+    return { valid: false, error: "No OTP found for this number" };
+  }
+  
+  stored.attempts += 1;
+  
+  if (stored.attempts > stored.maxAttempts) {
+    otpStore.delete(phoneNumber);
+    return { valid: false, error: "Maximum attempts exceeded" };
+  }
+  
+  if (stored.code === inputCode) {
+    otpStore.delete(phoneNumber);
+    return { valid: true };
+  }
+  
+  return { valid: false, error: "Invalid code" };
+}`,
+        },
+      },
+      {
+        heading: "Handling Code Expiry",
+        headingLevel: "h2",
+        content: [
+          "OTP codes should expire after a short time window, typically 5 to 10 minutes. Check the creation timestamp against the current time during verification. Implement automatic cleanup to prevent stale entries from accumulating in your store.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const OTP_EXPIRY_MS = 5 * 60 * 1000; // 5 minutes
+
+function verifyOTPWithExpiry(phoneNumber, inputCode) {
+  const stored = otpStore.get(phoneNumber);
+  
+  if (!stored) {
+    return { valid: false, error: "No OTP found" };
+  }
+  
+  if (Date.now() - stored.createdAt > OTP_EXPIRY_MS) {
+    otpStore.delete(phoneNumber);
+    return { valid: false, error: "OTP has expired" };
+  }
+  
+  return verifyOTP(phoneNumber, inputCode);
+}
+
+// Cleanup expired OTPs every minute
+setInterval(() => {
+  const now = Date.now();
+  for (const [phone, data] of otpStore.entries()) {
+    if (now - data.createdAt > OTP_EXPIRY_MS) {
+      otpStore.delete(phone);
+    }
+  }
+}, 60000);`,
+        },
+      },
+      {
+        heading: "Complete Express API",
+        headingLevel: "h2",
+        content: [
+          "Here is a complete Express.js API with endpoints for requesting and verifying OTPs. This example ties together all the previous sections into a production-ready service.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const express = require("express");
+const app = express();
+app.use(express.json());
+
+app.post("/api/otp/request", async (req, res) => {
+  const { phoneNumber } = req.body;
+  
+  if (!phoneNumber) {
+    return res.status(400).json({ error: "Phone number required" });
+  }
+  
+  const otp = generateOTP();
+  storeOTP(phoneNumber, otp);
+  
+  try {
+    await sendOTP(phoneNumber, otp);
+    res.json({ success: true, message: "OTP sent via WhatsApp" });
+  } catch (error) {
+    res.status(500).json({ error: "Failed to send OTP" });
+  }
+});
+
+app.post("/api/otp/verify", (req, res) => {
+  const { phoneNumber, code } = req.body;
+  const result = verifyOTPWithExpiry(phoneNumber, code);
+  
+  if (result.valid) {
+    res.json({ success: true, message: "Phone number verified" });
+  } else {
+    res.status(400).json({ success: false, error: result.error });
+  }
+});
+
+app.listen(3000);`,
+        },
+      },
+    ],
+  },
+  {
+    slug: "send-whatsapp-messages-php",
+    title: "How to Send WhatsApp Messages Using PHP",
+    description: "Step-by-step guide to sending WhatsApp messages with PHP using the QuackAPI REST API. Includes cURL and Guzzle examples for text, image, and document messages.",
+    category: "Tutorial",
+    date: "2026-02-18",
+    readTime: "6 min read",
+    sections: [
+      {
+        heading: "Prerequisites & Installation",
+        headingLevel: "h2",
+        content: [
+          "Before sending WhatsApp messages with PHP, you need PHP 7.4 or higher and Composer installed. We will use the Guzzle HTTP client for cleaner request handling, though we also cover native cURL.",
+          "Install Guzzle via Composer by running the following command in your project directory:",
+        ],
+        code: {
+          language: "bash",
+          snippet: `composer require guzzlehttp/guzzle`,
+        },
+      },
+      {
+        heading: "Getting Your API Key",
+        headingLevel: "h2",
+        content: [
+          "Log into your QuackAPI dashboard and navigate to Profile Settings. Your API key starts with wa_ and is required for authenticating all API requests.",
+          "Store your API key as an environment variable or in a secure configuration file. Never hardcode API keys in your PHP source files or commit them to version control.",
+        ],
+        code: {
+          language: "php",
+          snippet: `<?php
+// Load API key from environment variable
+$apiKey = getenv('WAPISTACK_API_KEY');
+$baseUrl = 'https://your-domain.com/api/messages/send';`,
+        },
+      },
+      {
+        heading: "Sending Text Messages with cURL",
+        headingLevel: "h2",
+        content: [
+          "PHP's built-in cURL extension is the most portable way to make HTTP requests. Here is how to send a text message using native cURL functions with proper headers and JSON payload.",
+        ],
+        code: {
+          language: "php",
+          snippet: `<?php
+$apiKey = getenv('WAPISTACK_API_KEY');
+$url = 'https://your-domain.com/api/messages/send';
+
+$payload = json_encode([
+    'deviceId' => 1,
+    'to' => '923001234567',
+    'content' => 'Hello from PHP!',
+    'type' => 'text'
+]);
+
+$ch = curl_init($url);
+curl_setopt($ch, CURLOPT_POST, true);
+curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
+curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+curl_setopt($ch, CURLOPT_HTTPHEADER, [
+    'Content-Type: application/json',
+    'x-api-key: ' . $apiKey
+]);
+
+$response = curl_exec($ch);
+$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+curl_close($ch);
+
+$result = json_decode($response, true);
+echo "Status: $httpCode\\n";
+print_r($result);`,
+        },
+      },
+      {
+        heading: "Sending with Guzzle",
+        headingLevel: "h2",
+        content: [
+          "Guzzle provides a much cleaner and more modern API for HTTP requests in PHP. It supports promises, middleware, and automatic JSON encoding, making it ideal for production applications.",
+        ],
+        code: {
+          language: "php",
+          snippet: `<?php
+require 'vendor/autoload.php';
+
+use GuzzleHttp\\Client;
+
+$client = new Client([
+    'base_uri' => 'https://your-domain.com',
+    'headers' => [
+        'Content-Type' => 'application/json',
+        'x-api-key' => getenv('WAPISTACK_API_KEY')
+    ]
+]);
+
+try {
+    $response = $client->post('/api/messages/send', [
+        'json' => [
+            'deviceId' => 1,
+            'to' => '923001234567',
+            'content' => 'Hello from Guzzle!',
+            'type' => 'text'
+        ]
+    ]);
+
+    $body = json_decode($response->getBody(), true);
+    echo "Message sent! ID: " . $body['id'] . "\\n";
+} catch (\\GuzzleHttp\\Exception\\RequestException $e) {
+    echo "Error: " . $e->getMessage() . "\\n";
+}`,
+        },
+      },
+      {
+        heading: "Sending Images and Documents",
+        headingLevel: "h2",
+        content: [
+          "QuackAPI supports sending images with captions and documents like PDFs. Set the type field to image or pdf and provide the file URL in the content field. For documents, include a filename parameter.",
+        ],
+        code: {
+          language: "php",
+          snippet: `<?php
+// Send an image with caption
+$client->post('/api/messages/send', [
+    'json' => [
+        'deviceId' => 1,
+        'to' => '923001234567',
+        'content' => 'https://example.com/photo.jpg',
+        'type' => 'image',
+        'caption' => 'Check out this photo!'
+    ]
+]);
+
+// Send a PDF document
+$client->post('/api/messages/send', [
+    'json' => [
+        'deviceId' => 1,
+        'to' => '923001234567',
+        'content' => 'https://example.com/invoice.pdf',
+        'type' => 'pdf',
+        'filename' => 'invoice.pdf'
+    ]
+]);`,
+        },
+      },
+      {
+        heading: "Complete PHP Class",
+        headingLevel: "h2",
+        content: [
+          "Here is a complete, reusable PHP class that wraps the QuackAPI API. You can include this in any PHP project to start sending WhatsApp messages with minimal setup.",
+        ],
+        code: {
+          language: "php",
+          snippet: `<?php
+require 'vendor/autoload.php';
+
+use GuzzleHttp\\Client;
+use GuzzleHttp\\Exception\\RequestException;
+
+class QuackAPIClient
+{
+    private Client $client;
+
+    public function __construct(?string $apiKey = null)
+    {
+        $key = $apiKey ?? getenv('WAPISTACK_API_KEY');
+        $this->client = new Client([
+            'base_uri' => 'https://your-domain.com',
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'x-api-key' => $key
+            ]
+        ]);
+    }
+
+    public function sendText(int $deviceId, string $to, string $message): array
+    {
+        return $this->send([
+            'deviceId' => $deviceId,
+            'to' => $to,
+            'content' => $message,
+            'type' => 'text'
+        ]);
+    }
+
+    public function sendImage(int $deviceId, string $to, string $url, string $caption = ''): array
+    {
+        return $this->send([
+            'deviceId' => $deviceId,
+            'to' => $to,
+            'content' => $url,
+            'type' => 'image',
+            'caption' => $caption
+        ]);
+    }
+
+    public function sendDocument(int $deviceId, string $to, string $url, string $filename): array
+    {
+        return $this->send([
+            'deviceId' => $deviceId,
+            'to' => $to,
+            'content' => $url,
+            'type' => 'pdf',
+            'filename' => $filename
+        ]);
+    }
+
+    private function send(array $payload): array
+    {
+        try {
+            $response = $this->client->post('/api/messages/send', ['json' => $payload]);
+            return json_decode($response->getBody(), true);
+        } catch (RequestException $e) {
+            throw new \\RuntimeException('QuackAPI API error: ' . $e->getMessage());
+        }
+    }
+}
+
+// Usage
+$wa = new QuackAPIClient();
+$result = $wa->sendText(1, '923001234567', 'Hello from QuackAPI PHP!');
+print_r($result);`,
+        },
+      },
+    ],
+  },
+  {
+    slug: "send-whatsapp-messages-nodejs",
+    title: "How to Send WhatsApp Messages with Node.js",
+    description: "Complete Node.js tutorial for sending WhatsApp messages via the QuackAPI API. Covers axios, fetch, and native https with async/await patterns.",
+    category: "Tutorial",
+    date: "2026-02-16",
+    readTime: "5 min read",
+    sections: [
+      {
+        heading: "Prerequisites & Installation",
+        headingLevel: "h2",
+        content: [
+          "You need Node.js 18 or higher installed on your system. We will primarily use axios for HTTP requests, but also demonstrate the built-in fetch API available in modern Node.js versions.",
+          "Install axios in your project using npm:",
+        ],
+        code: {
+          language: "bash",
+          snippet: `npm install axios`,
+        },
+      },
+      {
+        heading: "Setting Up",
+        headingLevel: "h2",
+        content: [
+          "Configure your API key and base URL as environment variables. Create a .env file or export them in your shell. The API key authenticates every request to the QuackAPI API.",
+          "Never hardcode your API key in source files. Use environment variables or a secrets manager in production.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const axios = require("axios");
+
+const API_KEY = process.env.WAPISTACK_API_KEY;
+const BASE_URL = "https://your-domain.com/api/messages/send";
+
+const headers = {
+  "Content-Type": "application/json",
+  "x-api-key": API_KEY
+};`,
+        },
+      },
+      {
+        heading: "Sending Text Messages with Axios",
+        headingLevel: "h2",
+        content: [
+          "Axios makes it simple to send JSON POST requests. The following example sends a text message to a WhatsApp number using async/await syntax for clean, readable code.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `async function sendTextMessage(to, message) {
+  try {
+    const response = await axios.post(BASE_URL, {
+      deviceId: 1,
+      to: to,
+      content: message,
+      type: "text"
+    }, { headers });
+
+    console.log("Message sent:", response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error:", error.response?.data || error.message);
+    throw error;
+  }
+}
+
+// Usage
+sendTextMessage("923001234567", "Hello from Node.js!");`,
+        },
+      },
+      {
+        heading: "Using Native Fetch",
+        headingLevel: "h2",
+        content: [
+          "Node.js 18+ includes a built-in fetch API, so you can send messages without any third-party dependencies. This is great for lightweight scripts and serverless functions.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `async function sendWithFetch(to, message) {
+  const response = await fetch("https://your-domain.com/api/messages/send", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": process.env.WAPISTACK_API_KEY
+    },
+    body: JSON.stringify({
+      deviceId: 1,
+      to: to,
+      content: message,
+      type: "text"
+    })
+  });
+
+  if (!response.ok) {
+    const error = await response.json();
+    throw new Error(error.message || "Request failed");
+  }
+
+  return await response.json();
+}
+
+sendWithFetch("923001234567", "Hello via fetch!");`,
+        },
+      },
+      {
+        heading: "Sending Media Messages",
+        headingLevel: "h2",
+        content: [
+          "Send images, documents, and other media by changing the type and content fields. Images support optional captions, and documents require a filename parameter.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `// Send an image with caption
+await axios.post(BASE_URL, {
+  deviceId: 1,
+  to: "923001234567",
+  content: "https://example.com/photo.jpg",
+  type: "image",
+  caption: "Check out this photo!"
+}, { headers });
+
+// Send a PDF document
+await axios.post(BASE_URL, {
+  deviceId: 1,
+  to: "923001234567",
+  content: "https://example.com/report.pdf",
+  type: "pdf",
+  filename: "report.pdf"
+}, { headers });`,
+        },
+      },
+      {
+        heading: "Building a Reusable Module",
+        headingLevel: "h2",
+        content: [
+          "Wrap all messaging functionality into a reusable module that you can import across your Node.js project. This class handles authentication, error handling, and supports all message types.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const axios = require("axios");
+
+class QuackAPI {
+  constructor(apiKey) {
+    this.apiKey = apiKey || process.env.WAPISTACK_API_KEY;
+    this.client = axios.create({
+      baseURL: "https://your-domain.com",
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": this.apiKey
+      }
+    });
+  }
+
+  async sendText(deviceId, to, message) {
+    const { data } = await this.client.post("/api/messages/send", {
+      deviceId, to, content: message, type: "text"
+    });
+    return data;
+  }
+
+  async sendImage(deviceId, to, imageUrl, caption = "") {
+    const { data } = await this.client.post("/api/messages/send", {
+      deviceId, to, content: imageUrl, type: "image", caption
+    });
+    return data;
+  }
+
+  async sendDocument(deviceId, to, docUrl, filename) {
+    const { data } = await this.client.post("/api/messages/send", {
+      deviceId, to, content: docUrl, type: "pdf", filename
+    });
+    return data;
+  }
+}
+
+module.exports = QuackAPI;
+
+// Usage
+const wa = new QuackAPI();
+wa.sendText(1, "923001234567", "Hello from QuackAPI!").then(console.log);`,
+        },
+      },
+    ],
+  },
+  {
+    slug: "build-whatsapp-chatbot-python",
+    title: "Build a WhatsApp Chatbot with Python and Flask",
+    description: "Learn to build an automated WhatsApp chatbot using Python, Flask, and the QuackAPI API. Handle incoming messages via webhooks and send intelligent auto-replies.",
+    category: "Tutorial",
+    date: "2026-02-12",
+    readTime: "8 min read",
+    sections: [
+      {
+        heading: "What You'll Build",
+        headingLevel: "h2",
+        content: [
+          "In this tutorial, you will build a fully functional WhatsApp chatbot that receives incoming messages via webhooks, processes commands like help, pricing, and hours, and sends intelligent auto-replies using the QuackAPI API.",
+          "The chatbot will include a menu system, keyword-based routing, and proper error handling. By the end, you will have a deployable Flask application ready for production use.",
+        ],
+      },
+      {
+        heading: "Setting Up Flask",
+        headingLevel: "h2",
+        content: [
+          "Install Flask and the requests library for making API calls. Create a new project directory and set up your Flask application with the basic structure needed for webhook handling.",
+        ],
+        code: {
+          language: "bash",
+          snippet: `pip install flask requests`,
+        },
+      },
+      {
+        heading: "Receiving Messages via Webhook",
+        headingLevel: "h2",
+        content: [
+          "Create a POST endpoint that QuackAPI will call whenever your connected device receives a message. The webhook payload includes the sender number, message type, content, and device ID.",
+          "Always respond with a 200 status code quickly to acknowledge receipt. Process messages asynchronously if your logic takes time.",
+        ],
+        code: {
+          language: "python",
+          snippet: `from flask import Flask, request, jsonify
+import requests
+import os
+
+app = Flask(__name__)
+
+API_KEY = os.environ.get("WAPISTACK_API_KEY")
+API_URL = "https://your-domain.com/api/messages/send"
+
+@app.route("/webhook/whatsapp", methods=["POST"])
+def webhook():
+    data = request.json
+    event = data.get("event")
+    sender = data.get("from")
+    message = data.get("message", {})
+    device_id = data.get("deviceId")
+
+    if event == "message.received" and message.get("type") == "text":
+        content = message.get("content", "").strip().lower()
+        handle_command(device_id, sender, content)
+
+    return jsonify({"received": True}), 200`,
+        },
+      },
+      {
+        heading: "Building a Command Handler",
+        headingLevel: "h2",
+        content: [
+          "Route incoming messages to the appropriate handler based on keywords. This pattern makes it easy to add new commands as your chatbot grows. Each command maps to a specific response or action.",
+        ],
+        code: {
+          language: "python",
+          snippet: `def handle_command(device_id, sender, content):
+    if content in ["help", "?"]:
+        reply = (
+            "Available commands:\\n"
+            "1. *pricing* - View our plans\\n"
+            "2. *hours* - Business hours\\n"
+            "3. *menu* - Show main menu\\n"
+            "4. *help* - Show this message"
+        )
+    elif content == "pricing":
+        reply = (
+            "Our Plans:\\n\\n"
+            "Starter: $9/month - 3 devices\\n"
+            "Professional: $29/month - 10 devices\\n"
+            "Enterprise: $79/month - Unlimited\\n\\n"
+            "Visit our website to sign up!"
+        )
+    elif content == "hours":
+        reply = (
+            "Business Hours:\\n"
+            "Monday - Friday: 9AM - 6PM\\n"
+            "Saturday: 10AM - 2PM\\n"
+            "Sunday: Closed"
+        )
+    elif content == "menu":
+        reply = show_menu()
+    else:
+        reply = "I didn't understand that. Type *help* to see available commands."
+
+    send_reply(device_id, sender, reply)`,
+        },
+      },
+      {
+        heading: "Sending Auto-Replies",
+        headingLevel: "h2",
+        content: [
+          "Use the QuackAPI API to send replies back to the user. This function handles the HTTP request with proper authentication headers and error handling.",
+        ],
+        code: {
+          language: "python",
+          snippet: `def send_reply(device_id, to, message):
+    headers = {
+        "Content-Type": "application/json",
+        "x-api-key": API_KEY
+    }
+    payload = {
+        "deviceId": device_id,
+        "to": to,
+        "content": message,
+        "type": "text"
+    }
+    try:
+        response = requests.post(API_URL, json=payload, headers=headers)
+        response.raise_for_status()
+        return response.json()
+    except requests.exceptions.RequestException as e:
+        print(f"Failed to send reply: {e}")
+        return None`,
+        },
+      },
+      {
+        heading: "Adding a Menu System",
+        headingLevel: "h2",
+        content: [
+          "A menu system gives users a structured way to interact with your chatbot. Present numbered options that users can select by replying with the corresponding number or keyword.",
+        ],
+        code: {
+          language: "python",
+          snippet: `def show_menu():
+    return (
+        "Welcome to QuackAPI Support!\\n\\n"
+        "Please choose an option:\\n"
+        "1. View Pricing\\n"
+        "2. Business Hours\\n"
+        "3. Technical Support\\n"
+        "4. Talk to a Human\\n\\n"
+        "Reply with the number or keyword."
+    )`,
+        },
+      },
+      {
+        heading: "Deploying Your Chatbot",
+        headingLevel: "h2",
+        content: [
+          "Deploy your Flask chatbot to a cloud platform like Heroku, Railway, or any VPS. Make sure your server is accessible via HTTPS, as QuackAPI requires a secure webhook URL.",
+          "Set the WAPISTACK_API_KEY environment variable on your hosting platform. Configure the webhook URL in your QuackAPI device settings to point to your deployed endpoint, for example https://your-app.com/webhook/whatsapp.",
+          "For production, consider using Gunicorn as your WSGI server and adding rate limiting to prevent abuse of your webhook endpoint.",
+        ],
+        code: {
+          language: "bash",
+          snippet: `# Run with Gunicorn for production
+pip install gunicorn
+gunicorn -w 4 -b 0.0.0.0:8000 app:app`,
+        },
+      },
+    ],
+  },
+  {
+    slug: "avoid-whatsapp-number-ban",
+    title: "How to Avoid Getting Your WhatsApp Number Banned",
+    description: "Essential tips and best practices to prevent your WhatsApp number from being banned when using WhatsApp API for business messaging. Learn the rules and stay compliant.",
+    category: "Best Practices",
+    date: "2026-02-08",
+    readTime: "6 min read",
+    sections: [
+      {
+        heading: "Why Numbers Get Banned",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp actively monitors messaging patterns and user reports to maintain platform quality. Numbers get banned for sending unsolicited bulk messages, being reported by multiple recipients, sending identical content to many users, or violating WhatsApp's Terms of Service.",
+          "A ban can be temporary (24 hours to 7 days) or permanent depending on the severity. Permanent bans are extremely difficult to reverse, so prevention is critical for any business relying on WhatsApp messaging.",
+        ],
+      },
+      {
+        heading: "WhatsApp's Messaging Policies",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp requires that all business messaging be opt-in. Users must explicitly consent to receive messages from your business before you send them anything. This applies to both promotional and transactional messages.",
+          "You must provide a clear way for users to opt out at any time. Messages must be relevant to the user and the context in which they opted in. Misleading content, spam, and scam messages are strictly prohibited and will result in immediate bans.",
+        ],
+      },
+      {
+        heading: "Best Practices for Safe Messaging",
+        headingLevel: "h2",
+        content: [
+          "Warm up new numbers gradually. Start by sending 50-100 messages per day in the first week, then increase by 20-30% each week. Sudden spikes in messaging volume trigger WhatsApp's anti-spam systems.",
+          "Personalize your messages. Avoid sending the exact same message to hundreds of recipients. Include the recipient's name, reference their specific order or inquiry, and vary your message templates.",
+          "Respect opt-outs immediately. When a user asks to stop receiving messages, honor that request within seconds, not hours. Maintain an opt-out list and check it before every send.",
+          "Implement rate limiting in your application. Space out messages with at least 1-2 second delays between sends. Avoid sending more than 1,000 messages per hour from a single number.",
+        ],
+      },
+      {
+        heading: "Handling User Opt-In and Opt-Out",
+        headingLevel: "h2",
+        content: [
+          "Build a proper opt-in and opt-out system into your application. Store consent records with timestamps and the context of opt-in. Check consent status before every message send to ensure compliance.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const optOutList = new Set();
+
+function handleOptOut(phoneNumber) {
+  optOutList.add(phoneNumber);
+  // Send confirmation
+  sendMessage(phoneNumber, "You have been unsubscribed. You will no longer receive messages from us.");
+}
+
+function canSendMessage(phoneNumber) {
+  return !optOutList.has(phoneNumber);
+}
+
+// Check before every send
+async function safeSend(deviceId, to, message) {
+  if (!canSendMessage(to)) {
+    console.log("User has opted out, skipping:", to);
+    return null;
+  }
+  // Proceed with sending
+  return await sendMessage(to, message);
+}`,
+        },
+      },
+      {
+        heading: "What to Do If You Get Banned",
+        headingLevel: "h2",
+        content: [
+          "If your number receives a temporary ban, stop all messaging immediately. Wait for the ban period to expire before resuming. When you start again, significantly reduce your messaging volume and review your content for potential triggers.",
+          "For permanent bans, you can try to appeal through WhatsApp's support channels, but success rates are low. The best approach is to register a new number and apply all the best practices from the start to avoid a repeat ban.",
+          "Keep detailed logs of all messages sent, including timestamps, recipient numbers, and content. These logs are invaluable for diagnosing what triggered a ban and for any appeal process.",
+        ],
+      },
+      {
+        heading: "Monitoring Message Quality",
+        headingLevel: "h2",
+        content: [
+          "Track your message delivery rates, read rates, and user report rates. A declining delivery rate or increasing block rate are early warning signs that your number may be at risk.",
+          "Monitor the ratio of messages sent versus messages delivered. If more than 5% of your messages are failing to deliver, investigate the cause immediately. High failure rates often precede bans.",
+          "Set up alerts for unusual patterns such as sudden spikes in opt-out requests or user blocks. These indicators help you catch problems before they escalate to a ban.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "connect-whatsapp-api-crm-integration",
+    title: "How to Integrate WhatsApp API with Your CRM System",
+    description: "Guide to connecting the QuackAPI WhatsApp API with popular CRM systems like HubSpot, Salesforce, and Zoho. Automate customer communication and sync conversations.",
+    category: "Integration",
+    date: "2026-02-03",
+    readTime: "7 min read",
+    sections: [
+      {
+        heading: "Why Integrate WhatsApp with Your CRM",
+        headingLevel: "h2",
+        content: [
+          "Integrating WhatsApp with your CRM creates a unified view of customer interactions. Sales and support teams can see complete conversation histories alongside deal stages, tickets, and contact information.",
+          "Automated WhatsApp messages triggered by CRM events like deal stage changes, ticket updates, or follow-up reminders ensure timely and consistent customer communication without manual effort.",
+        ],
+      },
+      {
+        heading: "Architecture Overview",
+        headingLevel: "h2",
+        content: [
+          "The integration works in two directions. Inbound: QuackAPI webhooks forward incoming WhatsApp messages to your server, which then creates or updates CRM records. Outbound: CRM events trigger your server to send WhatsApp messages through the QuackAPI API.",
+          "Your server acts as a middleware layer between QuackAPI and your CRM. This gives you full control over data transformation, filtering, and business logic before data flows in either direction.",
+        ],
+      },
+      {
+        heading: "Using Webhooks for CRM Sync",
+        headingLevel: "h2",
+        content: [
+          "Set up a webhook endpoint to receive incoming WhatsApp messages and sync them to your CRM. The following example receives messages and creates a new contact or updates conversation history in your CRM.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const express = require("express");
+const axios = require("axios");
+const app = express();
+app.use(express.json());
+
+const CRM_API_URL = "https://api.your-crm.com";
+const CRM_API_KEY = process.env.CRM_API_KEY;
+
+app.post("/webhook/whatsapp", async (req, res) => {
+  const { event, from, message, deviceId } = req.body;
+
+  if (event === "message.received") {
+    try {
+      // Search for existing contact in CRM
+      let contact = await findCRMContact(from);
+
+      if (!contact) {
+        // Create new contact
+        contact = await createCRMContact(from);
+      }
+
+      // Log the conversation in CRM
+      await logConversation(contact.id, {
+        direction: "inbound",
+        channel: "whatsapp",
+        content: message.content,
+        timestamp: new Date().toISOString()
+      });
+    } catch (error) {
+      console.error("CRM sync failed:", error.message);
+    }
+  }
+
+  res.status(200).json({ received: true });
+});
+
+async function findCRMContact(phone) {
+  const { data } = await axios.get(
+    \`\${CRM_API_URL}/contacts/search?phone=\${phone}\`,
+    { headers: { "Authorization": \`Bearer \${CRM_API_KEY}\` } }
+  );
+  return data.results[0] || null;
+}
+
+async function createCRMContact(phone) {
+  const { data } = await axios.post(
+    \`\${CRM_API_URL}/contacts\`,
+    { phone, source: "whatsapp" },
+    { headers: { "Authorization": \`Bearer \${CRM_API_KEY}\` } }
+  );
+  return data;
+}
+
+async function logConversation(contactId, entry) {
+  await axios.post(
+    \`\${CRM_API_URL}/contacts/\${contactId}/conversations\`,
+    entry,
+    { headers: { "Authorization": \`Bearer \${CRM_API_KEY}\` } }
+  );
+}`,
+        },
+      },
+      {
+        heading: "Sending CRM-Triggered Messages",
+        headingLevel: "h2",
+        content: [
+          "Trigger WhatsApp messages from CRM events such as deal stage changes, appointment reminders, or follow-up tasks. Use CRM webhooks or polling to detect events and send messages via the QuackAPI API.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const WAPISTACK_URL = "https://your-domain.com/api/messages/send";
+const WAPISTACK_KEY = process.env.WAPISTACK_API_KEY;
+
+// CRM webhook: deal stage changed
+app.post("/crm/webhook/deal-update", async (req, res) => {
+  const { dealId, stage, contact } = req.body;
+
+  const messages = {
+    "proposal_sent": "Hi! We have sent you a proposal. Please review and let us know if you have any questions.",
+    "won": "Congratulations! Your order has been confirmed. We will begin processing it right away.",
+    "follow_up": "Hi! Just checking in. Do you have any questions about our proposal?"
+  };
+
+  const messageText = messages[stage];
+  if (messageText && contact.phone) {
+    try {
+      await axios.post(WAPISTACK_URL, {
+        deviceId: 1,
+        to: contact.phone,
+        content: messageText,
+        type: "text"
+      }, {
+        headers: {
+          "Content-Type": "application/json",
+          "x-api-key": WAPISTACK_KEY
+        }
+      });
+      console.log(\`Sent \${stage} message to \${contact.phone}\`);
+    } catch (error) {
+      console.error("Failed to send CRM message:", error.message);
+    }
+  }
+
+  res.status(200).json({ processed: true });
+});`,
+        },
+      },
+      {
+        heading: "Popular CRM Integrations",
+        headingLevel: "h2",
+        content: [
+          "HubSpot: Use the HubSpot CRM API to create contacts, log engagements, and track deals. HubSpot supports custom properties where you can store the WhatsApp number and conversation metadata. Use HubSpot webhooks to trigger outbound messages on deal stage changes.",
+          "Salesforce: Leverage the Salesforce REST API to sync WhatsApp conversations as Activity records. Map WhatsApp contacts to Salesforce Leads or Contacts. Use Salesforce Process Builder or Flow to trigger WhatsApp notifications on record updates.",
+          "Zoho CRM: The Zoho CRM API supports contact management and custom modules where you can store WhatsApp conversation logs. Use Zoho's workflow rules to trigger API calls to your middleware when CRM events occur.",
+        ],
+      },
+      {
+        heading: "Building a Custom Integration",
+        headingLevel: "h2",
+        content: [
+          "For CRMs without built-in integrations, build a custom middleware service. Define a standard interface for CRM operations like contact lookup, creation, and conversation logging. Implement this interface for each CRM you need to support.",
+          "Use a message queue like Redis or RabbitMQ to decouple webhook processing from CRM API calls. This ensures webhook responses are fast and CRM sync happens reliably even if the CRM API is temporarily slow or unavailable.",
+          "Test your integration thoroughly with realistic data volumes. Implement retry logic for failed CRM API calls and set up monitoring to detect sync failures early.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-messaging-best-practices",
+    title: "WhatsApp API Messaging Best Practices for Developers",
+    description: "Developer guide to WhatsApp API best practices covering rate limiting, error handling, message formatting, media optimization, and building reliable messaging systems.",
+    category: "Best Practices",
+    date: "2026-01-25",
+    readTime: "7 min read",
+    sections: [
+      {
+        heading: "Rate Limiting and Throttling",
+        headingLevel: "h2",
+        content: [
+          "Implement a message queue to control the rate at which messages are sent. Sending too many messages too quickly can overwhelm the API and trigger rate limits or bans. A simple queue with configurable delay ensures smooth, compliant delivery.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `class MessageQueue {
+  constructor(delayMs = 1000) {
+    this.queue = [];
+    this.delayMs = delayMs;
+    this.processing = false;
+  }
+
+  add(message) {
+    this.queue.push(message);
+    if (!this.processing) this.process();
+  }
+
+  async process() {
+    this.processing = true;
+    while (this.queue.length > 0) {
+      const msg = this.queue.shift();
+      try {
+        await this.send(msg);
+      } catch (error) {
+        console.error("Send failed:", error.message);
+        // Re-queue with backoff if needed
+      }
+      await this.delay(this.delayMs);
+    }
+    this.processing = false;
+  }
+
+  async send(msg) {
+    const axios = require("axios");
+    return axios.post("https://your-domain.com/api/messages/send", msg, {
+      headers: {
+        "Content-Type": "application/json",
+        "x-api-key": process.env.WAPISTACK_API_KEY
+      }
+    });
+  }
+
+  delay(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
+}
+
+const queue = new MessageQueue(1500);
+queue.add({ deviceId: 1, to: "923001234567", content: "Hello!", type: "text" });`,
+        },
+      },
+      {
+        heading: "Error Handling Patterns",
+        headingLevel: "h2",
+        content: [
+          "Robust error handling is essential for production messaging systems. Categorize errors into retriable (network timeouts, 500 errors) and non-retriable (invalid API key, malformed request). Handle each category differently to avoid wasting resources on permanent failures.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `async function sendWithErrorHandling(payload) {
+  try {
+    const response = await axios.post(BASE_URL, payload, { headers });
+    return { success: true, data: response.data };
+  } catch (error) {
+    const status = error.response?.status;
+    const message = error.response?.data?.message || error.message;
+
+    if (status === 401) {
+      console.error("Invalid API key. Check WAPISTACK_API_KEY.");
+      return { success: false, retriable: false, error: message };
+    }
+
+    if (status === 429) {
+      console.warn("Rate limited. Slowing down...");
+      return { success: false, retriable: true, error: message };
+    }
+
+    if (status >= 500) {
+      console.warn("Server error. Will retry.");
+      return { success: false, retriable: true, error: message };
+    }
+
+    console.error("Request failed:", message);
+    return { success: false, retriable: false, error: message };
+  }
+}`,
+        },
+      },
+      {
+        heading: "Message Formatting Tips",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp supports basic text formatting that can improve readability. Use *bold* for emphasis, _italic_ for subtle highlights, and ~strikethrough~ for corrections. Combine these to create well-structured, scannable messages.",
+          "Keep messages concise and action-oriented. Break long content into multiple shorter messages rather than one wall of text. Use line breaks and bullet points to organize information logically.",
+          "Include clear calls to action in every message. Tell the user exactly what you want them to do next, whether it is replying with a keyword, clicking a link, or calling a number.",
+        ],
+      },
+      {
+        heading: "Media Optimization",
+        headingLevel: "h2",
+        content: [
+          "Optimize images before sending to reduce delivery time and data usage. Compress images to under 1MB when possible. WhatsApp supports JPEG, PNG, and WebP formats. JPEG is recommended for photographs, while PNG is better for graphics with text.",
+          "For documents, keep PDF files under 10MB. Use descriptive filenames that help users identify the document content. Supported document types include PDF, DOC, DOCX, XLS, XLSX, and PPT.",
+          "Video files should be compressed to under 16MB and use MP4 format with H.264 encoding for maximum compatibility. Keep videos under 3 minutes for optimal user engagement.",
+        ],
+      },
+      {
+        heading: "Retry Logic with Exponential Backoff",
+        headingLevel: "h2",
+        content: [
+          "Implement exponential backoff for retrying failed requests. This prevents overwhelming the API during outages and gives the server time to recover. Cap the maximum number of retries and the maximum delay to avoid indefinite waits.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `async function sendWithRetry(payload, maxRetries = 3) {
+  let lastError;
+
+  for (let attempt = 0; attempt < maxRetries; attempt++) {
+    try {
+      const response = await axios.post(
+        "https://your-domain.com/api/messages/send",
+        payload,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            "x-api-key": process.env.WAPISTACK_API_KEY
+          },
+          timeout: 10000
+        }
+      );
+      return response.data;
+    } catch (error) {
+      lastError = error;
+      const status = error.response?.status;
+
+      // Don't retry client errors (except rate limiting)
+      if (status && status >= 400 && status < 500 && status !== 429) {
+        throw error;
+      }
+
+      // Exponential backoff: 1s, 2s, 4s
+      const delayMs = Math.min(1000 * Math.pow(2, attempt), 10000);
+      console.log(\`Retry \${attempt + 1}/\${maxRetries} in \${delayMs}ms\`);
+      await new Promise(resolve => setTimeout(resolve, delayMs));
+    }
+  }
+
+  throw lastError;
+}`,
+        },
+      },
+      {
+        heading: "Monitoring and Logging",
+        headingLevel: "h2",
+        content: [
+          "Log every API request and response with timestamps, recipient numbers (masked for privacy), message types, and status codes. This data is invaluable for debugging delivery issues and optimizing your messaging strategy.",
+          "Track key metrics like delivery success rate, average response time, and error frequency. Set up alerts when error rates exceed thresholds, for example if more than 5% of messages fail in a 10-minute window.",
+          "Use structured logging with JSON format so you can easily search and aggregate logs. Include correlation IDs to trace a single message through your entire pipeline from creation to delivery confirmation.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-without-meta-approval",
+    title: "How to Use WhatsApp API Without Meta Business Verification",
+    description: "Discover how to access a WhatsApp API without waiting for Meta Business approval. Learn the QR-based approach used by QuackAPI and compare it with the official Meta Cloud API.",
+    category: "Guide",
+    date: "2026-02-20",
+    readTime: "7 min read",
+    sections: [
+      {
+        heading: "The Two Paths to WhatsApp API Access",
+        headingLevel: "h2",
+        content: [
+          "If you have searched for a WhatsApp API, you have likely hit a wall: the official Meta WhatsApp Business API requires your business to be verified by Meta, approved as a Business Solution Provider (BSP), and often takes days or weeks before you can send a single message.",
+          "But there is a second path — one that developers have been using for years. QR-based WhatsApp APIs work by connecting your existing personal or business WhatsApp account the same way WhatsApp Web does: scan a QR code with your phone and you are live within seconds.",
+          "QuackAPI uses this QR-based approach. No Meta Business Manager account. No waiting. No per-message conversation fees from Meta. Just scan and send.",
+        ],
+      },
+      {
+        heading: "Why the Official Meta API Requires Approval",
+        headingLevel: "h2",
+        content: [
+          "Meta's WhatsApp Business Platform is designed for large enterprises sending messages at scale using pre-approved message templates. To access it, you must: create a Meta Business Manager account, get your business verified by Meta (requires legal documents), apply for access through a BSP like Twilio or 360dialog, create and get message templates pre-approved before sending.",
+          "This process makes sense for enterprises sending millions of marketing messages but is overkill for developers who need to send order confirmations, OTP codes, internal notifications, or customer support messages.",
+        ],
+      },
+      {
+        heading: "How QR-Based WhatsApp APIs Work",
+        headingLevel: "h2",
+        content: [
+          "QR-based APIs like QuackAPI use the WhatsApp Web protocol to connect your phone to the cloud. When you scan a QR code in the QuackAPI dashboard, the platform establishes a persistent WebSocket session with WhatsApp's servers — exactly the same as WhatsApp Web in your browser, but hosted and managed by QuackAPI.",
+          "Once connected, you get a REST API endpoint to send messages, receive webhooks for incoming messages, and manage multiple WhatsApp numbers independently. The entire setup takes under two minutes.",
+        ],
+        code: {
+          language: "bash",
+          snippet: `# Step 1: Create a QuackAPI account at quackapi.com
+# Step 2: Add a device in the dashboard
+# Step 3: Scan the QR code with your WhatsApp
+# Step 4: Copy your API key from Profile Settings
+# Step 5: Send your first message
+
+curl -X POST https://quackapi.com/api/messages/send \\
+  -H "Content-Type: application/json" \\
+  -H "x-api-key: wa_your_api_key_here" \\
+  -d '{
+    "deviceId": 1,
+    "to": "12025551234",
+    "content": "Hello from QuackAPI — no Meta approval needed!",
+    "type": "text"
+  }'`,
+        },
+      },
+      {
+        heading: "QR-Based vs Official Meta API: Key Differences",
+        headingLevel: "h2",
+        content: [
+          "Here is a direct comparison to help you choose the right approach for your use case:",
+          "Setup time — QR-based (QuackAPI): 2 minutes. Official Meta API: Days to weeks. Business verification — QR-based: None required. Official Meta API: Required (legal documents). Cost — QR-based: Flat monthly ($0-$99). Official Meta API: Per-conversation fees from Meta + BSP markup. Message templates — QR-based: Send any message freely. Official Meta API: Pre-approved templates required for outbound. Multi-device — QR-based: Yes, unlimited. Official Meta API: One number per account.",
+          "The official Meta API is the right choice if you are sending high-volume marketing campaigns to opted-in users and need Meta's verified business badge. For everything else — notifications, OTP, support bots, CRM integrations — a QR-based API is faster, cheaper, and simpler.",
+        ],
+      },
+      {
+        heading: "Sending Messages with QuackAPI (Node.js Example)",
+        headingLevel: "h2",
+        content: [
+          "Once your WhatsApp is connected via QR, you can send messages from any language or platform using a standard HTTP POST request. Here is a complete Node.js example:",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const axios = require('axios');
+
+async function sendWhatsAppMessage(to, message) {
+  const response = await axios.post(
+    'https://quackapi.com/api/messages/send',
+    {
+      deviceId: 1,        // Your connected device ID
+      to: to,             // Recipient number with country code
+      content: message,
+      type: 'text'
+    },
+    {
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': process.env.QUACKAPI_KEY
+      }
+    }
+  );
+
+  console.log('Message sent:', response.data);
+  return response.data;
+}
+
+// Send an order notification
+sendWhatsAppMessage('12025551234', 'Your order #9871 has shipped! Track at: https://track.example.com/9871');`,
+        },
+      },
+      {
+        heading: "Receiving Incoming Messages with Webhooks",
+        headingLevel: "h2",
+        content: [
+          "QuackAPI forwards incoming WhatsApp messages to a webhook URL you configure per device. This means you can build support bots, auto-responders, and two-way conversations without any additional setup.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const express = require('express');
+const app = express();
+app.use(express.json());
+
+app.post('/webhook/whatsapp', (req, res) => {
+  const { from, message } = req.body;
+
+  console.log(\`Message from \${from}: \${message.content}\`);
+
+  // Auto-reply example
+  if (message.content.toLowerCase().includes('order')) {
+    // Fetch order status and reply
+    replyToMessage(from, 'Checking your order status...');
+  }
+
+  res.sendStatus(200);
+});
+
+app.listen(3000);`,
+        },
+      },
+      {
+        heading: "Is Using a QR-Based WhatsApp API Safe?",
+        headingLevel: "h2",
+        content: [
+          "QR-based APIs work through the same encrypted WhatsApp Web protocol your phone uses. Messages are end-to-end encrypted exactly as they would be on your phone. Your session credentials are stored securely by QuackAPI and never shared.",
+          "To keep your account in good standing: only message users who have opted in or who have previously contacted you, keep your messaging volume reasonable and consistent with normal usage patterns, avoid sending identical bulk messages to large lists, and respond to replies to maintain healthy engagement signals.",
+          "QuackAPI provides a free tier to get started with up to 100 messages per day, which is perfect for testing and low-volume production use. Paid plans unlock higher limits and additional devices.",
+        ],
+      },
+      {
+        heading: "Get Started in 2 Minutes",
+        headingLevel: "h2",
+        content: [
+          "Ready to skip the Meta approval queue? Create a free QuackAPI account, scan your QR code, and send your first message in under two minutes. No credit card required, no business verification, no waiting.",
+          "Visit quackapi.com to create your free account and get your API key instantly.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-free-alternatives",
+    title: "Best Free WhatsApp API Alternatives in 2026 (No Business Account Needed)",
+    description: "Compare the best free WhatsApp API options in 2026 including self-hosted open-source solutions and managed services. Find the right fit for your project without requiring a Meta Business account.",
+    category: "Comparison",
+    date: "2026-02-22",
+    readTime: "8 min read",
+    sections: [
+      {
+        heading: "Why Developers Search for Free WhatsApp API Alternatives",
+        headingLevel: "h2",
+        content: [
+          "The official Meta WhatsApp Business API is powerful, but it comes with significant friction: you need a verified Meta Business account, pay per-conversation fees, get messages pre-approved as templates, and wait days or weeks for access. For individual developers, startups, and small businesses, this is a non-starter.",
+          "Fortunately, there are several free and low-cost WhatsApp API alternatives available in 2026. This guide covers three categories: self-hosted open-source libraries, managed free-tier services, and when the official Meta API makes sense.",
+        ],
+      },
+      {
+        heading: "Option 1: Self-Hosted Open-Source (Free, Technical Setup Required)",
+        headingLevel: "h2",
+        content: [
+          "These are open-source projects you install and run on your own server. They connect to WhatsApp using the same protocol as WhatsApp Web.",
+          "whatsapp-web.js (21,000+ GitHub stars) — The most popular Node.js library. Uses Puppeteer to run a headless Chrome browser connected to WhatsApp Web. Great for hobby projects but resource-heavy (needs 500MB+ RAM for Chrome).",
+          "Evolution API — A full REST API built on the Baileys library. Supports multi-session, webhooks, media sending, and integrates with tools like Chatwoot and Typebot. Requires Docker knowledge to self-host.",
+          "WAHA (WhatsApp HTTP API) — Offers three engine options (browser-based, Node.js WebSocket, Go WebSocket) and a REST API. Simpler setup than Evolution API but still requires a VPS.",
+          "The catch: you manage the server, SSL certificates, uptime monitoring, updates, and backups. A basic VPS costs $5–$20/month. If your server goes down, so do your WhatsApp connections.",
+        ],
+        code: {
+          language: "bash",
+          snippet: `# Example: Running WAHA with Docker
+docker run -it --rm \\
+  -p 3000:3000/tcp \\
+  devlikeapro/waha
+
+# Send a message via WAHA REST API
+curl -X POST http://localhost:3000/api/sendText \\
+  -H "Content-Type: application/json" \\
+  -d '{
+    "chatId": "12025551234@c.us",
+    "text": "Hello from WAHA!",
+    "session": "default"
+  }'`,
+        },
+      },
+      {
+        heading: "Option 2: Managed Free Tier — QuackAPI",
+        headingLevel: "h2",
+        content: [
+          "QuackAPI offers a permanently free tier with 100 messages per day and 1 connected WhatsApp device. No credit card required, no Meta Business account, no server management.",
+          "You get: a full REST API with examples in 13+ programming languages, per-device webhook configuration for incoming messages, QR-based device linking in under 2 minutes, a web dashboard to monitor messages and devices, and upgrade paths to paid plans when you need more volume.",
+          "Compared to self-hosted options, QuackAPI removes all the DevOps overhead. You do not manage a server, handle SSL, or worry about uptime — QuackAPI handles all of that. For most developers, this is the best starting point.",
+        ],
+        code: {
+          language: "python",
+          snippet: `import requests
+import os
+
+# QuackAPI free tier — 100 messages/day
+API_KEY = os.environ['QUACKAPI_KEY']
+
+def send_whatsapp(to: str, message: str):
+    response = requests.post(
+        'https://quackapi.com/api/messages/send',
+        headers={
+            'Content-Type': 'application/json',
+            'x-api-key': API_KEY
+        },
+        json={
+            'deviceId': 1,
+            'to': to,
+            'content': message,
+            'type': 'text'
+        }
+    )
+    return response.json()
+
+# Works immediately after QR scan — no Meta approval
+result = send_whatsapp('12025551234', 'Hello from QuackAPI free tier!')
+print(result)  # {"id": 1, "status": "sent"}`,
+        },
+      },
+      {
+        heading: "Option 3: Official Meta WhatsApp Cloud API (Free Tier)",
+        headingLevel: "h2",
+        content: [
+          "Meta offers 1,000 free user-initiated conversations per month on the WhatsApp Cloud API. This is genuinely free for low-volume use, but the setup process is complex and time-consuming.",
+          "To get started with Meta's official API: create a Meta Business account, add a phone number to WhatsApp Business Platform (must be a number not already on WhatsApp), create message templates and submit for Meta approval (24–72 hours), and integrate using Meta's REST API or an approved BSP.",
+          "The official API is ideal if you need a verified green tick badge, access to WhatsApp Flows (interactive in-chat forms), or plan to run large-scale marketing campaigns that require Meta compliance.",
+        ],
+      },
+      {
+        heading: "Comparison Table: Free WhatsApp API Options",
+        headingLevel: "h2",
+        content: [
+          "Here is a quick summary to help you choose:",
+          "QuackAPI Free Tier — Setup: 2 minutes (QR scan), Requires Meta account: No, Free limit: 100 msg/day, Server management: None, Support: Email, Best for: Developers and startups.",
+          "Self-Hosted (WAHA/Evolution API) — Setup: 1–4 hours (Docker/VPS), Requires Meta account: No, Free limit: Unlimited (you pay for server), Server management: Full, Support: GitHub/community, Best for: Technical teams who want full control.",
+          "Meta Cloud API — Setup: Days to weeks (verification), Requires Meta account: Yes, Free limit: 1,000 conversations/month, Server management: None, Support: Meta support, Best for: Enterprise marketing campaigns.",
+          "For most developers starting out, QuackAPI's free tier is the fastest path from zero to a working WhatsApp integration. Self-hosting makes sense when you have DevOps resources and want maximum control. The official Meta API makes sense when you need scale and compliance.",
+        ],
+      },
+      {
+        heading: "Getting Started with QuackAPI for Free",
+        headingLevel: "h2",
+        content: [
+          "Sign up at quackapi.com — no credit card required. Add a device, scan the QR code with your phone, and copy your API key from the Profile Settings page. You will be sending messages within 2 minutes.",
+          "The free tier includes 100 messages per day, which is sufficient for testing, low-volume production use, and most personal projects. When you need more, plans start at $29/month with unlimited messages and up to 5 devices.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-abandoned-cart-recovery",
+    title: "WhatsApp Abandoned Cart Recovery: Boost E-commerce Sales by 35%",
+    description: "Learn how to implement WhatsApp abandoned cart recovery for your e-commerce store using QuackAPI. See why WhatsApp outperforms email with 98% open rates and step-by-step code examples.",
+    category: "E-commerce",
+    date: "2026-02-24",
+    readTime: "9 min read",
+    sections: [
+      {
+        heading: "Why WhatsApp Abandoned Cart Recovery Works",
+        headingLevel: "h2",
+        content: [
+          "The average e-commerce cart abandonment rate is 70%. That means 7 out of 10 shoppers who add items to their cart leave without buying. Recovering even a fraction of those lost sales has a massive impact on revenue.",
+          "Email abandoned cart sequences have been the standard recovery tool for years, but their effectiveness has declined sharply. Email open rates average 21% for e-commerce. WhatsApp open rates average 98%. A message that gets read is a message that can convert.",
+          "Studies from businesses using WhatsApp for cart recovery report 25–35% recovery rates on abandoned carts — compared to 5–10% for email sequences. The combination of high visibility, personal feel, and instant delivery makes WhatsApp the most effective channel for cart recovery in 2026.",
+        ],
+      },
+      {
+        heading: "How the WhatsApp Cart Recovery Flow Works",
+        headingLevel: "h2",
+        content: [
+          "A typical WhatsApp cart recovery flow has three touchpoints. The first message goes out 30–60 minutes after abandonment: a friendly reminder with the cart contents and a direct link back to checkout. The second message goes out 24 hours later if the cart is still unpurchased: add a small incentive like free shipping or a 5% discount code. The third message goes out 48–72 hours later: create urgency with low stock warnings or a final discount expiry.",
+          "The key difference from email: WhatsApp messages feel personal and conversational. Customers can reply directly to ask questions, which creates an engagement loop that further increases conversion.",
+        ],
+      },
+      {
+        heading: "Prerequisites: Setting Up QuackAPI for Cart Recovery",
+        headingLevel: "h2",
+        content: [
+          "Before writing any code, connect a WhatsApp device to QuackAPI. This is the number your cart recovery messages will be sent from — ideally your business WhatsApp number.",
+          "Log in to quackapi.com, go to Devices, click Add Device, and scan the QR code with your business WhatsApp. This takes about 60 seconds. Then copy your API key from Profile Settings.",
+        ],
+        code: {
+          language: "bash",
+          snippet: `# Install required packages
+npm install axios
+
+# Set your environment variables
+export QUACKAPI_KEY="wa_your_api_key_here"
+export QUACKAPI_DEVICE_ID="1"`,
+        },
+      },
+      {
+        heading: "Implementing Cart Recovery with Node.js",
+        headingLevel: "h2",
+        content: [
+          "Here is a complete cart recovery implementation. This example assumes you store abandoned carts in your database and have collected the customer's WhatsApp number at checkout entry.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const axios = require('axios');
+
+const QUACKAPI_KEY = process.env.QUACKAPI_KEY;
+const DEVICE_ID = parseInt(process.env.QUACKAPI_DEVICE_ID);
+
+async function sendWhatsApp(to, message) {
+  return axios.post(
+    'https://quackapi.com/api/messages/send',
+    { deviceId: DEVICE_ID, to, content: message, type: 'text' },
+    { headers: { 'Content-Type': 'application/json', 'x-api-key': QUACKAPI_KEY } }
+  );
+}
+
+async function sendCartRecoveryMessage(cart, attempt) {
+  const { customerPhone, customerName, items, total, checkoutUrl } = cart;
+  const itemList = items.map(i => \`• \${i.name} (x\${i.qty}) — $\${i.price}\`).join('\\n');
+
+  let message;
+
+  if (attempt === 1) {
+    message = \`Hi \${customerName}! 👋
+
+You left some items in your cart:
+\${itemList}
+
+Total: $\${total}
+
+Your cart is saved — complete your order here:
+\${checkoutUrl}
+
+Reply HELP if you have any questions!\`;
+  } else if (attempt === 2) {
+    message = \`Hi \${customerName}! Your cart is still waiting 🛒
+
+We'd love to offer you FREE SHIPPING on your order of $\${total}.
+
+Use code FREESHIP at checkout:
+\${checkoutUrl}
+
+Offer expires in 24 hours.\`;
+  } else {
+    message = \`Last chance \${customerName}! ⏰
+
+Your cart expires soon. Items are selling fast!
+
+Complete your order now: \${checkoutUrl}
+
+Reply STOP to unsubscribe from cart reminders.\`;
+  }
+
+  await sendWhatsApp(customerPhone, message);
+  console.log(\`Cart recovery attempt \${attempt} sent to \${customerPhone}\`);
+}
+
+// Schedule recovery messages
+async function scheduleCartRecovery(cart) {
+  // Attempt 1: 30 minutes after abandonment
+  setTimeout(() => sendCartRecoveryMessage(cart, 1), 30 * 60 * 1000);
+
+  // Attempt 2: 24 hours later
+  setTimeout(() => sendCartRecoveryMessage(cart, 2), 24 * 60 * 60 * 1000);
+
+  // Attempt 3: 72 hours later
+  setTimeout(() => sendCartRecoveryMessage(cart, 3), 72 * 60 * 60 * 1000);
+}`,
+        },
+      },
+      {
+        heading: "Implementing Cart Recovery with Python (Django/Flask)",
+        headingLevel: "h2",
+        content: [
+          "For Python backends using Django or Flask, here is the equivalent implementation using Celery for task scheduling:",
+        ],
+        code: {
+          language: "python",
+          snippet: `import requests
+import os
+from celery import shared_task
+from datetime import timedelta
+
+QUACKAPI_KEY = os.environ['QUACKAPI_KEY']
+DEVICE_ID = int(os.environ['QUACKAPI_DEVICE_ID'])
+
+def send_whatsapp(phone: str, message: str):
+    response = requests.post(
+        'https://quackapi.com/api/messages/send',
+        headers={'Content-Type': 'application/json', 'x-api-key': QUACKAPI_KEY},
+        json={'deviceId': DEVICE_ID, 'to': phone, 'content': message, 'type': 'text'}
+    )
+    return response.json()
+
+@shared_task
+def cart_recovery_attempt_1(cart_id: int):
+    from shop.models import Cart
+    cart = Cart.objects.get(id=cart_id)
+    if cart.is_purchased:
+        return  # Already converted, skip
+
+    items = '\\n'.join([f'• {i.name} x{i.qty} — \${i.price}' for i in cart.items.all()])
+    message = (
+        f"Hi {cart.customer_name}! You left items in your cart:\\n\\n"
+        f"{items}\\n\\nTotal: \${cart.total}\\n\\n"
+        f"Complete your order: {cart.checkout_url}"
+    )
+    send_whatsapp(cart.customer_phone, message)
+
+# In your view when a cart is abandoned:
+def on_cart_abandoned(cart):
+    cart_recovery_attempt_1.apply_async(
+        args=[cart.id],
+        countdown=1800  # 30 minutes
+    )`,
+        },
+      },
+      {
+        heading: "Handling Replies and Opt-Outs",
+        headingLevel: "h2",
+        content: [
+          "Set up a webhook in your QuackAPI device settings to receive customer replies. When someone replies STOP, cancel any pending recovery tasks and mark them as opted out. This is both good practice and essential for maintaining trust.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `app.post('/webhook/whatsapp', async (req, res) => {
+  const { from, message } = req.body;
+
+  if (message.content.toUpperCase().trim() === 'STOP') {
+    await db.optOutFromCartRecovery(from);
+    await sendWhatsApp(from, "You've been unsubscribed from cart reminders. Reply START to re-enable.");
+  } else if (message.content.toUpperCase().trim() === 'HELP') {
+    await sendWhatsApp(from, "Need help with your order? Our team will contact you within 1 hour. Or email us at support@yourstore.com");
+  }
+
+  res.sendStatus(200);
+});`,
+        },
+      },
+      {
+        heading: "Expected Results and Benchmarks",
+        headingLevel: "h2",
+        content: [
+          "Based on industry data from businesses running WhatsApp cart recovery in 2026: message open rate averages 94–98% (vs 21% for email), click-through rate on recovery links averages 35–45% (vs 8–12% for email), cart recovery rate averages 25–35% of abandoned carts (vs 5–10% for email), and ROI typically exceeds 10x the cost of the WhatsApp API subscription within the first month.",
+          "Start with the free QuackAPI tier (100 messages/day) to test your recovery flow before scaling. Once you validate the conversion rate with your audience, upgrade to a paid plan to send unlimited recovery messages.",
+          "Sign up free at quackapi.com — no credit card, no Meta Business account, start sending in 2 minutes.",
+        ],
+      },
+    ],
+  },
+];
+
+function formatDate(dateStr: string): string {
+  return new Date(dateStr).toLocaleDateString("en-US", {
+    year: "numeric",
+    month: "long",
+    day: "numeric",
+  });
+}
+
+
+function Footer() {
+  return (
+    <footer className="border-t border-border/50 bg-card/50" data-testid="blog-footer">
+      <div className="max-w-7xl mx-auto px-6 py-12">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-6">
+          <div className="flex items-center gap-3">
+            <div className="w-8 h-8 rounded-md bg-gradient-to-br from-primary to-primary/80 flex items-center justify-center text-primary-foreground font-bold shadow-lg shadow-primary/20">
+              W
+            </div>
+            <span className="font-display font-bold text-lg">QuackAPI</span>
+          </div>
+          <div className="flex flex-wrap items-center justify-center gap-6">
+            <a href="/terms" className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-terms">Terms</a>
+            <a href="/privacy" className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-privacy">Privacy</a>
+            <a href="/contact" className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-contact">Contact</a>
+            <a href="/docs" className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-docs">API Docs</a>
+            <a href="/blog" className="text-sm text-muted-foreground hover:text-foreground transition-colors" data-testid="link-blog">Blog</a>
+          </div>
+          <p className="text-sm text-muted-foreground">2026 QuackAPI. All rights reserved.</p>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function CodeBlock({ code, language }: { code: string; language: string }) {
+  const [copied, setCopied] = useState(false);
+
+  const handleCopy = () => {
+    navigator.clipboard.writeText(code);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
+  return (
+    <div className="relative bg-[#1e1e2e] rounded-xl overflow-hidden border border-white/10 my-4">
+      <div className="flex items-center justify-between px-4 py-2 border-b border-white/10">
+        <span className="text-white/40 text-xs font-mono">{language}</span>
+        <button
+          onClick={handleCopy}
+          className="text-white/40 hover:text-white/80 transition-colors p-1"
+          data-testid={`button-copy-${language}`}
+        >
+          {copied ? (
+            <span className="text-green-400 text-xs">Copied</span>
+          ) : (
+            <span className="text-xs">Copy</span>
+          )}
+        </button>
+      </div>
+      <pre className="p-4 text-sm overflow-x-auto">
+        <code className="text-green-300 font-mono whitespace-pre leading-relaxed">{code}</code>
+      </pre>
+    </div>
+  );
+}
+
+function BlogListing() {
+  return (
+    <div className="min-h-screen bg-background">
+      <SEO
+        title="Blog - WhatsApp API Tutorials & Guides"
+        description="Tutorials, guides, and insights for WhatsApp API developers. Learn how to send messages, set up webhooks, implement OTP verification, and more with QuackAPI."
+        canonical="/blog"
+        ogImage="/og-blog.png"
+      />
+      <Navbar />
+
+      <section className="relative py-16 md:py-24" data-testid="section-blog-hero">
+        <div className="absolute inset-0 bg-gradient-to-b from-primary/5 via-background to-background" />
+        <div className="relative max-w-4xl mx-auto px-6 text-center">
+          <div className="inline-flex items-center gap-2 bg-primary/10 text-primary px-4 py-1.5 rounded-full text-sm font-medium mb-6">
+            <BookOpen className="w-4 h-4" />
+            Developer Resources
+          </div>
+          <h1 className="font-display text-4xl md:text-5xl font-bold tracking-tight mb-4" data-testid="text-blog-title">
+            QuackAPI Blog
+          </h1>
+          <p className="text-lg text-muted-foreground max-w-2xl mx-auto" data-testid="text-blog-subtitle">
+            Tutorials, guides, and insights for WhatsApp API developers
+          </p>
+        </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-6 pb-24" data-testid="section-blog-grid">
+        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {articles.map((article) => (
+            <Link key={article.slug} href={`/blog/${article.slug}`} className="block group" data-testid={`card-article-${article.slug}`}>
+              <Card className="h-full border-border/50 transition-all duration-300 hover:shadow-lg hover:border-primary/20 bg-background">
+                <CardContent className="p-6 flex flex-col h-full">
+                  <div className="flex items-center gap-3 mb-4 flex-wrap">
+                    <Badge variant="secondary" data-testid={`badge-category-${article.slug}`}>
+                      <Tag className="w-3 h-3 mr-1" />
+                      {article.category}
+                    </Badge>
+                  </div>
+                  <h2 className="font-display text-lg font-semibold mb-2 group-hover:text-primary transition-colors" data-testid={`text-title-${article.slug}`}>
+                    {article.title}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mb-4 flex-1 leading-relaxed" data-testid={`text-desc-${article.slug}`}>
+                    {article.description}
+                  </p>
+                  <div className="flex items-center gap-4 text-xs text-muted-foreground pt-4 border-t border-border/50 flex-wrap">
+                    <span className="flex items-center gap-1">
+                      <Calendar className="w-3 h-3" />
+                      {formatDate(article.date)}
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Clock className="w-3 h-3" />
+                      {article.readTime}
+                    </span>
+                  </div>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
+        </div>
+      </section>
+
+      <section className="max-w-7xl mx-auto px-6 pb-24" data-testid="section-explore-more">
+        <h2 className="font-display text-2xl font-bold mb-6">Explore More</h2>
+        <div className="grid md:grid-cols-3 gap-6">
+          <div className="bg-card border border-border/50 rounded-xl p-6">
+            <h3 className="font-display text-lg font-semibold mb-2">API Documentation</h3>
+            <p className="text-sm text-muted-foreground mb-4">Complete API reference with code examples in 13+ programming languages.</p>
+            <a href="/docs" className="text-sm font-medium text-primary hover:underline" data-testid="link-explore-docs">View API Docs &rarr;</a>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-6">
+            <h3 className="font-display text-lg font-semibold mb-2">Use Cases</h3>
+            <p className="text-sm text-muted-foreground mb-4">See how businesses use QuackAPI for notifications, OTP, support, and automation.</p>
+            <a href="/use-cases" className="text-sm font-medium text-primary hover:underline" data-testid="link-explore-usecases">Explore Use Cases &rarr;</a>
+          </div>
+          <div className="bg-card border border-border/50 rounded-xl p-6">
+            <h3 className="font-display text-lg font-semibold mb-2">QuackAPI vs UltraMSG</h3>
+            <p className="text-sm text-muted-foreground mb-4">Compare QuackAPI with UltraMSG on features, pricing, and developer experience.</p>
+            <a href="/compare/ultramsg" className="text-sm font-medium text-primary hover:underline" data-testid="link-explore-compare">See Comparison &rarr;</a>
+          </div>
+        </div>
+      </section>
+
+      <Footer />
+    </div>
+  );
+}
+
+function ArticlePage({ slug }: { slug: string }) {
+  const article = articles.find((a) => a.slug === slug);
+
+  if (!article) {
+    return (
+      <div className="min-h-screen bg-background">
+        <Navbar />
+        <div className="max-w-4xl mx-auto px-6 py-24 text-center">
+          <h1 className="font-display text-3xl font-bold mb-4">Article Not Found</h1>
+          <p className="text-muted-foreground mb-8">The article you are looking for does not exist.</p>
+          <Link href="/blog">
+            <Button data-testid="button-back-to-blog">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back to Blog
+            </Button>
+          </Link>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  const relatedArticles = articles.filter((a) => a.slug !== slug).slice(0, 3);
+
+  return (
+    <div className="min-h-screen bg-background">
+      <SEO
+        title={article.title}
+        description={article.description}
+        canonical={`/blog/${article.slug}`}
+        ogType="article"
+        ogImage="/og-image.png"
+        jsonLd={[
+          {
+            "@context": "https://schema.org",
+            "@type": "BlogPosting",
+            headline: article.title,
+            description: article.description,
+            datePublished: article.date,
+            dateModified: article.date,
+            wordCount: article.sections.reduce((acc, s) => acc + s.content.join(" ").split(" ").length, 0),
+            author: { "@type": "Organization", name: "QuackAPI", url: "https://quackapi.com" },
+            publisher: { "@type": "Organization", name: "QuackAPI", url: "https://quackapi.com", logo: { "@type": "ImageObject", url: "https://quackapi.com/favicon.png" } },
+            mainEntityOfPage: { "@type": "WebPage", "@id": `https://quackapi.com/blog/${article.slug}` },
+            url: `https://quackapi.com/blog/${article.slug}`,
+          },
+          {
+            "@context": "https://schema.org",
+            "@type": "BreadcrumbList",
+            itemListElement: [
+              { "@type": "ListItem", position: 1, name: "Home", item: "https://quackapi.com" },
+              { "@type": "ListItem", position: 2, name: "Blog", item: "https://quackapi.com/blog" },
+              { "@type": "ListItem", position: 3, name: article.title },
+            ],
+          },
+        ]}
+      />
+      <Navbar />
+
+      <div className="max-w-4xl mx-auto px-6 py-8">
+        <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8 flex-wrap" aria-label="Breadcrumb" data-testid="breadcrumb">
+          <a href="/" className="hover:text-foreground transition-colors" data-testid="breadcrumb-home">Home</a>
+          <ChevronRight className="w-3 h-3" />
+          <Link href="/blog" className="hover:text-foreground transition-colors" data-testid="breadcrumb-blog">Blog</Link>
+          <ChevronRight className="w-3 h-3" />
+          <span className="text-foreground font-medium" data-testid="breadcrumb-current">{article.title}</span>
+        </nav>
+
+        <article data-testid={`article-${article.slug}`}>
+          <header className="mb-10">
+            <Badge variant="secondary" className="mb-4" data-testid="badge-article-category">
+              <Tag className="w-3 h-3 mr-1" />
+              {article.category}
+            </Badge>
+            <h1 className="font-display text-3xl md:text-4xl font-bold mb-4" data-testid="text-article-title">
+              {article.title}
+            </h1>
+            <div className="flex items-center gap-4 text-sm text-muted-foreground flex-wrap" data-testid="article-meta">
+              <span className="flex items-center gap-1.5">
+                <Calendar className="w-4 h-4" />
+                {formatDate(article.date)}
+              </span>
+              <span className="flex items-center gap-1.5">
+                <Clock className="w-4 h-4" />
+                {article.readTime}
+              </span>
+            </div>
+          </header>
+
+          <div className="prose-container space-y-8">
+            {article.sections.map((section, idx) => (
+              <section key={idx} data-testid={`section-${idx}`}>
+                {section.headingLevel === "h2" ? (
+                  <h2 className="font-display text-2xl font-bold mb-4 mt-8">{section.heading}</h2>
+                ) : (
+                  <h3 className="font-display text-xl font-semibold mb-3 mt-6">{section.heading}</h3>
+                )}
+                {section.content.map((paragraph, pIdx) => (
+                  <p key={pIdx} className="text-muted-foreground leading-relaxed mb-4">
+                    {paragraph.split(/(`[^`]+`)/).map((part, partIdx) =>
+                      part.startsWith("`") && part.endsWith("`") ? (
+                        <code key={partIdx} className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground">
+                          {part.slice(1, -1)}
+                        </code>
+                      ) : (
+                        <span key={partIdx}>{part}</span>
+                      )
+                    )}
+                  </p>
+                ))}
+                {section.code && (
+                  <CodeBlock code={section.code.snippet} language={section.code.language} />
+                )}
+              </section>
+            ))}
+          </div>
+        </article>
+
+        <section className="mt-16 pt-12 border-t border-border/50" data-testid="section-related-articles">
+          <h2 className="font-display text-2xl font-bold mb-6">Related Articles</h2>
+          <div className="grid md:grid-cols-3 gap-6">
+            {relatedArticles.map((related) => (
+              <Link key={related.slug} href={`/blog/${related.slug}`} className="block group" data-testid={`card-related-${related.slug}`}>
+                <Card className="h-full border-border/50 transition-all duration-300 hover:shadow-lg hover:border-primary/20 bg-background">
+                  <CardContent className="p-5">
+                    <Badge variant="secondary" className="mb-3">
+                      {related.category}
+                    </Badge>
+                    <h3 className="font-display font-semibold mb-2 group-hover:text-primary transition-colors">
+                      {related.title}
+                    </h3>
+                    <div className="flex items-center gap-3 text-xs text-muted-foreground flex-wrap">
+                      <span className="flex items-center gap-1">
+                        <Calendar className="w-3 h-3" />
+                        {formatDate(related.date)}
+                      </span>
+                      <span className="flex items-center gap-1">
+                        <Clock className="w-3 h-3" />
+                        {related.readTime}
+                      </span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+
+      <Footer />
+    </div>
+  );
+}
+
+export default function BlogPage() {
+  const [matched, params] = useRoute("/blog/:slug");
+
+  if (matched && params?.slug) {
+    return <ArticlePage slug={params.slug} />;
+  }
+
+  return <BlogListing />;
+}

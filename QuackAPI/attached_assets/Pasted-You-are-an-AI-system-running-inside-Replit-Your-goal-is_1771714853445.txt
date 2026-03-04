@@ -1,0 +1,60 @@
+You are an AI system running inside Replit. Your goal is to **automatically implement and optimize SEO for WAPIStack**, a WhatsApp API SaaS platform. You have access to the website files, live preview, and the ability to generate new content and structured data. 
+
+Please perform the following tasks:
+
+1. **Homepage SEO Optimization**
+   - Generate a **title tag** for the homepage (max 70 chars) including “WAPIStack” and main keywords like WhatsApp API, messaging automation.
+   - Generate a **meta description** (max 160 chars) emphasizing WAPIStack’s features.
+   - Add **H1, H2, H3 structure** for the homepage:
+     - H1: Main product/service headline
+     - H2: Features, Integrations, Pricing
+     - H3: Details under each feature
+   - Suggest **internal linking structure** to blog/tutorial pages.
+
+2. **Blog / Resource SEO Automation**
+   - Generate **long-tail SEO keywords** for blog topics about WhatsApp API automation, messaging integration, and tutorials.
+   - Auto-generate **meta titles and meta descriptions** for each blog post.
+   - Suggest **SEO-friendly headings (H1-H3)** for blog posts.
+   - Create a **structured JSON-LD schema** for blog posts:
+     - `@type: BlogPosting`
+     - Include: headline, description, author, datePublished, mainEntityOfPage
+   - Generate **suggested ALT texts** for images in the blog posts.
+
+3. **Feature Pages SEO**
+   - Generate **unique title tags and meta descriptions** for each feature page.
+   - Add **H1-H3 headers** with target keywords.
+   - Generate **structured data (SoftwareApplication schema)** for each feature page, including software name, description, URL, applicationCategory, operatingSystem, offers.
+
+4. **Social / Open Graph SEO**
+   - Generate **Open Graph tags** (og:title, og:description, og:image) for each page.
+   - Generate **Twitter Card meta tags** (twitter:card, title, description, image).
+
+5. **SEO Automation Features Only Replit Can Do**
+   - Automatically **inject generated SEO metadata into HTML/CSS/JS files**.
+   - Create **new blog pages** with prefilled SEO fields.
+   - Generate **JSON-LD structured data files** and link them to pages.
+   - Preview the **SEO changes live** in Replit’s browser preview.
+   - Track **SEO performance metrics in a local file** (e.g., keyword density, meta tags present, heading structure compliance).
+
+6. **Content Generation**
+   - Generate **SEO-optimized blog posts** of 500–1000 words each, including target keywords naturally.
+   - Suggest **internal links** to other relevant WAPIStack pages.
+   - Generate **call-to-action sections** optimized for conversions.
+
+7. **Automation / Integration**
+   - Set up **file watcher** so whenever a new page is created, SEO metadata, schema, and suggested keywords are automatically generated and injected.
+   - Create **log files** to keep track of generated SEO content for auditing.
+
+8. **Output Requirements**
+   - All generated SEO content should be in **editable HTML / JSON / Markdown files**.
+   - Provide **live preview link** for each generated page.
+   - Highlight **missing SEO elements** in existing pages and suggest fixes.
+   - Include **all structured data** (JSON-LD) in the `<head>` of each page automatically.
+
+---
+
+**Extra Notes:**  
+- Always prioritize **WhatsApp API, WAPIStack, messaging automation** in keywords.  
+- Ensure all content is **unique and grammatically correct**.  
+- Make the system **scalable** to handle 50+ pages/blog posts automatically.  
+- Provide **error logs** if SEO metadata fails to inject or conflicts occur.

@@ -1,0 +1,69 @@
+2026-02-25T12:25:23Z info: Deployment: 0c3ca80e-fa67-4350-90e7-49c470ebfae7
+2026-02-25T12:25:23Z info: Build: 54ce65cd-f8c7-4921-ad3f-d26da8bf1e56
+2026-02-25T12:25:23Z info: Running Security Scan
+2026-02-25T12:25:31Z info: Security Scan Complete
+2026-02-25T12:25:31Z info: Connecting to builder
+2026-02-25T12:25:31Z info: Builder connected
+2026-02-25T12:25:32Z info: Installing packages
+2026-02-25T12:25:32Z info: Starting Build
+
+> rest-express@1.0.0 build
+> tsx script/build.ts
+
+
+building client...
+
+vite v7.3.0 building client environment for production...
+
+transforming...
+
+✓ 3078 modules transformed.
+
+rendering chunks...
+
+computing gzip size...
+
+../dist/public/index.html                     1.07 kB │ gzip:   0.57 kB
+
+../dist/public/assets/index-BDY3y3uc.css     99.34 kB │ gzip:  15.80 kB
+../dist/public/assets/index-ClhMZ9QB.js   1,379.59 kB │ gzip: 391.16 kB
+
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+
+✓ built in 7.35s
+building server...
+
+
+  dist/index.cjs  1.4mb ⚠️
+
+⚡ Done in 285ms
+
+npm notice
+npm notice New major version of npm available! 10.8.2 -> 11.10.1
+npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.10.1
+npm notice To update run: npm install -g npm@11.10.1
+npm notice
+
+2026-02-25T12:25:44Z info: Pushing pid1 binary layer...
+2026-02-25T12:25:45Z info: Pushing Repl layer...
+2026-02-25T12:25:45Z info: Pushing hosting layer...
+2026-02-25T12:25:45Z info: Created hosting layer
+2026-02-25T12:25:46Z info: Created pid1 binary layer
+2026-02-25T12:26:07Z info: Created Repl layer
+2026-02-25T12:26:07Z info: Pushing Repl (cache) layer...
+2026-02-25T12:26:08Z info: Created Repl (cache) layer
+2026-02-25T12:26:12Z info: Pushed image manifest
+2026-02-25T12:26:14Z info: Pushed soci index manifest
+2026-02-25T12:26:17Z info: Creating Autoscale service
+[Baileys] Checking for existing sessions to reconnect...
+forwarding local port 5000 to external port 80 (mapped as 1104)
+metasidecar: loaded enterprise status from environment is_enterprise=false
+12:26:40 PM [express] serving on port 5000
+> rest-express@1.0.0 start
+> NODE_ENV=production node dist/index.cjs
+starting up user application
+2026-02-25T12:28:47Z error: The deployment is failing health checks. This can happen if the application isn't responding, responds with an error, or doesn't respond in time. Health checks are sent to the / endpoint by default and must respond as soon as possible. Make sure that the / endpoint is implemented and returns a 200 status code in a timely manner. Avoid doing expensive or long running operations on the / endpoint, prefer deferring them to a different route. Check the logs for more information.
