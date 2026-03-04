@@ -6,7 +6,7 @@ A full-stack WhatsApp API SaaS platform that allows users to connect WhatsApp de
 ## Architecture
 - **Frontend**: React + Vite + Tailwind CSS + shadcn/ui (in `QuackAPI/client/`)
 - **Backend**: Express.js + TypeScript (in `QuackAPI/server/`)
-- **Database**: PostgreSQL with Drizzle ORM (schema in `QuackAPI/shared/`)
+- **Database**: Supabase PostgreSQL with Drizzle ORM (schema in `QuackAPI/shared/`)
 - **WhatsApp**: @whiskeysockets/baileys for multi-device protocol
 - **Auth**: JWT-based authentication
 
@@ -15,7 +15,8 @@ A full-stack WhatsApp API SaaS platform that allows users to connect WhatsApp de
 - `cd QuackAPI && npm run db:push` — push schema changes to the database
 
 ## Key Environment Variables
-- `DATABASE_URL` — PostgreSQL connection string (auto-provisioned)
+- `SUPABASE_DATABASE_URL` — Supabase PostgreSQL pooler connection string (takes priority over DATABASE_URL)
+- `DATABASE_URL` — Fallback PostgreSQL connection string (auto-provisioned by Replit)
 - `JWT_SECRET` — secret for JWT token signing
 - `SESSION_SECRET` — session secret
 
