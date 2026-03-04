@@ -1,17 +1,13 @@
 import nodemailer from "nodemailer";
-
-const SMTP_HOST = "mail.spacemail.com";
-const SMTP_PORT = 465;
-const SMTP_USER = process.env.SMTP_USER || "notification@quackapi.com";
-const SMTP_PASS = process.env.SMTP_PASS;
+import { smtpConfig } from "./config";
 
 function getTransporter() {
-  if (!SMTP_PASS) return null;
+  if (!smtpConfig.pass) return null;
   return nodemailer.createTransport({
-    host: SMTP_HOST,
-    port: SMTP_PORT,
-    secure: true,
-    auth: { user: SMTP_USER, pass: SMTP_PASS },
+    host: smtpConfig.host,
+    port: smtpConfig.port,
+    secure: smtpConfig.secure,
+    auth: { user: smtpConfig.user, pass: smtpConfig.pass },
     tls: { rejectUnauthorized: false },
   });
 }
@@ -23,7 +19,7 @@ async function sendEmail(to: string, subject: string, html: string) {
     return;
   }
   try {
-    await transporter.sendMail({ from: `"QuackAPI" <${SMTP_USER}>`, to, subject, html });
+    await transporter.sendMail({ from: `"QuackAPI" <${smtpConfig.user}>`, to, subject, html });
     console.log(`[Email] Sent "${subject}" to ${to}`);
   } catch (err) {
     console.error(`[Email] Failed to send to ${to}:`, err);

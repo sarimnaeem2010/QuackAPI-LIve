@@ -13,6 +13,7 @@ import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { getStripe, isStripeConfigured, STRIPE_PRICE_MAP } from "./stripe";
 import { sendWelcomeEmail, sendEmailVerificationOTP, sendPasswordResetOTP, sendAdminRegistrationNotification } from "./email";
+import { getPayPalCredentials, notificationConfig, smtpConfig, paypalConfig } from "./config";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 
@@ -68,8 +69,8 @@ export async function registerRoutes(
         const user = await storage.createUser({ name: input.name, email: input.email, password: input.password });
         await storage.markEmailVerified(user.id);
         await sendWelcomeEmail(user.email, user.name, user.apiKey);
-        if (adminConfig.notificationEmail) {
-          sendAdminRegistrationNotification(adminConfig.notificationEmail, { name: user.name, email: user.email }).catch(() => {});
+        if (notificationConfig.email) {
+          sendAdminRegistrationNotification(notificationConfig.email, { name: user.name, email: user.email }).catch(() => {});
         }
         const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
         const { password, ...userResponse } = user;
@@ -139,11 +140,9 @@ export async function registerRoutes(
       pendingRegistrations.delete(pendingId);
 
       await sendWelcomeEmail(user.email, user.name, user.apiKey);
-      storage.getAdminSettings().then((cfg) => {
-        if (cfg.notificationEmail) {
-          sendAdminRegistrationNotification(cfg.notificationEmail, { name: user.name, email: user.email }).catch(() => {});
-        }
-      }).catch(() => {});
+      if (notificationConfig.email) {
+        sendAdminRegistrationNotification(notificationConfig.email, { name: user.name, email: user.email }).catch(() => {});
+      }
 
       const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
       const { password, ...userResponse } = user;
@@ -552,9 +551,7 @@ export async function registerRoutes(
   // PayPal: create order and return approval URL
   app.get("/api/paypal/client-id", async (_req: any, res) => {
     try {
-      const settings = await storage.getAdminSettings();
-      const mode = settings.paypalMode || "sandbox";
-      const clientId = mode === "live" ? settings.paypalLiveClientId : settings.paypalSandboxClientId;
+      const { mode, clientId } = getPayPalCredentials();
       if (!clientId) {
         return res.status(503).json({ message: `PayPal ${mode} credentials are not configured` });
       }
@@ -571,10 +568,7 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Invalid plan" });
       }
 
-      const settings = await storage.getAdminSettings();
-      const mode = settings.paypalMode || "sandbox";
-      const clientId = mode === "live" ? settings.paypalLiveClientId : settings.paypalSandboxClientId;
-      const clientSecret = mode === "live" ? settings.paypalLiveClientSecret : settings.paypalSandboxClientSecret;
+      const { mode, clientId, clientSecret } = getPayPalCredentials();
       if (!clientId || !clientSecret) {
         return res.status(400).json({ message: `PayPal ${mode} credentials are not configured. Please contact support.` });
       }
@@ -628,10 +622,7 @@ export async function registerRoutes(
       const { orderId, paymentId, plan, billingCycle } = req.body;
       if (!orderId) return res.status(400).json({ message: "orderId is required" });
 
-      const settings = await storage.getAdminSettings();
-      const mode = settings.paypalMode || "sandbox";
-      const clientId = mode === "live" ? settings.paypalLiveClientId : settings.paypalSandboxClientId;
-      const clientSecret = mode === "live" ? settings.paypalLiveClientSecret : settings.paypalSandboxClientSecret;
+      const { mode, clientId, clientSecret } = getPayPalCredentials();
       if (!clientId || !clientSecret) {
         return res.status(400).json({ message: `PayPal ${mode} credentials are not configured` });
       }
@@ -906,13 +897,21 @@ export async function registerRoutes(
   app.get("/api/admin/settings", requireAdmin, async (req: any, res) => {
     try {
       const settings = await storage.getAdminSettings();
-      const { smtpPass, paypalClientSecret, paypalSandboxClientSecret, paypalLiveClientSecret, ...safeSettings } = settings;
       res.json({
-        ...safeSettings,
-        smtpPassSet: !!smtpPass,
-        paypalSecretSet: !!paypalClientSecret,
-        paypalSandboxSecretSet: !!paypalSandboxClientSecret,
-        paypalLiveSecretSet: !!paypalLiveClientSecret,
+        id: settings.id,
+        requireEmailOtp: settings.requireEmailOtp,
+        smtpHost: smtpConfig.host,
+        smtpPort: String(smtpConfig.port),
+        smtpUser: smtpConfig.user,
+        smtpPassSet: !!smtpConfig.pass,
+        notificationEmail: notificationConfig.email || null,
+        paypalMode: paypalConfig.mode,
+        paypalSandboxClientId: paypalConfig.sandboxClientId || null,
+        paypalSandboxSecretSet: !!paypalConfig.sandboxClientSecret,
+        paypalLiveClientId: paypalConfig.liveClientId || null,
+        paypalLiveSecretSet: !!paypalConfig.liveClientSecret,
+        paypalClientId: null,
+        paypalSecretSet: false,
       });
     } catch (err) {
       console.error("Admin get settings error:", err);
@@ -922,34 +921,25 @@ export async function registerRoutes(
 
   app.patch("/api/admin/settings", requireAdmin, async (req: any, res) => {
     try {
-      const {
-        requireEmailOtp, smtpHost, smtpPort, smtpUser, smtpPass, notificationEmail,
-        paypalClientId, paypalClientSecret, paypalMode,
-        paypalSandboxClientId, paypalSandboxClientSecret,
-        paypalLiveClientId, paypalLiveClientSecret,
-      } = req.body;
+      const { requireEmailOtp } = req.body;
       const updates: Record<string, any> = {};
       if (typeof requireEmailOtp === "boolean") updates.requireEmailOtp = requireEmailOtp;
-      if (smtpHost !== undefined) updates.smtpHost = smtpHost;
-      if (smtpPort !== undefined) updates.smtpPort = smtpPort;
-      if (smtpUser !== undefined) updates.smtpUser = smtpUser;
-      if (smtpPass !== undefined && smtpPass !== "") updates.smtpPass = smtpPass;
-      if (notificationEmail !== undefined) updates.notificationEmail = notificationEmail || null;
-      if (paypalClientId !== undefined) updates.paypalClientId = (paypalClientId || "").trim() || null;
-      if (paypalClientSecret !== undefined && paypalClientSecret !== "") updates.paypalClientSecret = paypalClientSecret.trim();
-      if (paypalMode !== undefined) updates.paypalMode = paypalMode;
-      if (paypalSandboxClientId !== undefined) updates.paypalSandboxClientId = (paypalSandboxClientId || "").trim() || null;
-      if (paypalSandboxClientSecret !== undefined && paypalSandboxClientSecret !== "") updates.paypalSandboxClientSecret = paypalSandboxClientSecret.trim();
-      if (paypalLiveClientId !== undefined) updates.paypalLiveClientId = (paypalLiveClientId || "").trim() || null;
-      if (paypalLiveClientSecret !== undefined && paypalLiveClientSecret !== "") updates.paypalLiveClientSecret = paypalLiveClientSecret.trim();
       const updated = await storage.updateAdminSettings(updates);
-      const { smtpPass: _pass, paypalClientSecret: _secret, paypalSandboxClientSecret: _sbSecret, paypalLiveClientSecret: _liveSecret, ...safeSettings } = updated;
       res.json({
-        ...safeSettings,
-        smtpPassSet: !!_pass,
-        paypalSecretSet: !!_secret,
-        paypalSandboxSecretSet: !!_sbSecret,
-        paypalLiveSecretSet: !!_liveSecret,
+        id: updated.id,
+        requireEmailOtp: updated.requireEmailOtp,
+        smtpHost: smtpConfig.host,
+        smtpPort: String(smtpConfig.port),
+        smtpUser: smtpConfig.user,
+        smtpPassSet: !!smtpConfig.pass,
+        notificationEmail: notificationConfig.email || null,
+        paypalMode: paypalConfig.mode,
+        paypalSandboxClientId: paypalConfig.sandboxClientId || null,
+        paypalSandboxSecretSet: !!paypalConfig.sandboxClientSecret,
+        paypalLiveClientId: paypalConfig.liveClientId || null,
+        paypalLiveSecretSet: !!paypalConfig.liveClientSecret,
+        paypalClientId: null,
+        paypalSecretSet: false,
       });
     } catch (err) {
       console.error("Admin update settings error:", err);
@@ -959,10 +949,7 @@ export async function registerRoutes(
 
   app.post("/api/admin/paypal/test", requireAdmin, async (_req: any, res) => {
     try {
-      const settings = await storage.getAdminSettings();
-      const mode = settings.paypalMode || "sandbox";
-      const clientId = mode === "live" ? settings.paypalLiveClientId : settings.paypalSandboxClientId;
-      const clientSecret = mode === "live" ? settings.paypalLiveClientSecret : settings.paypalSandboxClientSecret;
+      const { mode, clientId, clientSecret } = getPayPalCredentials();
       if (!clientId || !clientSecret) {
         return res.status(400).json({ success: false, error: `PayPal ${mode} credentials are not configured` });
       }
