@@ -10,6 +10,7 @@ expertMode = true
 
 [userenv.shared]
 JWT_SECRET = "2e9f572507ffd029b9bcc79062ef7f99763dd9fd973b0b2609405154133a6720"
+SUPABASE_DATABASE_URL = "postgresql://postgres:[AYzel@2010123]@db.jdsqfnjuorueojrroqib.supabase.co:5432/postgres"
 
 [workflows]
 runButton = "Project"
