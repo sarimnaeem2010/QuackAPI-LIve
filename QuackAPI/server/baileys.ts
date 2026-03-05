@@ -124,12 +124,11 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
           const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-
           console.log(`[Baileys] Device ${deviceId} disconnected. Status: ${statusCode}. Reconnect: ${shouldReconnect}`);
 
           activeSockets.delete(deviceId);
           await storage.updateDeviceSession(deviceId, null, "disconnected", null);
-
+          
           const device = await storage.getDevice(deviceId);
           if (device) {
             const user = await storage.getUser(device.userId);
@@ -139,7 +138,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
               );
             }
           }
-
           if (shouldReconnect) {
             const attempts = reconnectAttempts.get(deviceId) || 0;
 
@@ -158,13 +156,20 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
             console.log(`[Baileys] Will reconnect device ${deviceId} in ${Math.round(delay / 1000)}s (attempt ${attempts + 1}/${MAX_RECONNECT_ATTEMPTS})...`);
             setTimeout(async () => {
               const device = await storage.getDevice(deviceId);
-              if (!device) {
-                console.log(`[Baileys] Device ${deviceId} no longer exists, skipping reconnect.`);
-                return;
-              }
+              if (!device) return;
               setupBaileys(deviceId, true);
             }, delay);
           } else {
+            // Send email for loggedOut scenario
+            const device = await storage.getDevice(deviceId);
+            if (device) {
+              const user = await storage.getUser(device.userId);
+              if (user?.email) {
+                sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+                  console.error("[Email] Disconnect notification failed:", err)
+                );
+              }
+            }
             await storage.updateDeviceSession(deviceId, null, "disconnected", null);
             reconnectAttempts.delete(deviceId);
             const sessionDir = getSessionPath(deviceId);
@@ -365,6 +370,15 @@ export async function sendMessage(
 }
 
 export async function disconnectDevice(deviceId: number): Promise<void> {
+  const device = await storage.getDevice(deviceId);
+  if (device) {
+    const user = await storage.getUser(device.userId);
+    if (user?.email) {
+      await sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+        console.error("[Email] Disconnect notification failed:", err)
+      );
+    }
+  }
   const sock = activeSockets.get(deviceId);
   if (sock) {
     suppressReconnect.add(deviceId);
