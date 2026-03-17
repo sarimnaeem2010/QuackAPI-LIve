@@ -39,22 +39,17 @@ process.on("unhandledRejection", (reason: any) => {
   console.error("[Server] Unhandled rejection:", reason?.message ?? reason);
 });
 
-process.on("SIGINT", () => {
-  console.log("[Server] Received SIGINT");
-  _realExit(0);
-});
-
-let _sigtermCount = 0;
-process.on("SIGTERM", () => {
-  _sigtermCount++;
-  console.log(`[Server] Received SIGTERM #${_sigtermCount} at uptime=${Math.round(process.uptime())}s — resisting for diagnostics`);
-  // Resist SIGTERM to diagnose whether Replit's runner sends it at ~30s.
-  // If a 2nd SIGTERM arrives, exit cleanly.
-  if (_sigtermCount >= 2) {
-    console.log("[Server] Received 2nd SIGTERM — exiting cleanly");
+function gracefulShutdown(signal: string) {
+  console.log(`[Server] Received ${signal} — shutting down gracefully`);
+  import("./baileys").then(({ closeAllSockets }) => {
+    closeAllSockets();
+  }).catch(() => {}).finally(() => {
     _realExit(0);
-  }
-});
+  });
+}
+
+process.on("SIGINT", () => gracefulShutdown("SIGINT"));
+process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
 
 process.on("exit", (code) => {
   console.log("[Server] Process exiting with code:", code);
