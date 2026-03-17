@@ -134,3 +134,4 @@ Preferred communication style: Simple, everyday language.
 - Breadcrumb structured data on all content pages (docs, blog, use-cases, compare)
 - noindex on authenticated dashboard pages
 - Vite code splitting: vendor (react/react-dom/wouter), ui (radix), query (tanstack) chunks
+# test2
