@@ -240,8 +240,11 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           }, delay);
 
         } else if (connection === "open") {
-          console.log(`[Baileys] Device ${deviceId} connected successfully!`);
+          const wasAutoReconnect = autoReconnecting.has(deviceId);
+          autoReconnecting.delete(deviceId);
           reconnectAttempts.delete(deviceId);
+
+          console.log(`[Baileys] Device ${deviceId} connected successfully! (autoReconnect=${wasAutoReconnect})`);
 
           const phoneNumber = sock.user?.id?.split(":")[0] || sock.user?.id?.split("@")[0] || null;
           await storage.updateDeviceStatusAndQR(deviceId, "connected", null);
@@ -252,13 +255,15 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           await saveSessionToDB(deviceId, sessionPath).catch(() => {});
 
-          const device = await storage.getDevice(deviceId);
-          if (device) {
-            const user = await storage.getUser(device.userId);
-            if (user?.email) {
-              sendDeviceConnectNotification(user.email, user.name, device.deviceName, phoneNumber).catch((err) =>
-                console.error("[Email] Connect notification failed:", err)
-              );
+          if (!wasAutoReconnect) {
+            const device = await storage.getDevice(deviceId);
+            if (device) {
+              const user = await storage.getUser(device.userId);
+              if (user?.email) {
+                sendDeviceConnectNotification(user.email, user.name, device.deviceName, phoneNumber).catch((err) =>
+                  console.error("[Email] Connect notification failed:", err)
+                );
+              }
             }
           }
         }
