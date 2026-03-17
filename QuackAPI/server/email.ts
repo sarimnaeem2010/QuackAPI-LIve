@@ -1,25 +1,65 @@
 import nodemailer from "nodemailer";
 import { smtpConfig } from "./config";
+import { storage } from "./storage";
 
-function getTransporter() {
-  if (!smtpConfig.pass) return null;
+let _smtpCache: { host: string; port: number; user: string; pass: string; secure: boolean } | null = null;
+let _smtpCacheAt = 0;
+const SMTP_CACHE_TTL = 60_000;
+
+async function getSmtpSettings() {
+  const now = Date.now();
+  if (_smtpCache && now - _smtpCacheAt < SMTP_CACHE_TTL) return _smtpCache;
+  try {
+    const settings = await storage.getAdminSettings();
+    const host = settings.smtpHost || smtpConfig.host;
+    const portStr = settings.smtpPort || String(smtpConfig.port);
+    const port = parseInt(portStr, 10) || smtpConfig.port;
+    const user = settings.smtpUser || smtpConfig.user;
+    const pass = settings.smtpPass || smtpConfig.pass;
+    const secure = port === 465;
+    _smtpCache = { host, port, user, pass, secure };
+    _smtpCacheAt = now;
+    return _smtpCache;
+  } catch {
+    return {
+      host: smtpConfig.host,
+      port: smtpConfig.port,
+      user: smtpConfig.user,
+      pass: smtpConfig.pass,
+      secure: smtpConfig.secure,
+    };
+  }
+}
+
+export function invalidateSmtpCache() {
+  _smtpCache = null;
+  _smtpCacheAt = 0;
+}
+
+async function getTransporter() {
+  const cfg = await getSmtpSettings();
+  if (!cfg.pass) return null;
   return nodemailer.createTransport({
-    host: smtpConfig.host,
-    port: smtpConfig.port,
-    secure: smtpConfig.secure,
-    auth: { user: smtpConfig.user, pass: smtpConfig.pass },
+    host: cfg.host,
+    port: cfg.port,
+    secure: cfg.secure,
+    auth: { user: cfg.user, pass: cfg.pass },
     tls: { rejectUnauthorized: false },
+    connectionTimeout: 15_000,
+    greetingTimeout: 10_000,
+    socketTimeout: 15_000,
   });
 }
 
 async function sendEmail(to: string, subject: string, html: string) {
-  const transporter = getTransporter();
+  const cfg = await getSmtpSettings();
+  const transporter = await getTransporter();
   if (!transporter) {
     console.log(`[Email] SMTP not configured. Would send to ${to}: "${subject}"`);
     return;
   }
   try {
-    await transporter.sendMail({ from: `"QuackAPI" <${smtpConfig.user}>`, to, subject, html });
+    await transporter.sendMail({ from: `"QuackAPI" <${cfg.user}>`, to, subject, html });
     console.log(`[Email] Sent "${subject}" to ${to}`);
   } catch (err) {
     console.error(`[Email] Failed to send to ${to}:`, err);
@@ -148,19 +188,33 @@ export async function sendPasswordResetOTP(to: string, name: string, otp: string
 }
 
 export async function sendDeviceDisconnectNotification(to: string, userName: string, deviceName: string) {
-  const appUrl = process.env.APP_URL || "";
-  const reconnectHint = appUrl
-    ? `Log in to your dashboard and scan the QR code to reconnect your device.`
-    : "Log in to your QuackAPI dashboard and open Devices to scan the QR code and reconnect.";
-  const ctaHtml = appUrl
-    ? `<a href="${appUrl}" style="display:inline-block;background:#6c47ff;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:600;">Reconnect device</a>`
-    : "";
+  const appUrl = process.env.APP_URL || "https://quackapi.com";
   const html = emailWrapper(`
-    <h1 style="color:#1a1a2e;font-size:26px;font-weight:700;margin:0 0 8px 0;">WhatsApp device disconnected</h1>
-    <p style="color:#6c757d;font-size:15px;margin:0 0 16px 0;">Hi ${userName}, your WhatsApp device <strong>${deviceName}</strong> has been disconnected.</p>
-    <p style="color:#6c757d;font-size:15px;margin:0 0 24px 0;">${reconnectHint}</p>
-    ${ctaHtml ? `<p style="margin:0 0 24px 0;">${ctaHtml}</p>` : ""}
-    <p style="color:#6c757d;font-size:13px;margin:0;">If you did not expect this, check your internet connection or re-scan the QR code in the dashboard.</p>
+    <h1 style="color:#1a1a2e;font-size:26px;font-weight:700;margin:0 0 8px 0;">WhatsApp device disconnected ⚠️</h1>
+    <p style="color:#6c757d;font-size:15px;margin:0 0 16px 0;">Hi ${userName}, your WhatsApp device <strong>${deviceName}</strong> has been disconnected from QuackAPI.</p>
+    <p style="color:#6c757d;font-size:15px;margin:0 0 24px 0;">Log in to your dashboard and scan the QR code to reconnect your device and resume sending messages.</p>
+    <p style="margin:0 0 24px 0;">
+      <a href="${appUrl}/devices" style="display:inline-block;background:#6c47ff;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:600;">Reconnect device</a>
+    </p>
+    <p style="color:#6c757d;font-size:13px;margin:0;">If you manually disconnected this device, you can safely ignore this email.</p>
   `);
-  await sendEmail(to, "Your WhatsApp device has disconnected – reconnect required", html);
+  await sendEmail(to, `Your WhatsApp device "${deviceName}" has disconnected – action required`, html);
+}
+
+export async function sendDeviceConnectNotification(to: string, userName: string, deviceName: string, phoneNumber: string | null) {
+  const appUrl = process.env.APP_URL || "https://quackapi.com";
+  const phoneHint = phoneNumber ? `<p style="color:#6c757d;font-size:14px;margin:0 0 8px 0;">Phone number: <strong>+${phoneNumber}</strong></p>` : "";
+  const html = emailWrapper(`
+    <div style="background:#f0fdf4;border-left:4px solid #22c55e;border-radius:8px;padding:16px 20px;margin:0 0 24px 0;">
+      <p style="color:#15803d;font-size:13px;font-weight:600;margin:0;text-transform:uppercase;letter-spacing:1px;">Device Connected</p>
+    </div>
+    <h1 style="color:#1a1a2e;font-size:26px;font-weight:700;margin:0 0 8px 0;">WhatsApp device connected ✅</h1>
+    <p style="color:#6c757d;font-size:15px;margin:0 0 16px 0;">Hi ${userName}, your WhatsApp device <strong>${deviceName}</strong> has been successfully connected to QuackAPI.</p>
+    ${phoneHint}
+    <p style="color:#6c757d;font-size:15px;margin:0 0 24px 0;">You can now send and receive messages via the API.</p>
+    <p style="margin:0 0 24px 0;">
+      <a href="${appUrl}/devices" style="display:inline-block;background:#22c55e;color:#ffffff;text-decoration:none;padding:14px 28px;border-radius:10px;font-size:15px;font-weight:600;">Open Dashboard</a>
+    </p>
+  `);
+  await sendEmail(to, `Your WhatsApp device "${deviceName}" is now connected 🟢`, html);
 }
