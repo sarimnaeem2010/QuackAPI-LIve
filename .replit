@@ -11,6 +11,14 @@ expertMode = true
 [userenv.shared]
 JWT_SECRET = "2e9f572507ffd029b9bcc79062ef7f99763dd9fd973b0b2609405154133a6720"
 SUPABASE_DATABASE_URL = "postgresql://postgres.jdsqfnjuorueojrroqib:AYzel%402010123@aws-1-us-east-1.pooler.supabase.com:6543/postgres"
+SMTP_HOST = "mail.spacemail.com"
+SMTP_PORT = "465"
+SMTP_USER = "notification@quackapi.com"
+SMTP_SECURE = "true"
+NOTIFICATION_EMAIL = "sarim.naeem2010@gmail.com"
+PAYPAL_MODE = "sandbox"
+PAYPAL_SANDBOX_CLIENT_ID = "AfYvzCU0raFhovIM43dOey3txoSTtv5nb8AfBBV17W6j_vcX9YEAkDOjRe-fwSDNkbrD5hw7g7C7XeHj"
+PAYPAL_LIVE_CLIENT_ID = "AXmQriRLkO_EconhM_MMfHYmqxg_xJb-BtuaVnkU6SmeJ9gKpjw_SGBBIGleLy30sbOTgXfiuMHHlO0q"
 
 [workflows]
 runButton = "Project"

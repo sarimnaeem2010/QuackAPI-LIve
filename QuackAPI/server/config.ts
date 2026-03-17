@@ -1,21 +1,21 @@
 export const smtpConfig = {
-  host: "mail.spacemail.com",
-  port: 465,
-  user: "notification@quackapi.com",
-  pass: "Ayzel@2010",
-  secure: true,
+  host: process.env.SMTP_HOST || "mail.spacemail.com",
+  port: parseInt(process.env.SMTP_PORT || "465", 10),
+  user: process.env.SMTP_USER || "notification@quackapi.com",
+  pass: process.env.SMTP_PASS || "",
+  secure: process.env.SMTP_SECURE !== "false",
 };
 
 export const paypalConfig = {
-  mode: "sandbox" as "sandbox" | "live",
-  sandboxClientId: "AfYvzCU0raFhovIM43dOey3txoSTtv5nb8AfBBV17W6j_vcX9YEAkDOjRe-fwSDNkbrD5hw7g7C7XeHj",
-  sandboxClientSecret: "EBDDSAboeZ4vHiu3eCY1qkbXKoFzqMUaoMpWNIwWtEco2GLmGvpmk7KkFzSIBgoq5jIo6X0Ud-Y2c3xw",
-  liveClientId: "AXmQriRLkO_EconhM_MMfHYmqxg_xJb-BtuaVnkU6SmeJ9gKpjw_SGBBIGleLy30sbOTgXfiuMHHlO0q",
-  liveClientSecret: "EAP07Y39ttpZaeygRsrkbmxlW1XSvd-orMWMX51EMmROpniWjfHMgase5zJBidN0TihW5Ija28SDjuyH",
+  mode: (process.env.PAYPAL_MODE || "sandbox") as "sandbox" | "live",
+  sandboxClientId: process.env.PAYPAL_SANDBOX_CLIENT_ID || "",
+  sandboxClientSecret: process.env.PAYPAL_SANDBOX_SECRET || "",
+  liveClientId: process.env.PAYPAL_LIVE_CLIENT_ID || "",
+  liveClientSecret: process.env.PAYPAL_LIVE_SECRET || "",
 };
 
 export const notificationConfig = {
-  email: "sarim.naeem2010@gmail.com",
+  email: process.env.NOTIFICATION_EMAIL || "",
 };
 
 export function getPayPalCredentials() {
