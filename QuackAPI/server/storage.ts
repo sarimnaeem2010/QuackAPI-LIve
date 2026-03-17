@@ -181,9 +181,19 @@ export class DatabaseStorage implements IStorage {
     const [updated] = await db.update(devices).set(updates).where(eq(devices.id, id)).returning();
     return updated;
   }
+  async getConnectedAndPendingDevices() {
+    return await db.select().from(devices).where(inArray(devices.status, ["connected", "pending"]));
+  }
   async updateDeviceSession(id: number, sessionData: any, status: string, qrCode: string | null) {
     const [updated] = await db.update(devices).set({ sessionData, status, qrCode }).where(eq(devices.id, id)).returning();
     return updated;
+  }
+  async updateDeviceStatusAndQR(id: number, status: string, qrCode: string | null) {
+    const [updated] = await db.update(devices).set({ status, qrCode }).where(eq(devices.id, id)).returning();
+    return updated;
+  }
+  async updateDeviceSessionData(id: number, data: any) {
+    await db.update(devices).set({ sessionData: data }).where(eq(devices.id, id));
   }
   async updateDevicePhone(id: number, phoneNumber: string) {
     const [updated] = await db.update(devices).set({ phoneNumber }).where(eq(devices.id, id)).returning();
