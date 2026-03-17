@@ -28,7 +28,38 @@ const activeSockets: Map<number, BaileysSocketWithWS> = new Map();
 const reconnectAttempts: Map<number, number> = new Map();
 const suppressReconnect = new Set<number>();
 const autoReconnecting = new Set<number>();
-const MAX_RECONNECT_ATTEMPTS = 10;
+
+// ── Version cache ──────────────────────────────────────────────────────────────
+// Fetch the WA protocol version once and reuse it for 24 h.
+// This prevents a failed HTTP call from blocking every reconnect attempt.
+let _cachedVersion: number[] | null = null;
+let _versionFetchedAt = 0;
+const VERSION_CACHE_TTL = 24 * 60 * 60 * 1000;
+
+async function getWAVersion(baileys: typeof import("@whiskeysockets/baileys")): Promise<number[]> {
+  const now = Date.now();
+  if (_cachedVersion && now - _versionFetchedAt < VERSION_CACHE_TTL) {
+    return _cachedVersion;
+  }
+  try {
+    const { version } = await baileys.fetchLatestBaileysVersion();
+    _cachedVersion = version;
+    _versionFetchedAt = now;
+    console.log(`[Baileys] Fetched fresh WA version: ${version.join(".")}`);
+    return version;
+  } catch (err) {
+    if (_cachedVersion) {
+      console.warn(`[Baileys] Failed to fetch WA version, using cached: ${_cachedVersion.join(".")}`);
+      return _cachedVersion;
+    }
+    // Known-good fallback so we never block reconnects over a version-fetch failure
+    const fallback = [2, 3000, 1019685367];
+    console.warn(`[Baileys] Failed to fetch WA version, using fallback: ${fallback.join(".")}`);
+    _cachedVersion = fallback;
+    _versionFetchedAt = now;
+    return fallback;
+  }
+}
 
 let _baileys: typeof import("@whiskeysockets/baileys") | null = null;
 async function getBaileys() {
@@ -42,10 +73,10 @@ function getSessionPath(deviceId: number): string {
   return path.join(SESSION_DIR, `device_${deviceId}`);
 }
 
+// Reconnect delay: exponential backoff capped at 5 minutes.
 function getReconnectDelay(attempt: number): number {
   const base = 3000;
-  const delay = Math.min(base * Math.pow(2, attempt), 120000);
-  return delay;
+  return Math.min(base * Math.pow(2, attempt), 300_000);
 }
 
 export function clearDeviceSession(deviceId: number): void {
@@ -131,18 +162,18 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
   }
 
   try {
+    const baileys = await getBaileys();
     const {
       default: makeWASocket,
       useMultiFileAuthState,
       DisconnectReason,
-      fetchLatestBaileysVersion,
       makeCacheableSignalKeyStore,
       Browsers,
-      getContentType,
-    } = await getBaileys();
+    } = baileys;
+
+    const version = await getWAVersion(baileys);
 
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
-    const { version } = await fetchLatestBaileysVersion();
 
     const sock = makeWASocket({
       version,
@@ -180,6 +211,8 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
         }
 
         if (connection === "close") {
+          // ── suppressReconnect: caller explicitly ended this socket (e.g. user
+          //    clicked Disconnect or we're replacing it). Just clean up.
           if (suppressReconnect.has(deviceId)) {
             suppressReconnect.delete(deviceId);
             activeSockets.delete(deviceId);
@@ -187,57 +220,56 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           }
 
           const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
-          const shouldReconnect = statusCode !== DisconnectReason.loggedOut;
-          console.log(`[Baileys] Device ${deviceId} disconnected. Status: ${statusCode}. Reconnect: ${shouldReconnect}`);
+          const isLoggedOut = statusCode === DisconnectReason.loggedOut;
+          const isRestartRequired = statusCode === DisconnectReason.restartRequired;
+
+          console.log(
+            `[Baileys] Device ${deviceId} disconnected. statusCode=${statusCode} loggedOut=${isLoggedOut} restartRequired=${isRestartRequired}`
+          );
 
           activeSockets.delete(deviceId);
           await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
 
-          if (!shouldReconnect) {
-            const device = await storage.getDevice(deviceId);
-            if (device) {
-              const user = await storage.getUser(device.userId);
-              if (user?.email) {
-                sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
-                  console.error("[Email] Disconnect notification failed:", err)
-                );
-              }
-            }
+          // ── loggedOut: WhatsApp explicitly removed this session.
+          //    Clear ALL session data and stop retrying — user must re-scan.
+          if (isLoggedOut) {
+            console.log(`[Baileys] Device ${deviceId} was logged out by WhatsApp. Clearing session.`);
             reconnectAttempts.delete(deviceId);
             const sessionDir = getSessionPath(deviceId);
             if (fs.existsSync(sessionDir)) {
               fs.rmSync(sessionDir, { recursive: true, force: true });
             }
             await storage.updateDeviceSessionData(deviceId, null).catch(() => {});
+            const device = await storage.getDevice(deviceId);
+            if (device) {
+              const user = await storage.getUser(device.userId);
+              if (user?.email) {
+                sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+                  console.error("[Email] Logout notification failed:", err)
+                );
+              }
+            }
             return;
           }
 
+          // ── All other disconnect reasons: reconnect indefinitely.
+          //    Session data is NEVER deleted here — only loggedOut should do that.
+          //    restartRequired → immediate retry after a short pause.
+          //    Everything else → exponential backoff capped at 5 minutes.
           const attempts = reconnectAttempts.get(deviceId) || 0;
+          const delay = isRestartRequired ? 1_000 : getReconnectDelay(attempts);
 
-          if (attempts >= MAX_RECONNECT_ATTEMPTS) {
-            console.log(`[Baileys] Device ${deviceId} exceeded max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}). Giving up.`);
-            reconnectAttempts.delete(deviceId);
-            const device = await storage.getDevice(deviceId);
-            if (device) {
-              const user = await storage.getUser(device.userId);
-              if (user?.email) {
-                sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
-                  console.error("[Email] Max reconnect notification failed:", err)
-                );
-              }
-            }
-            const sessionDir = getSessionPath(deviceId);
-            if (fs.existsSync(sessionDir)) {
-              fs.rmSync(sessionDir, { recursive: true, force: true });
-            }
-            await storage.updateDeviceSessionData(deviceId, null).catch(() => {});
-            return;
+          if (!isRestartRequired) {
+            reconnectAttempts.set(deviceId, attempts + 1);
           }
 
-          const delay = getReconnectDelay(attempts);
-          reconnectAttempts.set(deviceId, attempts + 1);
-          console.log(`[Baileys] Will reconnect device ${deviceId} in ${Math.round(delay / 1000)}s (attempt ${attempts + 1}/${MAX_RECONNECT_ATTEMPTS})...`);
+          console.log(
+            `[Baileys] Scheduling reconnect for device ${deviceId} in ${Math.round(delay / 1000)}s` +
+            (isRestartRequired ? " (restart required)" : ` (attempt ${attempts + 1})`)
+          );
+
           setTimeout(async () => {
+            if (suppressReconnect.has(deviceId)) return;
             const device = await storage.getDevice(deviceId);
             if (!device) return;
             setupBaileys(deviceId, true);
@@ -248,7 +280,7 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           autoReconnecting.delete(deviceId);
           reconnectAttempts.delete(deviceId);
 
-          console.log(`[Baileys] Device ${deviceId} connected successfully! (autoReconnect=${wasAutoReconnect})`);
+          console.log(`[Baileys] Device ${deviceId} connected! (autoReconnect=${wasAutoReconnect})`);
 
           const phoneNumber = sock.user?.id?.split(":")[0] || sock.user?.id?.split("@")[0] || null;
           await storage.updateDeviceStatusAndQR(deviceId, "connected", null);
@@ -279,6 +311,8 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
     sock.ev.on("messages.upsert", async ({ messages: msgs, type }) => {
       try {
         if (type !== "notify") return;
+
+        const { getContentType } = await getBaileys();
 
         for (const msg of msgs) {
           if (msg.key.fromMe) continue;
@@ -332,7 +366,46 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
   } catch (err) {
     console.error(`[Baileys] Failed to setup device ${deviceId}:`, err);
     await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
+
+    // Even on setup failure, schedule a retry so transient errors don't strand the device
+    if (!suppressReconnect.has(deviceId)) {
+      const attempts = reconnectAttempts.get(deviceId) || 0;
+      const delay = getReconnectDelay(attempts);
+      reconnectAttempts.set(deviceId, attempts + 1);
+      console.log(`[Baileys] Setup failed for device ${deviceId}, retrying in ${Math.round(delay / 1000)}s (attempt ${attempts + 1})...`);
+      setTimeout(async () => {
+        if (suppressReconnect.has(deviceId)) return;
+        const device = await storage.getDevice(deviceId);
+        if (!device) return;
+        setupBaileys(deviceId, true);
+      }, delay);
+    }
   }
+}
+
+// ── Periodic health check ──────────────────────────────────────────────────────
+// Every 3 minutes, verify each tracked socket's WebSocket is still open.
+// If a socket is found in a non-OPEN state (zombie), trigger a reconnect.
+const HEALTH_CHECK_INTERVAL = 3 * 60 * 1000;
+
+export function startHealthCheck(): void {
+  setInterval(() => {
+    for (const [deviceId, sock] of activeSockets.entries()) {
+      const ws = (sock as BaileysSocketWithWS).ws;
+      const readyState = ws?.readyState;
+      if (!ws || readyState !== 1) {
+        console.log(
+          `[Baileys] Health check: device ${deviceId} socket is stale (readyState=${readyState ?? "none"}). Triggering reconnect.`
+        );
+        activeSockets.delete(deviceId);
+        storage.updateDeviceStatusAndQR(deviceId, "disconnected", null).catch(() => {});
+        if (!suppressReconnect.has(deviceId)) {
+          setupBaileys(deviceId, true);
+        }
+      }
+    }
+  }, HEALTH_CHECK_INTERVAL);
+  console.log("[Baileys] Socket health check started (interval: 3 min).");
 }
 
 export async function sendMessage(
@@ -481,6 +554,8 @@ export async function disconnectDevice(deviceId: number, notifyUser: boolean = f
       await sock.logout();
     } catch {}
     activeSockets.delete(deviceId);
+  } else {
+    suppressReconnect.add(deviceId);
   }
 
   const sessionDir = getSessionPath(deviceId);
@@ -521,7 +596,10 @@ export async function reconnectExistingDevices(): Promise<void> {
     }
   }
 
-  if (!fs.existsSync(SESSION_DIR)) return;
+  if (!fs.existsSync(SESSION_DIR)) {
+    startHealthCheck();
+    return;
+  }
 
   const dirs = fs.readdirSync(SESSION_DIR);
   for (const dir of dirs) {
@@ -536,4 +614,7 @@ export async function reconnectExistingDevices(): Promise<void> {
       fs.rmSync(path.join(SESSION_DIR, dir), { recursive: true, force: true });
     }
   }
+
+  // Start the periodic health check after initial reconnection pass
+  startHealthCheck();
 }
