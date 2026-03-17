@@ -560,6 +560,15 @@ export function getDeviceSocket(deviceId: number): BaileysSocketWithWS | undefin
   return activeSockets.get(deviceId);
 }
 
+export function closeAllSockets(): void {
+  console.log(`[Baileys] Closing ${activeSockets.size} active socket(s) for graceful shutdown...`);
+  for (const [deviceId, sock] of activeSockets.entries()) {
+    suppressReconnect.add(deviceId);
+    try { sock.end(undefined); } catch {}
+  }
+  activeSockets.clear();
+}
+
 export async function reconnectExistingDevices(): Promise<void> {
   console.log("[Baileys] Checking for existing sessions to reconnect...");
 
