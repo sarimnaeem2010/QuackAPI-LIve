@@ -278,7 +278,21 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           }
 
           const attempts = reconnectAttempts.get(deviceId) || 0;
-          const delay = isImmediateRetry ? 1_000 : getReconnectDelay(attempts);
+          const baseDelay = isImmediateRetry ? 1_000 : getReconnectDelay(attempts);
+          // 440 "conflict/replaced": enforce a minimum 15s delay so the competing session
+          // has time to die before we reconnect. After 3 consecutive 440s, escalate to 60s
+          // to break out of a runaway conflict loop.
+          let delay: number;
+          if (is440Conflict) {
+            if (consec440Count >= 3) {
+              delay = 60_000;
+              console.warn(`[Baileys] Device ${deviceId} had ${consec440Count} consecutive 440s — enforcing 60s cooldown before next reconnect`);
+            } else {
+              delay = Math.max(baseDelay, 15_000);
+            }
+          } else {
+            delay = baseDelay;
+          }
 
           if (!isImmediateRetry) {
             reconnectAttempts.set(deviceId, attempts + 1);
