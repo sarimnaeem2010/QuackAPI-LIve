@@ -275,6 +275,7 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
         } else if (connection === "open") {
           const wasAutoReconnect = autoReconnecting.has(deviceId);
           autoReconnecting.delete(deviceId);
+          lastConnectedAt.set(deviceId, Date.now());
           reconnectAttempts.delete(deviceId);
 
           console.log(`[Baileys] Device ${deviceId} connected! (autoReconnect=${wasAutoReconnect})`);
