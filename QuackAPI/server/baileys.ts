@@ -392,10 +392,10 @@ export function startHealthCheck(): void {
   setInterval(() => {
     for (const [deviceId, sock] of activeSockets.entries()) {
       const ws = (sock as BaileysSocketWithWS).ws;
-      const readyState = ws?.readyState;
-      if (!ws || readyState !== 1) {
+      const isOpen = ws?.isOpen ?? (ws?.readyState === 1);
+      if (!ws || !isOpen) {
         console.log(
-          `[Baileys] Health check: device ${deviceId} socket is stale (readyState=${readyState ?? "none"}). Triggering reconnect.`
+          `[Baileys] Health check: device ${deviceId} socket is stale (isOpen=${isOpen}). Triggering reconnect.`
         );
         storage.updateDeviceStatusAndQR(deviceId, "disconnected", null).catch(() => {});
         if (!suppressReconnect.has(deviceId)) {
