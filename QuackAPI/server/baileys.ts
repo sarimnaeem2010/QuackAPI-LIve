@@ -31,6 +31,19 @@ const autoReconnecting = new Set<number>();
 const lastConnectedAt: Map<number, number> = new Map();
 const STABLE_CONNECTION_MS = 30_000;
 
+const RETRY_WINDOW_MS = 5 * 60 * 1000;
+
+interface RetryEntry {
+  messageId: number;
+  retryUntil: number;
+  to: string;
+  content: string;
+  type: string;
+  mediaUrl?: string;
+  extra?: { caption?: string; filename?: string; lat?: string; lng?: string; address?: string; contactName?: string; contactPhone?: string };
+}
+const retryQueue: Map<number, RetryEntry[]> = new Map();
+
 // Cache the WA version for 24h to avoid blocking reconnects on fetch failures
 let _cachedVersion: number[] | null = null;
 let _versionFetchedAt = 0;
@@ -297,6 +310,21 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           await saveSessionToDB(deviceId, sessionPath).catch(() => {});
 
+          const pendingRetries = retryQueue.get(deviceId);
+          if (pendingRetries && pendingRetries.length > 0) {
+            const now = Date.now();
+            const toRetry = pendingRetries.filter(e => e.retryUntil > now);
+            retryQueue.delete(deviceId);
+            if (toRetry.length > 0) {
+              console.log(`[Baileys] Retrying ${toRetry.length} queued message(s) for device ${deviceId}`);
+              for (const entry of toRetry) {
+                sendMessage(deviceId, entry.to, entry.content, entry.messageId, entry.type, entry.mediaUrl, entry.extra).catch(err =>
+                  console.error(`[Baileys] Retry failed for message ${entry.messageId}:`, err)
+                );
+              }
+            }
+          }
+
           if (!wasAutoReconnect) {
             const device = await storage.getDevice(deviceId);
             if (device) {
@@ -405,6 +433,16 @@ export function startHealthCheck(): void {
         }
       }
     }
+
+    const now = Date.now();
+    for (const [deviceId, queue] of retryQueue.entries()) {
+      const fresh = queue.filter(e => e.retryUntil > now);
+      if (fresh.length === 0) {
+        retryQueue.delete(deviceId);
+      } else if (fresh.length !== queue.length) {
+        retryQueue.set(deviceId, fresh);
+      }
+    }
   }, HEALTH_CHECK_INTERVAL);
   console.log("[Baileys] Socket health check started (interval: 3 min).");
 }
@@ -420,9 +458,19 @@ export async function sendMessage(
 ): Promise<void> {
   const sock = activeSockets.get(deviceId);
 
+  const queueForRetry = (): void => {
+    const queue = retryQueue.get(deviceId) ?? [];
+    if (!queue.some(e => e.messageId === messageId)) {
+      queue.push({ messageId, retryUntil: Date.now() + RETRY_WINDOW_MS, to, content, type, mediaUrl, extra });
+      retryQueue.set(deviceId, queue);
+      console.log(`[Baileys] Queued message ${messageId} for retry on device ${deviceId} reconnect`);
+    }
+  };
+
   if (!sock) {
     console.warn(`[Baileys] sendMessage: no socket for device ${deviceId}`);
     await storage.updateMessageStatus(messageId, "failed", "Device not connected");
+    queueForRetry();
     return;
   }
 
@@ -432,6 +480,7 @@ export async function sendMessage(
     console.warn(`[Baileys] sendMessage: socket for device ${deviceId} is not open (ws=${!!ws}, isOpen=${isOpen})`);
     activeSockets.delete(deviceId);
     await storage.updateMessageStatus(messageId, "failed", "Device not connected");
+    queueForRetry();
     return;
   }
 
