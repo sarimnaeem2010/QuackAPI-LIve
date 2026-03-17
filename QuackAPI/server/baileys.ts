@@ -30,6 +30,9 @@ const suppressReconnect = new Set<number>();
 const autoReconnecting = new Set<number>();
 const lastConnectedAt: Map<number, number> = new Map();
 const STABLE_CONNECTION_MS = 30_000;
+// Tracks how many consecutive 440 "conflict/replaced" disconnects a device has seen.
+// Used to enforce an escalating backoff to break out of conflict loops.
+const consecutive440s: Map<number, number> = new Map();
 
 const RETRY_WINDOW_MS = 5 * 60 * 1000;
 
