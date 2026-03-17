@@ -23,6 +23,7 @@ if (!fs.existsSync(SESSION_DIR)) {
 const activeSockets: Map<number, WASocket> = new Map();
 const reconnectAttempts: Map<number, number> = new Map();
 const suppressReconnect = new Set<number>();
+const autoReconnecting = new Set<number>();
 const MAX_RECONNECT_ATTEMPTS = 10;
 
 let _baileys: typeof import("@whiskeysockets/baileys") | null = null;
