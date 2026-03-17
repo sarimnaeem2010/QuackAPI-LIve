@@ -13,7 +13,7 @@ import {
 } from "./email";
 
 interface BaileysSocketWithWS extends WASocket {
-  ws?: { readyState: number };
+  ws?: { readyState?: number; isOpen?: boolean; isClosed?: boolean };
 }
 
 const logger = pino({ level: "warn" });
