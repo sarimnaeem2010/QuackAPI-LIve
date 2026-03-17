@@ -388,7 +388,6 @@ export function startHealthCheck(): void {
         console.log(
           `[Baileys] Health check: device ${deviceId} socket is stale (readyState=${readyState ?? "none"}). Triggering reconnect.`
         );
-        activeSockets.delete(deviceId);
         storage.updateDeviceStatusAndQR(deviceId, "disconnected", null).catch(() => {});
         if (!suppressReconnect.has(deviceId)) {
           setupBaileys(deviceId, true);
