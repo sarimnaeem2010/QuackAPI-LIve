@@ -187,7 +187,8 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
       markOnlineOnConnect: true,
     });
 
-    activeSockets.set(deviceId, sock);
+    // Socket is only registered as active once fully authenticated (connection === "open").
+    // Setting it here before open would allow sendMessage to run on a broken/unauthenticated socket.
 
     sock.ev.on("creds.update", async () => {
       saveCreds();
