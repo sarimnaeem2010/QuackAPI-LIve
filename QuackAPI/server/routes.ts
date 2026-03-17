@@ -404,7 +404,7 @@ export async function registerRoutes(
       const device = await storage.getDevice(deviceId);
       if (!device || device.userId !== req.user.id) return res.status(404).json({ message: "Not found" });
       
-      await disconnectDevice(deviceId);
+      await disconnectDevice(deviceId, false);
       await storage.deleteDevice(deviceId);
       
       const sessionDir = path.join(process.cwd(), "baileys_sessions", `device_${deviceId}`);
@@ -422,7 +422,7 @@ export async function registerRoutes(
     const device = await storage.getDevice(deviceId);
     if (!device || device.userId !== req.user.id) return res.status(404).json({ message: "Not found" });
     
-    await disconnectDevice(deviceId);
+    await disconnectDevice(deviceId, false);
     res.json({ message: "Device disconnected" });
   });
 
@@ -431,8 +431,8 @@ export async function registerRoutes(
     const device = await storage.getDevice(deviceId);
     if (!device || device.userId !== req.user.id) return res.status(404).json({ message: "Not found" });
 
-    await disconnectDevice(deviceId);
-    await storage.updateDeviceSession(deviceId, null, "pending", null);
+    await disconnectDevice(deviceId, false);
+    await storage.updateDeviceStatusAndQR(deviceId, "pending", null);
     setupBaileys(deviceId);
     res.json({ message: "Reconnecting device..." });
   });
