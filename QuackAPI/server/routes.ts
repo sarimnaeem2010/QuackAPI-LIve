@@ -894,25 +894,29 @@ export async function registerRoutes(
     }
   });
 
+  function buildSettingsResponse(settings: any) {
+    return {
+      id: settings.id,
+      requireEmailOtp: settings.requireEmailOtp,
+      smtpHost: settings.smtpHost || smtpConfig.host,
+      smtpPort: settings.smtpPort || String(smtpConfig.port),
+      smtpUser: settings.smtpUser || smtpConfig.user,
+      smtpPassSet: !!(settings.smtpPass || smtpConfig.pass),
+      notificationEmail: settings.notificationEmail || notificationConfig.email || null,
+      paypalMode: paypalConfig.mode,
+      paypalSandboxClientId: paypalConfig.sandboxClientId || null,
+      paypalSandboxSecretSet: !!paypalConfig.sandboxClientSecret,
+      paypalLiveClientId: paypalConfig.liveClientId || null,
+      paypalLiveSecretSet: !!paypalConfig.liveClientSecret,
+      paypalClientId: null,
+      paypalSecretSet: false,
+    };
+  }
+
   app.get("/api/admin/settings", requireAdmin, async (req: any, res) => {
     try {
       const settings = await storage.getAdminSettings();
-      res.json({
-        id: settings.id,
-        requireEmailOtp: settings.requireEmailOtp,
-        smtpHost: smtpConfig.host,
-        smtpPort: String(smtpConfig.port),
-        smtpUser: smtpConfig.user,
-        smtpPassSet: !!smtpConfig.pass,
-        notificationEmail: notificationConfig.email || null,
-        paypalMode: paypalConfig.mode,
-        paypalSandboxClientId: paypalConfig.sandboxClientId || null,
-        paypalSandboxSecretSet: !!paypalConfig.sandboxClientSecret,
-        paypalLiveClientId: paypalConfig.liveClientId || null,
-        paypalLiveSecretSet: !!paypalConfig.liveClientSecret,
-        paypalClientId: null,
-        paypalSecretSet: false,
-      });
+      res.json(buildSettingsResponse(settings));
     } catch (err) {
       console.error("Admin get settings error:", err);
       res.status(500).json({ message: "Failed to fetch settings" });
@@ -921,28 +925,24 @@ export async function registerRoutes(
 
   app.patch("/api/admin/settings", requireAdmin, async (req: any, res) => {
     try {
-      const { requireEmailOtp } = req.body;
+      const { requireEmailOtp, smtpHost, smtpPort, smtpUser, smtpPass, notificationEmail, paypalMode } = req.body;
       const updates: Record<string, any> = {};
       if (typeof requireEmailOtp === "boolean") updates.requireEmailOtp = requireEmailOtp;
+      if (typeof smtpHost === "string") updates.smtpHost = smtpHost;
+      if (typeof smtpPort === "string") updates.smtpPort = smtpPort;
+      if (typeof smtpUser === "string") updates.smtpUser = smtpUser;
+      if (typeof smtpPass === "string" && smtpPass) updates.smtpPass = smtpPass;
+      if (typeof notificationEmail === "string") updates.notificationEmail = notificationEmail;
+      if (typeof paypalMode === "string") updates.paypalMode = paypalMode;
+
       const updated = Object.keys(updates).length > 0
         ? await storage.updateAdminSettings(updates)
         : await storage.getAdminSettings();
-      res.json({
-        id: updated.id,
-        requireEmailOtp: updated.requireEmailOtp,
-        smtpHost: smtpConfig.host,
-        smtpPort: String(smtpConfig.port),
-        smtpUser: smtpConfig.user,
-        smtpPassSet: !!smtpConfig.pass,
-        notificationEmail: notificationConfig.email || null,
-        paypalMode: paypalConfig.mode,
-        paypalSandboxClientId: paypalConfig.sandboxClientId || null,
-        paypalSandboxSecretSet: !!paypalConfig.sandboxClientSecret,
-        paypalLiveClientId: paypalConfig.liveClientId || null,
-        paypalLiveSecretSet: !!paypalConfig.liveClientSecret,
-        paypalClientId: null,
-        paypalSecretSet: false,
-      });
+
+      const { invalidateSmtpCache } = await import("./email");
+      invalidateSmtpCache();
+
+      res.json(buildSettingsResponse(updated));
     } catch (err) {
       console.error("Admin update settings error:", err);
       res.status(500).json({ message: "Failed to update settings" });
