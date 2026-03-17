@@ -275,8 +275,14 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
         } else if (connection === "open") {
           const wasAutoReconnect = autoReconnecting.has(deviceId);
           autoReconnecting.delete(deviceId);
+          const prevConnectedAt = lastConnectedAt.get(deviceId);
           lastConnectedAt.set(deviceId, Date.now());
-          reconnectAttempts.delete(deviceId);
+          // Only reset backoff counter if previous connection was stable (or first connect).
+          // If the last session was very short (<30s), keep the counter so backoff keeps growing.
+          const prevDurationMs = prevConnectedAt ? (Date.now() - prevConnectedAt) : Infinity;
+          if (prevDurationMs >= STABLE_CONNECTION_MS) {
+            reconnectAttempts.delete(deviceId);
+          }
 
           console.log(`[Baileys] Device ${deviceId} connected! (autoReconnect=${wasAutoReconnect})`);
 
