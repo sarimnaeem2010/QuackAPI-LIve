@@ -507,6 +507,12 @@ export async function reconnectExistingDevices(): Promise<void> {
     } else {
       console.log(`[Baileys] Device ${deviceId} has no session anywhere — marking disconnected.`);
       await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
+      const user = await storage.getUser(device.userId).catch(() => undefined);
+      if (user?.email) {
+        sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+          console.error("[Email] Startup disconnect notification failed:", err)
+        );
+      }
     }
   }
 
