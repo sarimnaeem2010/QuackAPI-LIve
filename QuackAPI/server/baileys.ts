@@ -236,13 +236,20 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
           const isLoggedOut = statusCode === DisconnectReason.loggedOut;
+          const is440Conflict = statusCode === 440;
           const isImmediateRetry =
-            statusCode === DisconnectReason.restartRequired ||
-            statusCode === DisconnectReason.timedOut ||
-            statusCode == null;
+            !is440Conflict &&
+            (statusCode === DisconnectReason.restartRequired ||
+              statusCode === DisconnectReason.timedOut ||
+              statusCode == null);
+
+          if (is440Conflict) {
+            consecutive440s.set(deviceId, (consecutive440s.get(deviceId) ?? 0) + 1);
+          }
+          const consec440Count = consecutive440s.get(deviceId) ?? 0;
 
           console.log(
-            `[Baileys] Device ${deviceId} disconnected. statusCode=${statusCode} loggedOut=${isLoggedOut} immediateRetry=${isImmediateRetry}`
+            `[Baileys] Device ${deviceId} disconnected. statusCode=${statusCode} loggedOut=${isLoggedOut} immediateRetry=${isImmediateRetry} consec440=${consec440Count}`
           );
 
           if (activeSockets.get(deviceId) === sock) {
