@@ -28,6 +28,8 @@ const activeSockets: Map<number, BaileysSocketWithWS> = new Map();
 const reconnectAttempts: Map<number, number> = new Map();
 const suppressReconnect = new Set<number>();
 const autoReconnecting = new Set<number>();
+const lastConnectedAt: Map<number, number> = new Map();
+const STABLE_CONNECTION_MS = 30_000;
 
 // Cache the WA version for 24h to avoid blocking reconnects on fetch failures
 let _cachedVersion: number[] | null = null;
