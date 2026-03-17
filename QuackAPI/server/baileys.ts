@@ -7,7 +7,10 @@ import path from "path";
 import fs from "fs";
 import QRCode from "qrcode";
 import { storage } from "./storage";
-import { sendDeviceDisconnectNotification } from "./email";
+import {
+  sendDeviceDisconnectNotification,
+  sendDeviceConnectNotification,
+} from "./email";
 
 const logger = pino({ level: "warn" });
 
@@ -48,6 +51,50 @@ export function clearDeviceSession(deviceId: number): void {
   }
 }
 
+async function saveSessionToDB(deviceId: number, sessionPath: string): Promise<void> {
+  if (!fs.existsSync(sessionPath)) return;
+  try {
+    const files = fs.readdirSync(sessionPath);
+    const sessionData: Record<string, any> = {};
+    for (const file of files) {
+      const filePath = path.join(sessionPath, file);
+      const stat = fs.statSync(filePath);
+      if (!stat.isFile()) continue;
+      const raw = fs.readFileSync(filePath, "utf-8");
+      try {
+        sessionData[file] = JSON.parse(raw);
+      } catch {
+        sessionData[file] = raw;
+      }
+    }
+    await storage.updateDeviceSessionData(deviceId, sessionData);
+  } catch (err) {
+    console.error(`[Baileys] Failed to save session to DB for device ${deviceId}:`, err);
+  }
+}
+
+async function restoreSessionFromDB(deviceId: number, sessionPath: string): Promise<boolean> {
+  try {
+    const device = await storage.getDevice(deviceId);
+    if (!device?.sessionData || typeof device.sessionData !== "object") return false;
+    const sessionFiles = device.sessionData as Record<string, any>;
+    if (Object.keys(sessionFiles).length === 0) return false;
+    if (!fs.existsSync(sessionPath)) {
+      fs.mkdirSync(sessionPath, { recursive: true });
+    }
+    for (const [filename, content] of Object.entries(sessionFiles)) {
+      const filePath = path.join(sessionPath, filename);
+      const data = typeof content === "string" ? content : JSON.stringify(content);
+      fs.writeFileSync(filePath, data, "utf-8");
+    }
+    console.log(`[Baileys] Restored session from DB for device ${deviceId} (${Object.keys(sessionFiles).length} files)`);
+    return true;
+  } catch (err) {
+    console.error(`[Baileys] Failed to restore session from DB for device ${deviceId}:`, err);
+    return false;
+  }
+}
+
 export async function setupBaileys(deviceId: number, isReconnect: boolean = false): Promise<void> {
   if (activeSockets.has(deviceId)) {
     const existing = activeSockets.get(deviceId);
@@ -65,8 +112,14 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
   }
 
   const sessionPath = getSessionPath(deviceId);
+
   if (!fs.existsSync(sessionPath)) {
     fs.mkdirSync(sessionPath, { recursive: true });
+  }
+
+  const hasLocalCreds = fs.existsSync(path.join(sessionPath, "creds.json"));
+  if (!hasLocalCreds) {
+    await restoreSessionFromDB(deviceId, sessionPath);
   }
 
   try {
@@ -99,7 +152,10 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
     activeSockets.set(deviceId, sock);
 
-    sock.ev.on("creds.update", saveCreds);
+    sock.ev.on("creds.update", async () => {
+      saveCreds();
+      await saveSessionToDB(deviceId, sessionPath).catch(() => {});
+    });
 
     sock.ev.on("connection.update", async (update) => {
       try {
@@ -108,7 +164,7 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
         if (qr) {
           try {
             const qrDataUrl = await QRCode.toDataURL(qr, { width: 300, margin: 2 });
-            await storage.updateDeviceSession(deviceId, null, "pending", qrDataUrl);
+            await storage.updateDeviceStatusAndQR(deviceId, "pending", qrDataUrl);
             console.log(`[Baileys] QR code generated for device ${deviceId}`);
           } catch (err) {
             console.error(`[Baileys] QR generation error for device ${deviceId}:`, err);
@@ -127,40 +183,9 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           console.log(`[Baileys] Device ${deviceId} disconnected. Status: ${statusCode}. Reconnect: ${shouldReconnect}`);
 
           activeSockets.delete(deviceId);
-          await storage.updateDeviceSession(deviceId, null, "disconnected", null);
-          
-          const device = await storage.getDevice(deviceId);
-          if (device) {
-            const user = await storage.getUser(device.userId);
-            if (user?.email) {
-              sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
-                console.error("[Email] Disconnect notification failed:", err)
-              );
-            }
-          }
-          if (shouldReconnect) {
-            const attempts = reconnectAttempts.get(deviceId) || 0;
+          await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
 
-            if (attempts >= MAX_RECONNECT_ATTEMPTS) {
-              console.log(`[Baileys] Device ${deviceId} exceeded max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}). Giving up.`);
-              reconnectAttempts.delete(deviceId);
-              const sessionDir = getSessionPath(deviceId);
-              if (fs.existsSync(sessionDir)) {
-                fs.rmSync(sessionDir, { recursive: true, force: true });
-              }
-              return;
-            }
-
-            const delay = getReconnectDelay(attempts);
-            reconnectAttempts.set(deviceId, attempts + 1);
-            console.log(`[Baileys] Will reconnect device ${deviceId} in ${Math.round(delay / 1000)}s (attempt ${attempts + 1}/${MAX_RECONNECT_ATTEMPTS})...`);
-            setTimeout(async () => {
-              const device = await storage.getDevice(deviceId);
-              if (!device) return;
-              setupBaileys(deviceId, true);
-            }, delay);
-          } else {
-            // Send email for loggedOut scenario
+          if (!shouldReconnect) {
             const device = await storage.getDevice(deviceId);
             if (device) {
               const user = await storage.getUser(device.userId);
@@ -170,22 +195,67 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
                 );
               }
             }
-            await storage.updateDeviceSession(deviceId, null, "disconnected", null);
             reconnectAttempts.delete(deviceId);
             const sessionDir = getSessionPath(deviceId);
             if (fs.existsSync(sessionDir)) {
               fs.rmSync(sessionDir, { recursive: true, force: true });
             }
+            await storage.updateDeviceSessionData(deviceId, null).catch(() => {});
+            return;
           }
+
+          const attempts = reconnectAttempts.get(deviceId) || 0;
+
+          if (attempts >= MAX_RECONNECT_ATTEMPTS) {
+            console.log(`[Baileys] Device ${deviceId} exceeded max reconnect attempts (${MAX_RECONNECT_ATTEMPTS}). Giving up.`);
+            reconnectAttempts.delete(deviceId);
+            const device = await storage.getDevice(deviceId);
+            if (device) {
+              const user = await storage.getUser(device.userId);
+              if (user?.email) {
+                sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+                  console.error("[Email] Max reconnect notification failed:", err)
+                );
+              }
+            }
+            const sessionDir = getSessionPath(deviceId);
+            if (fs.existsSync(sessionDir)) {
+              fs.rmSync(sessionDir, { recursive: true, force: true });
+            }
+            await storage.updateDeviceSessionData(deviceId, null).catch(() => {});
+            return;
+          }
+
+          const delay = getReconnectDelay(attempts);
+          reconnectAttempts.set(deviceId, attempts + 1);
+          console.log(`[Baileys] Will reconnect device ${deviceId} in ${Math.round(delay / 1000)}s (attempt ${attempts + 1}/${MAX_RECONNECT_ATTEMPTS})...`);
+          setTimeout(async () => {
+            const device = await storage.getDevice(deviceId);
+            if (!device) return;
+            setupBaileys(deviceId, true);
+          }, delay);
+
         } else if (connection === "open") {
           console.log(`[Baileys] Device ${deviceId} connected successfully!`);
           reconnectAttempts.delete(deviceId);
 
           const phoneNumber = sock.user?.id?.split(":")[0] || sock.user?.id?.split("@")[0] || null;
-          await storage.updateDeviceSession(deviceId, { connected: true }, "connected", null);
+          await storage.updateDeviceStatusAndQR(deviceId, "connected", null);
 
           if (phoneNumber) {
             await storage.updateDevicePhone(deviceId, phoneNumber);
+          }
+
+          await saveSessionToDB(deviceId, sessionPath).catch(() => {});
+
+          const device = await storage.getDevice(deviceId);
+          if (device) {
+            const user = await storage.getUser(device.userId);
+            if (user?.email) {
+              sendDeviceConnectNotification(user.email, user.name, device.deviceName, phoneNumber).catch((err) =>
+                console.error("[Email] Connect notification failed:", err)
+              );
+            }
           }
         }
       } catch (err) {
@@ -248,7 +318,7 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
     });
   } catch (err) {
     console.error(`[Baileys] Failed to setup device ${deviceId}:`, err);
-    await storage.updateDeviceSession(deviceId, null, "disconnected", null);
+    await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
   }
 }
 
@@ -264,6 +334,15 @@ export async function sendMessage(
   const sock = activeSockets.get(deviceId);
 
   if (!sock) {
+    console.warn(`[Baileys] sendMessage: no socket for device ${deviceId}`);
+    await storage.updateMessageStatus(messageId, "failed", "Device not connected");
+    return;
+  }
+
+  const wsReadyState = (sock as any).ws?.readyState;
+  if (wsReadyState !== undefined && wsReadyState !== 1) {
+    console.warn(`[Baileys] sendMessage: socket for device ${deviceId} is not open (readyState=${wsReadyState})`);
+    activeSockets.delete(deviceId);
     await storage.updateMessageStatus(messageId, "failed", "Device not connected");
     return;
   }
@@ -369,14 +448,16 @@ export async function sendMessage(
   }
 }
 
-export async function disconnectDevice(deviceId: number): Promise<void> {
-  const device = await storage.getDevice(deviceId);
-  if (device) {
-    const user = await storage.getUser(device.userId);
-    if (user?.email) {
-      await sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
-        console.error("[Email] Disconnect notification failed:", err)
-      );
+export async function disconnectDevice(deviceId: number, notifyUser: boolean = false): Promise<void> {
+  if (notifyUser) {
+    const device = await storage.getDevice(deviceId);
+    if (device) {
+      const user = await storage.getUser(device.userId);
+      if (user?.email) {
+        await sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+          console.error("[Email] Disconnect notification failed:", err)
+        );
+      }
     }
   }
   const sock = activeSockets.get(deviceId);
@@ -402,25 +483,37 @@ export function getDeviceSocket(deviceId: number): WASocket | undefined {
 
 export async function reconnectExistingDevices(): Promise<void> {
   console.log("[Baileys] Checking for existing sessions to reconnect...");
+
+  const allActiveDevices = await storage.getConnectedAndPendingDevices().catch(() => [] as any[]);
+
+  for (const device of allActiveDevices) {
+    const deviceId = device.id;
+    const sessionPath = getSessionPath(deviceId);
+    const hasLocalCreds = fs.existsSync(path.join(sessionPath, "creds.json"));
+    const hasDbSession = device.sessionData && typeof device.sessionData === "object" && Object.keys(device.sessionData as object).length > 0;
+
+    if (hasLocalCreds || hasDbSession) {
+      console.log(`[Baileys] Reconnecting device ${deviceId} (local=${hasLocalCreds}, db=${hasDbSession})...`);
+      setupBaileys(deviceId);
+    } else {
+      console.log(`[Baileys] Device ${deviceId} has no session anywhere — marking disconnected.`);
+      await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
+    }
+  }
+
   if (!fs.existsSync(SESSION_DIR)) return;
 
   const dirs = fs.readdirSync(SESSION_DIR);
   for (const dir of dirs) {
     const match = dir.match(/^device_(\d+)$/);
     if (!match) continue;
-
     const deviceId = parseInt(match[1], 10);
-    const device = await storage.getDevice(deviceId);
+    if (allActiveDevices.find((d: any) => d.id === deviceId)) continue;
 
     const credsFile = path.join(SESSION_DIR, dir, "creds.json");
-    const hasValidSession = fs.existsSync(credsFile);
-
-    if (device && device.status !== "disconnected" && hasValidSession) {
-      console.log(`[Baileys] Reconnecting device ${deviceId}...`);
-      setupBaileys(deviceId);
-    } else if (device && !hasValidSession) {
-      console.log(`[Baileys] Device ${deviceId} has no saved session, skipping reconnect.`);
-      await storage.updateDeviceSession(deviceId, null, "disconnected", null);
+    if (!fs.existsSync(credsFile)) {
+      console.log(`[Baileys] Orphaned session dir for device ${deviceId} without creds — cleaning up.`);
+      fs.rmSync(path.join(SESSION_DIR, dir), { recursive: true, force: true });
     }
   }
 }
