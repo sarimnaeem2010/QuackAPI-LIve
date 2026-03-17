@@ -7,5 +7,8 @@
     "dev": "cd QuackAPI && npm run dev",
     "build": "cd QuackAPI && npm run build",
     "start": "cd QuackAPI && npm run start"
+  },
+  "dependencies": {
+    "chokidar": "^5.0.0"
   }
 }
