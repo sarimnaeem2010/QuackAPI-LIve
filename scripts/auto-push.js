@@ -1,5 +1,5 @@
 import chokidar from "chokidar";
-import { execSync } from "child_process";
+import { execSync, spawnSync } from "child_process";
 import path from "path";
 import { fileURLToPath } from "url";
 
@@ -29,7 +29,7 @@ function timestamp() {
   return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
 }
 
-function updateRemoteWithToken() {
+function setup() {
   const token = process.env.GITHUB_TOKEN;
   if (!token) {
     console.error("[auto-push] ERROR: GITHUB_TOKEN is not set. Cannot push to GitHub.");
@@ -37,18 +37,27 @@ function updateRemoteWithToken() {
   }
 
   try {
+    // Ensure the remote URL uses plain HTTPS (no embedded credentials)
     const remoteUrl = execSync("git remote get-url origin", { cwd: ROOT }).toString().trim();
     const match = remoteUrl.match(/https:\/\/(?:[^@]+@)?github\.com\/(.+)/);
     if (!match) {
       console.error("[auto-push] ERROR: origin remote does not look like a GitHub HTTPS URL:", remoteUrl);
       process.exit(1);
     }
-    const repoPath = match[1];
-    const authedUrl = `https://x-access-token:${token}@github.com/${repoPath}`;
-    execSync(`git remote set-url origin "${authedUrl}"`, { cwd: ROOT });
-    console.log("[auto-push] GitHub remote configured with token.");
+    const cleanUrl = `https://github.com/${match[1]}`;
+    execSync(`git remote set-url origin "${cleanUrl}"`, { cwd: ROOT });
+
+    // Use a git credential helper that supplies the token at push time only
+    // The helper reads GITHUB_TOKEN from the environment — never written to disk
+    execSync('git config credential.helper "!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f"', { cwd: ROOT });
+
+    // Configure committer identity
+    execSync('git config user.email "replit-agent@quackapi.com"', { cwd: ROOT });
+    execSync('git config user.name "Replit Auto Push"', { cwd: ROOT });
+
+    console.log("[auto-push] GitHub credentials configured via credential helper (token not stored on disk).");
   } catch (err) {
-    console.error("[auto-push] ERROR configuring remote:", err.message);
+    console.error("[auto-push] ERROR during setup:", err.message);
     process.exit(1);
   }
 }
@@ -62,6 +71,12 @@ function pushChanges() {
   const msg = `auto: ${label} @ ${timestamp()}`;
 
   try {
+    // Remove stale lock file if present (can occur after a crash or race)
+    try {
+      const lockFile = path.join(ROOT, ".git", "index.lock");
+      execSync(`rm -f "${lockFile}"`, { stdio: "pipe" });
+    } catch { }
+
     execSync("git add .", { cwd: ROOT, stdio: "pipe" });
     const diff = execSync("git diff --cached --name-only", { cwd: ROOT }).toString().trim();
     if (!diff) {
@@ -69,8 +84,18 @@ function pushChanges() {
       return;
     }
     execSync(`git commit -m "${msg.replace(/"/g, "'")}"`, { cwd: ROOT, stdio: "pipe" });
-    execSync("git push origin main", { cwd: ROOT, stdio: "pipe" });
-    console.log(`[auto-push] Pushed: ${msg}`);
+
+    // Push with the GITHUB_TOKEN available in env so the credential helper can read it
+    const result = spawnSync("git", ["push", "origin", "main"], {
+      cwd: ROOT,
+      env: { ...process.env },
+      encoding: "utf-8",
+    });
+    if (result.status !== 0) {
+      console.error("[auto-push] Push failed:", result.stderr || result.stdout);
+    } else {
+      console.log(`[auto-push] Pushed: ${msg}`);
+    }
   } catch (err) {
     console.error("[auto-push] Push failed:", err.message);
   }
@@ -82,14 +107,7 @@ function schedule(filePath) {
   timer = setTimeout(pushChanges, DEBOUNCE_MS);
 }
 
-updateRemoteWithToken();
-
-try {
-  execSync('git config user.email "replit-agent@quackapi.com"', { cwd: ROOT });
-  execSync('git config user.name "Replit Auto Push"', { cwd: ROOT });
-} catch (err) {
-  console.error("[auto-push] WARNING: Could not set git identity:", err.message);
-}
+setup();
 
 const watcher = chokidar.watch(ROOT, {
   ignored: IGNORED,
@@ -107,3 +125,4 @@ watcher
 
 process.on("SIGINT", () => { watcher.close(); process.exit(0); });
 process.on("SIGTERM", () => { watcher.close(); process.exit(0); });
+
