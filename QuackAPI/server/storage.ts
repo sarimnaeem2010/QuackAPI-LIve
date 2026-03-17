@@ -29,6 +29,7 @@ export interface IStorage {
   getDevices(userId: number): Promise<Device[]>;
   getDevice(id: number): Promise<Device | undefined>;
   getConnectedAndPendingDevices(): Promise<Device[]>;
+  getDevicesWithSession(): Promise<Device[]>;
   createDevice(device: InsertDevice): Promise<Device>;
   updateDevice(id: number, updates: UpdateDeviceRequest): Promise<Device>;
   updateDeviceSession(id: number, sessionData: any, status: string, qrCode: string | null): Promise<Device>;
@@ -183,6 +184,15 @@ export class DatabaseStorage implements IStorage {
   }
   async getConnectedAndPendingDevices() {
     return await db.select().from(devices).where(inArray(devices.status, ["connected", "pending"]));
+  }
+  async getDevicesWithSession() {
+    // Returns all devices that have session data in the DB, regardless of their
+    // current status. This allows startup reconnect to recover devices that were
+    // marked "disconnected" before the server restarted.
+    const allDevices = await db.select().from(devices);
+    return allDevices.filter(
+      (d) => d.sessionData && typeof d.sessionData === "object" && Object.keys(d.sessionData as object).length > 0
+    );
   }
   async updateDeviceSession(id: number, sessionData: any, status: string, qrCode: string | null) {
     const [updated] = await db.update(devices).set({ sessionData, status, qrCode }).where(eq(devices.id, id)).returning();

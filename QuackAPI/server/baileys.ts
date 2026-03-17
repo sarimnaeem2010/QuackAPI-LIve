@@ -221,10 +221,15 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
           const isLoggedOut = statusCode === DisconnectReason.loggedOut;
-          const isRestartRequired = statusCode === DisconnectReason.restartRequired;
+          // Codes that warrant an immediate short retry instead of backoff:
+          //   515 = RestartRequired, 408 = TimedOut, undefined/null = transport drop
+          const isImmediateRetry =
+            statusCode === DisconnectReason.restartRequired ||
+            statusCode === DisconnectReason.timedOut ||
+            statusCode == null;
 
           console.log(
-            `[Baileys] Device ${deviceId} disconnected. statusCode=${statusCode} loggedOut=${isLoggedOut} restartRequired=${isRestartRequired}`
+            `[Baileys] Device ${deviceId} disconnected. statusCode=${statusCode} loggedOut=${isLoggedOut} immediateRetry=${isImmediateRetry}`
           );
 
           activeSockets.delete(deviceId);
@@ -254,18 +259,18 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           // ── All other disconnect reasons: reconnect indefinitely.
           //    Session data is NEVER deleted here — only loggedOut should do that.
-          //    restartRequired → immediate retry after a short pause.
+          //    restartRequired / timedOut / transport drop → short 1s immediate retry.
           //    Everything else → exponential backoff capped at 5 minutes.
           const attempts = reconnectAttempts.get(deviceId) || 0;
-          const delay = isRestartRequired ? 1_000 : getReconnectDelay(attempts);
+          const delay = isImmediateRetry ? 1_000 : getReconnectDelay(attempts);
 
-          if (!isRestartRequired) {
+          if (!isImmediateRetry) {
             reconnectAttempts.set(deviceId, attempts + 1);
           }
 
           console.log(
             `[Baileys] Scheduling reconnect for device ${deviceId} in ${Math.round(delay / 1000)}s` +
-            (isRestartRequired ? " (restart required)" : ` (attempt ${attempts + 1})`)
+            (isImmediateRetry ? " (immediate retry)" : ` (attempt ${attempts + 1})`)
           );
 
           setTimeout(async () => {
@@ -573,19 +578,35 @@ export function getDeviceSocket(deviceId: number): BaileysSocketWithWS | undefin
 export async function reconnectExistingDevices(): Promise<void> {
   console.log("[Baileys] Checking for existing sessions to reconnect...");
 
-  const allActiveDevices = await storage.getConnectedAndPendingDevices().catch(() => [] as any[]);
+  // Use getDevicesWithSession() so we also recover devices that were marked
+  // "disconnected" before the server restarted but still have valid session
+  // data in the database. This is the key to surviving server restarts.
+  const devicesWithSession = await storage.getDevicesWithSession().catch(() => [] as any[]);
+  const reconnectedIds = new Set<number>();
 
-  for (const device of allActiveDevices) {
+  for (const device of devicesWithSession) {
+    const deviceId = device.id;
+    reconnectedIds.add(deviceId);
+    const sessionPath = getSessionPath(deviceId);
+    const hasLocalCreds = fs.existsSync(path.join(sessionPath, "creds.json"));
+    console.log(`[Baileys] Reconnecting device ${deviceId} (status=${device.status}, local=${hasLocalCreds}, db=true)...`);
+    setupBaileys(deviceId, true);
+  }
+
+  // Also pick up devices marked connected/pending that may not have DB session
+  // data yet (e.g. they were in the middle of QR scanning).
+  const connectedAndPending = await storage.getConnectedAndPendingDevices().catch(() => [] as any[]);
+  for (const device of connectedAndPending) {
+    if (reconnectedIds.has(device.id)) continue;
     const deviceId = device.id;
     const sessionPath = getSessionPath(deviceId);
     const hasLocalCreds = fs.existsSync(path.join(sessionPath, "creds.json"));
-    const hasDbSession = device.sessionData && typeof device.sessionData === "object" && Object.keys(device.sessionData as object).length > 0;
 
-    if (hasLocalCreds || hasDbSession) {
-      console.log(`[Baileys] Reconnecting device ${deviceId} (local=${hasLocalCreds}, db=${hasDbSession})...`);
+    if (hasLocalCreds) {
+      console.log(`[Baileys] Reconnecting device ${deviceId} from local creds (status=${device.status})...`);
       setupBaileys(deviceId, true);
     } else {
-      console.log(`[Baileys] Device ${deviceId} has no session anywhere — marking disconnected.`);
+      console.log(`[Baileys] Device ${deviceId} has no session — marking disconnected.`);
       await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
       const user = await storage.getUser(device.userId).catch(() => undefined);
       if (user?.email) {
@@ -596,22 +617,21 @@ export async function reconnectExistingDevices(): Promise<void> {
     }
   }
 
-  if (!fs.existsSync(SESSION_DIR)) {
-    startHealthCheck();
-    return;
-  }
+  // Clean up orphaned local session dirs for devices not being reconnected
+  if (fs.existsSync(SESSION_DIR)) {
+    const dirs = fs.readdirSync(SESSION_DIR);
+    for (const dir of dirs) {
+      const match = dir.match(/^device_(\d+)$/);
+      if (!match) continue;
+      const deviceId = parseInt(match[1], 10);
+      if (reconnectedIds.has(deviceId)) continue;
+      if (connectedAndPending.find((d: any) => d.id === deviceId)) continue;
 
-  const dirs = fs.readdirSync(SESSION_DIR);
-  for (const dir of dirs) {
-    const match = dir.match(/^device_(\d+)$/);
-    if (!match) continue;
-    const deviceId = parseInt(match[1], 10);
-    if (allActiveDevices.find((d: any) => d.id === deviceId)) continue;
-
-    const credsFile = path.join(SESSION_DIR, dir, "creds.json");
-    if (!fs.existsSync(credsFile)) {
-      console.log(`[Baileys] Orphaned session dir for device ${deviceId} without creds — cleaning up.`);
-      fs.rmSync(path.join(SESSION_DIR, dir), { recursive: true, force: true });
+      const credsFile = path.join(SESSION_DIR, dir, "creds.json");
+      if (!fs.existsSync(credsFile)) {
+        console.log(`[Baileys] Orphaned session dir for device ${deviceId} without creds — cleaning up.`);
+        fs.rmSync(path.join(SESSION_DIR, dir), { recursive: true, force: true });
+      }
     }
   }
 
