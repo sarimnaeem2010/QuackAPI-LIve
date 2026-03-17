@@ -1,0 +1,37 @@
+#2 - Baileys Service Full Overhaul
+
+What & Why
+
+A full audit of the Baileys WhatsApp service revealed 7 real bugs that break core SaaS functionality: devices show "connected" in the UI but messages fail, customers get double disconnect emails or emails on manual disconnects, no email is sent when a customer successfully scans a QR code, SMTP settings changed in the admin panel are silently ignored, and sessions are lost on every server restart (critical for Railway ephemeral filesystem).
+
+Done looks like
+
+Messages send successfully when device is connected; "device not connected" error only appears when device genuinely has no socket
+On server restart, all devices with no active session are immediately marked "disconnected" in the DB and customers notified
+Customer receives exactly one email when device disconnects unexpectedly — not on manual dashboard disconnect
+Customer receives an email when they successfully scan the QR and connect their WhatsApp
+Customer receives an email when auto-reconnect gives up after max retries
+SMTP credentials configured in admin panel are the ones actually used to send emails
+Sessions survive server restarts by being stored in the database (not only on the filesystem)
+Out of scope
+
+Changing the frontend UI beyond what is needed to reflect accurate status
+PayPal config or billing changes
+Tasks
+
+Fix startup status sync — On server start, query ALL devices from DB with status connected or pending. For each one that has no active socket AND no valid session file (creds.json), mark it disconnected in the DB. This ensures no device is stuck "connected" after a restart with no session.
+Fix socket validation before send — In sendMessage(), after getting the socket from activeSockets, also check that the underlying WebSocket (sock.ws) is open (readyState === 1). If the socket exists but is not open, mark the message failed with "Device not connected" and remove the stale entry from activeSockets.
+Fix duplicate disconnect email bug — In connection === "close" handler: email is currently sent twice for loggedOut scenario (once at line 136 for all closes, again at line 168 for loggedOut). Remove the duplicate. Send one email: only when !shouldReconnect (permanent disconnect / logged out). For temporary disconnects that will auto-reconnect, do NOT email the customer — only email when reconnect is either given up or permanently logged out.
+Skip email on manual disconnect — disconnectDevice() is called from both the user dashboard (manual disconnect) and from internal reconnect logic. Add an optional notifyUser: boolean parameter (default false). Only send the disconnect email when explicitly requested by Baileys internal logic, not when user clicks "Disconnect" in the dashboard.
+Add connection success email — In the connection === "open" handler, after saving the device status, send a new sendDeviceConnectNotification(email, userName, deviceName, phoneNumber) email to the customer. Create this function in email.ts with a clean branded template matching the existing style.
+Add max-reconnect-exhausted email — When attempts >= MAX_RECONNECT_ATTEMPTS, send the disconnect notification email before clearing the session, so the customer is informed their device won't automatically reconnect.
+Fix SMTP config to read from DB admin settings — The admin panel saves SMTP config to the adminSettings DB table, but email.ts always uses the hardcoded smtpConfig from config.ts. Fix email.ts getTransporter() to dynamically read from storage.getAdminSettings() for host, port, user, pass, and secure fields. The hardcoded config.ts values become the fallback defaults only.
+Session persistence via DB — Baileys session files (baileys_sessions/device_N/) are stored only on the filesystem, which is ephemeral on Railway. Implement a hybrid approach: after each creds.update event, serialize the entire session state to JSON and save it in the sessionData column of the devices table. On startup/reconnect, if the session directory doesn't exist locally, restore it from sessionData in the DB before calling useMultiFileAuthState. This keeps sessions alive across Railway redeploys.
+Relevant files
+
+QuackAPI/server/baileys.ts
+QuackAPI/server/email.ts
+QuackAPI/server/config.ts
+QuackAPI/server/routes.ts:383-437
+QuackAPI/server/storage.ts
+QuackAPI/shared/schema.ts:30
