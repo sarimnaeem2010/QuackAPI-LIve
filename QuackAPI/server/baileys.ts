@@ -12,6 +12,10 @@ import {
   sendDeviceConnectNotification,
 } from "./email";
 
+interface BaileysSocketWithWS extends WASocket {
+  ws?: { readyState: number };
+}
+
 const logger = pino({ level: "warn" });
 
 const SESSION_DIR = path.join(process.cwd(), "baileys_sessions");
@@ -20,7 +24,7 @@ if (!fs.existsSync(SESSION_DIR)) {
   fs.mkdirSync(SESSION_DIR, { recursive: true });
 }
 
-const activeSockets: Map<number, WASocket> = new Map();
+const activeSockets: Map<number, BaileysSocketWithWS> = new Map();
 const reconnectAttempts: Map<number, number> = new Map();
 const suppressReconnect = new Set<number>();
 const autoReconnecting = new Set<number>();
