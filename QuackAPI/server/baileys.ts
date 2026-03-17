@@ -348,9 +348,10 @@ export async function sendMessage(
     return;
   }
 
-  const wsReadyState = (sock as any).ws?.readyState;
-  if (wsReadyState !== undefined && wsReadyState !== 1) {
-    console.warn(`[Baileys] sendMessage: socket for device ${deviceId} is not open (readyState=${wsReadyState})`);
+  const ws = (sock as any).ws;
+  const wsReadyState = ws?.readyState;
+  if (!ws || wsReadyState !== 1) {
+    console.warn(`[Baileys] sendMessage: socket for device ${deviceId} is not open (ws=${!!ws}, readyState=${wsReadyState})`);
     activeSockets.delete(deviceId);
     await storage.updateMessageStatus(messageId, "failed", "Device not connected");
     return;
