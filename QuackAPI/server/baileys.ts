@@ -657,6 +657,11 @@ export function closeAllSockets(): void {
 
 export async function reconnectExistingDevices(): Promise<void> {
   console.log("[Baileys] Checking for existing sessions to reconnect...");
+  // Pause 5s before connecting any devices on startup. Combined with the 2s shutdown
+  // delay in gracefulShutdown(), this creates a ~7s clean window ensuring the previous
+  // server instance's WA sockets are fully closed before we attempt to reconnect.
+  // Without this, both the old and new processes connect simultaneously → 440 conflict loop.
+  await new Promise(r => setTimeout(r, 5000));
 
   const devicesWithSession = await storage.getDevicesWithSession().catch(() => [] as any[]);
   const reconnectedIds = new Set<number>();
