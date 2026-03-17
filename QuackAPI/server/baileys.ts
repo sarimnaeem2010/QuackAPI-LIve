@@ -1,6 +1,10 @@
 import type {
   WASocket,
 } from "@whiskeysockets/baileys";
+
+interface BaileysSocketWithWS extends WASocket {
+  ws?: { readyState: number };
+}
 import { Boom } from "@hapi/boom";
 import pino from "pino";
 import path from "path";
