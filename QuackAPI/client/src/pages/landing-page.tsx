@@ -164,7 +164,7 @@ function HeroSection({ onNavigate }: { onNavigate: (path: string) => void }) {
           transition={{ duration: 0.5, delay: 0.1 }}
           className="font-display text-5xl md:text-7xl font-bold tracking-tight mb-6"
         >
-          WhatsApp API
+          WhatsApp API Now
           <span className="block text-primary mt-2">For Your Business</span>
         </motion.h1>
         
