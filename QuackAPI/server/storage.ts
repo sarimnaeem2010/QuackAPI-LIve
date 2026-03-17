@@ -443,6 +443,40 @@ export class DatabaseStorage implements IStorage {
       return created;
     }
   }
+
+  async ensureDefaultPlans(): Promise<void> {
+    const existing = await this.getPlans();
+    if (existing.length > 0) return;
+    const defaults = [
+      {
+        key: "starter", name: "Starter",
+        description: "Perfect for individuals and small projects",
+        monthlyPrice: 0, yearlyPrice: 0,
+        devicesLimit: 1, messagesLimit: 100,
+        features: ["1 WhatsApp device", "100 messages/day", "REST API access", "Basic webhook support", "Email support"],
+        isPopular: false, sortOrder: 0,
+      },
+      {
+        key: "professional", name: "Professional",
+        description: "For growing businesses and developers",
+        monthlyPrice: 2900, yearlyPrice: 29000,
+        devicesLimit: 5, messagesLimit: 1000,
+        features: ["5 WhatsApp devices", "1,000 messages/day", "REST API access", "Advanced webhooks", "Priority support", "Analytics dashboard"],
+        isPopular: true, sortOrder: 1,
+      },
+      {
+        key: "enterprise", name: "Enterprise",
+        description: "Unlimited scale for large businesses",
+        monthlyPrice: 9900, yearlyPrice: 99000,
+        devicesLimit: -1, messagesLimit: -1,
+        features: ["Unlimited devices", "Unlimited messages/day", "REST API access", "Advanced webhooks", "Dedicated support", "Custom integrations", "SLA guarantee"],
+        isPopular: false, sortOrder: 2,
+      },
+    ];
+    for (const p of defaults) {
+      await db.insert(plans).values(p as any).onConflictDoNothing();
+    }
+  }
 }
 
 export const storage = new DatabaseStorage();
