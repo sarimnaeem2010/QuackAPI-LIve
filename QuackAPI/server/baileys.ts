@@ -352,7 +352,7 @@ export async function sendMessage(
     return;
   }
 
-  const ws = (sock as any).ws;
+  const ws = sock.ws;
   const wsReadyState = ws?.readyState;
   if (!ws || wsReadyState !== 1) {
     console.warn(`[Baileys] sendMessage: socket for device ${deviceId} is not open (ws=${!!ws}, readyState=${wsReadyState})`);
