@@ -491,7 +491,7 @@ export async function disconnectDevice(deviceId: number, notifyUser: boolean = f
   await storage.updateDeviceSession(deviceId, null, "disconnected", null);
 }
 
-export function getDeviceSocket(deviceId: number): WASocket | undefined {
+export function getDeviceSocket(deviceId: number): BaileysSocketWithWS | undefined {
   return activeSockets.get(deviceId);
 }
 
