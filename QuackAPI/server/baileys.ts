@@ -209,7 +209,9 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
         if (connection === "close") {
           if (suppressReconnect.has(deviceId)) {
             suppressReconnect.delete(deviceId);
-            activeSockets.delete(deviceId);
+            if (activeSockets.get(deviceId) === sock) {
+              activeSockets.delete(deviceId);
+            }
             return;
           }
 
@@ -224,7 +226,9 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
             `[Baileys] Device ${deviceId} disconnected. statusCode=${statusCode} loggedOut=${isLoggedOut} immediateRetry=${isImmediateRetry}`
           );
 
-          activeSockets.delete(deviceId);
+          if (activeSockets.get(deviceId) === sock) {
+            activeSockets.delete(deviceId);
+          }
           await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
 
           if (isLoggedOut) {
