@@ -144,6 +144,11 @@ httpServer.listen(
   () => {
     console.log(`Server started on port ${port}`);
 
+    // Seed default plans if table is empty
+    import("./storage")
+      .then(({ storage }) => storage.ensureDefaultPlans())
+      .catch((err: any) => console.error("[Server] Plan seed failed:", err?.message ?? err));
+
     // Reconnect any existing WhatsApp devices
     import("./baileys")
       .then(({ reconnectExistingDevices }) => reconnectExistingDevices())
