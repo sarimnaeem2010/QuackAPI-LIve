@@ -274,6 +274,7 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           }, delay);
 
         } else if (connection === "open") {
+          activeSockets.set(deviceId, sock);
           const wasAutoReconnect = autoReconnecting.has(deviceId);
           autoReconnecting.delete(deviceId);
           const prevConnectedAt = lastConnectedAt.get(deviceId);
