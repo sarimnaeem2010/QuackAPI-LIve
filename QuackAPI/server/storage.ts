@@ -28,9 +28,12 @@ export interface IStorage {
 
   getDevices(userId: number): Promise<Device[]>;
   getDevice(id: number): Promise<Device | undefined>;
+  getConnectedAndPendingDevices(): Promise<Device[]>;
   createDevice(device: InsertDevice): Promise<Device>;
   updateDevice(id: number, updates: UpdateDeviceRequest): Promise<Device>;
   updateDeviceSession(id: number, sessionData: any, status: string, qrCode: string | null): Promise<Device>;
+  updateDeviceStatusAndQR(id: number, status: string, qrCode: string | null): Promise<Device>;
+  updateDeviceSessionData(id: number, data: any): Promise<void>;
   updateDevicePhone(id: number, phoneNumber: string): Promise<Device>;
   deleteDevice(id: number): Promise<void>;
 
