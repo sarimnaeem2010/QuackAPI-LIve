@@ -1,6 +1,6 @@
 import { db } from "./db";
 import { users, devices, messages, payments, paymentMethods, passwordResetTokens, adminSettings, webhookLogs, plans, type User, type InsertUser, type Device, type InsertDevice, type UpdateDeviceRequest, type Message, type InsertMessage, type Payment, type InsertPayment, type PaymentMethod, type InsertPaymentMethod, type AdminSettings, type InsertAdminSettings, type WebhookLog, type InsertWebhookLog, type Plan } from "@shared/schema";
-import { eq, and, desc, sql, gte } from "drizzle-orm";
+import { eq, and, desc, sql, gte, inArray } from "drizzle-orm";
 import crypto from "crypto";
 
 export interface IStorage {
