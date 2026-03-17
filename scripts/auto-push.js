@@ -48,8 +48,8 @@ function setup() {
     execSync(`git remote set-url origin "${cleanUrl}"`, { cwd: ROOT });
 
     // Use a git credential helper that supplies the token at push time only
-    // The helper reads GITHUB_TOKEN from the environment — never written to disk
-    execSync('git config credential.helper "!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f"', { cwd: ROOT });
+    // Single quotes preserve $GITHUB_TOKEN as a literal variable — expanded at push time, not config time
+    execSync("git config credential.helper '!f() { echo username=x-access-token; echo password=$GITHUB_TOKEN; }; f'", { cwd: ROOT });
 
     // Configure committer identity
     execSync('git config user.email "replit-agent@quackapi.com"', { cwd: ROOT });
