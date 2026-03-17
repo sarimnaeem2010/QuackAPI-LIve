@@ -29,9 +29,7 @@ const reconnectAttempts: Map<number, number> = new Map();
 const suppressReconnect = new Set<number>();
 const autoReconnecting = new Set<number>();
 
-// ── Version cache ──────────────────────────────────────────────────────────────
-// Fetch the WA protocol version once and reuse it for 24 h.
-// This prevents a failed HTTP call from blocking every reconnect attempt.
+// Cache the WA version for 24h to avoid blocking reconnects on fetch failures
 let _cachedVersion: number[] | null = null;
 let _versionFetchedAt = 0;
 const VERSION_CACHE_TTL = 24 * 60 * 60 * 1000;
@@ -52,7 +50,6 @@ async function getWAVersion(baileys: typeof import("@whiskeysockets/baileys")): 
       console.warn(`[Baileys] Failed to fetch WA version, using cached: ${_cachedVersion.join(".")}`);
       return _cachedVersion;
     }
-    // Known-good fallback so we never block reconnects over a version-fetch failure
     const fallback = [2, 3000, 1019685367];
     console.warn(`[Baileys] Failed to fetch WA version, using fallback: ${fallback.join(".")}`);
     _cachedVersion = fallback;
@@ -73,7 +70,6 @@ function getSessionPath(deviceId: number): string {
   return path.join(SESSION_DIR, `device_${deviceId}`);
 }
 
-// Reconnect delay: exponential backoff capped at 5 minutes.
 function getReconnectDelay(attempt: number): number {
   const base = 3000;
   return Math.min(base * Math.pow(2, attempt), 300_000);
@@ -211,8 +207,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
         }
 
         if (connection === "close") {
-          // ── suppressReconnect: caller explicitly ended this socket (e.g. user
-          //    clicked Disconnect or we're replacing it). Just clean up.
           if (suppressReconnect.has(deviceId)) {
             suppressReconnect.delete(deviceId);
             activeSockets.delete(deviceId);
@@ -221,8 +215,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
           const statusCode = (lastDisconnect?.error as Boom)?.output?.statusCode;
           const isLoggedOut = statusCode === DisconnectReason.loggedOut;
-          // Codes that warrant an immediate short retry instead of backoff:
-          //   515 = RestartRequired, 408 = TimedOut, undefined/null = transport drop
           const isImmediateRetry =
             statusCode === DisconnectReason.restartRequired ||
             statusCode === DisconnectReason.timedOut ||
@@ -235,8 +227,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           activeSockets.delete(deviceId);
           await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
 
-          // ── loggedOut: WhatsApp explicitly removed this session.
-          //    Clear ALL session data and stop retrying — user must re-scan.
           if (isLoggedOut) {
             console.log(`[Baileys] Device ${deviceId} was logged out by WhatsApp. Clearing session.`);
             reconnectAttempts.delete(deviceId);
@@ -257,10 +247,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
             return;
           }
 
-          // ── All other disconnect reasons: reconnect indefinitely.
-          //    Session data is NEVER deleted here — only loggedOut should do that.
-          //    restartRequired / timedOut / transport drop → short 1s immediate retry.
-          //    Everything else → exponential backoff capped at 5 minutes.
           const attempts = reconnectAttempts.get(deviceId) || 0;
           const delay = isImmediateRetry ? 1_000 : getReconnectDelay(attempts);
 
@@ -372,7 +358,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
     console.error(`[Baileys] Failed to setup device ${deviceId}:`, err);
     await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
 
-    // Even on setup failure, schedule a retry so transient errors don't strand the device
     if (!suppressReconnect.has(deviceId)) {
       const attempts = reconnectAttempts.get(deviceId) || 0;
       const delay = getReconnectDelay(attempts);
@@ -388,9 +373,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
   }
 }
 
-// ── Periodic health check ──────────────────────────────────────────────────────
-// Every 3 minutes, verify each tracked socket's WebSocket is still open.
-// If a socket is found in a non-OPEN state (zombie), trigger a reconnect.
 const HEALTH_CHECK_INTERVAL = 3 * 60 * 1000;
 
 export function startHealthCheck(): void {
@@ -578,9 +560,6 @@ export function getDeviceSocket(deviceId: number): BaileysSocketWithWS | undefin
 export async function reconnectExistingDevices(): Promise<void> {
   console.log("[Baileys] Checking for existing sessions to reconnect...");
 
-  // Use getDevicesWithSession() so we also recover devices that were marked
-  // "disconnected" before the server restarted but still have valid session
-  // data in the database. This is the key to surviving server restarts.
   const devicesWithSession = await storage.getDevicesWithSession().catch(() => [] as any[]);
   const reconnectedIds = new Set<number>();
 
@@ -593,8 +572,6 @@ export async function reconnectExistingDevices(): Promise<void> {
     setupBaileys(deviceId, true);
   }
 
-  // Also pick up devices marked connected/pending that may not have DB session
-  // data yet (e.g. they were in the middle of QR scanning).
   const connectedAndPending = await storage.getConnectedAndPendingDevices().catch(() => [] as any[]);
   for (const device of connectedAndPending) {
     if (reconnectedIds.has(device.id)) continue;
@@ -617,7 +594,6 @@ export async function reconnectExistingDevices(): Promise<void> {
     }
   }
 
-  // Clean up orphaned local session dirs for devices not being reconnected
   if (fs.existsSync(SESSION_DIR)) {
     const dirs = fs.readdirSync(SESSION_DIR);
     for (const dir of dirs) {
@@ -635,6 +611,5 @@ export async function reconnectExistingDevices(): Promise<void> {
     }
   }
 
-  // Start the periodic health check after initial reconnection pass
   startHealthCheck();
 }

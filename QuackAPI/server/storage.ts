@@ -186,9 +186,6 @@ export class DatabaseStorage implements IStorage {
     return await db.select().from(devices).where(inArray(devices.status, ["connected", "pending"]));
   }
   async getDevicesWithSession() {
-    // Returns all devices that have session data in the DB, regardless of their
-    // current status. This allows startup reconnect to recover devices that were
-    // marked "disconnected" before the server restarted.
     const allDevices = await db.select().from(devices);
     return allDevices.filter(
       (d) => d.sessionData && typeof d.sessionData === "object" && Object.keys(d.sessionData as object).length > 0
