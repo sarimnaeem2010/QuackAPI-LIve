@@ -503,7 +503,7 @@ export async function reconnectExistingDevices(): Promise<void> {
 
     if (hasLocalCreds || hasDbSession) {
       console.log(`[Baileys] Reconnecting device ${deviceId} (local=${hasLocalCreds}, db=${hasDbSession})...`);
-      setupBaileys(deviceId);
+      setupBaileys(deviceId, true);
     } else {
       console.log(`[Baileys] Device ${deviceId} has no session anywhere — marking disconnected.`);
       await storage.updateDeviceStatusAndQR(deviceId, "disconnected", null);
