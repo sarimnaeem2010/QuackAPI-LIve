@@ -43,7 +43,11 @@ function gracefulShutdown(signal: string) {
   console.log(`[Server] Received ${signal} — shutting down gracefully`);
   import("./baileys").then(({ closeAllSockets }) => {
     closeAllSockets();
-  }).catch(() => {}).finally(() => {
+    // Wait 2s for WS close frames to propagate to WhatsApp before the process dies.
+    // This prevents the new process from connecting while the old socket is still live,
+    // which causes 440 "conflict/replaced" loops on restart.
+    setTimeout(() => _realExit(0), 2000);
+  }).catch(() => {
     _realExit(0);
   });
 }
