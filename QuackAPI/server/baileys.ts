@@ -108,8 +108,11 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
     suppressReconnect.delete(deviceId);
   }
 
-  if (!isReconnect) {
+  if (isReconnect) {
+    autoReconnecting.add(deviceId);
+  } else {
     reconnectAttempts.delete(deviceId);
+    autoReconnecting.delete(deviceId);
   }
 
   const sessionPath = getSessionPath(deviceId);
