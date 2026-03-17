@@ -83,21 +83,16 @@ try {
 app.get("/health", (_req, res) => res.status(200).json({ status: "ok" }));
 app.get("/healthz", (_req, res) => res.status(200).json({ status: "ok" }));
 
-app.get("/", (_req, res) => {
-  let html = cachedIndexHtml;
-  if (process.env.NODE_ENV !== "production" && indexHtmlPath) {
-    try {
-      html = fs.readFileSync(indexHtmlPath, "utf-8");
-    } catch {
-      // use cache or fallback
+if (process.env.NODE_ENV === "production") {
+  app.get("/", (_req, res) => {
+    const html = cachedIndexHtml;
+    if (html) {
+      res.status(200).type("html").send(html);
+    } else {
+      res.status(200).send("OK");
     }
-  }
-  if (html) {
-    res.status(200).type("html").send(html);
-  } else {
-    res.status(200).send("OK");
-  }
-});
+  });
+}
 
 // Body parsing and logging middleware
 app.use(
@@ -145,8 +140,8 @@ app.use((req, res, next) => {
 });
 
 // Start listening IMMEDIATELY — before routes are registered.
-const port = parseInt(process.env.PORT || "3000", 10);
-const host = process.env.NODE_ENV === "production" ? "0.0.0.0" : "127.0.0.1";
+const port = parseInt(process.env.PORT || "5000", 10);
+const host = "0.0.0.0";
 const listenOpts: { port: number; host: string; reusePort?: boolean } = { port, host };
 if (process.env.NODE_ENV === "production") listenOpts.reusePort = true;
 httpServer.listen(
@@ -175,14 +170,24 @@ import("./routes")
       return res.status(status).json({ message });
     });
 
-    return import("./static").then(({ serveStatic }) => {
-      try {
-        serveStatic(app);
-        console.log("Static serving configured");
-      } catch (err: any) {
-        console.error("Static serving failed:", err.message);
-      }
-    });
+    if (process.env.NODE_ENV === "development") {
+      return import("./vite").then(({ setupVite }) => {
+        return setupVite(httpServer, app).then(() => {
+          console.log("Vite dev middleware configured");
+        });
+      }).catch((err: any) => {
+        console.error("Vite setup failed:", err.message);
+      });
+    } else {
+      return import("./static").then(({ serveStatic }) => {
+        try {
+          serveStatic(app);
+          console.log("Static serving configured");
+        } catch (err: any) {
+          console.error("Static serving failed:", err.message);
+        }
+      });
+    }
   })
   .catch((err: any) => {
     console.error("[Server] Route/static setup failed:", err.message ?? err);

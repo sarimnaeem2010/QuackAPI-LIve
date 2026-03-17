@@ -1,31 +1,42 @@
-# QuackAPI - WhatsApp API SaaS Platform
+# QuackAPI Workspace
 
-## Overview
-A full-stack WhatsApp API SaaS platform that allows users to connect WhatsApp devices via QR codes, send messages (text, images, PDFs) through a REST API, and manage webhooks and payments.
+This workspace contains the QuackAPI project — a WhatsApp API SaaS platform.
+
+## Project Location
+All application code lives in the `QuackAPI/` subdirectory.
+
+## Running the App
+The root `package.json` proxies commands to `QuackAPI/`:
+- `npm run dev` — starts the dev server (runs `cd QuackAPI && npm run dev`)
+- `npm run build` — builds for production
+- `npm run start` — starts production build
+
+The workflow is configured to run `cd QuackAPI && npm run dev` on port 5000.
 
 ## Architecture
-- **Frontend**: React + Vite + Tailwind CSS + shadcn/ui (in `QuackAPI/client/`)
-- **Backend**: Express.js + TypeScript (in `QuackAPI/server/`)
-- **Database**: Supabase PostgreSQL with Drizzle ORM (schema in `QuackAPI/shared/`)
+- **Frontend**: React + Vite + Tailwind CSS + shadcn/ui (`QuackAPI/client/`)
+- **Backend**: Express.js + TypeScript (`QuackAPI/server/`)
+- **Database**: PostgreSQL with Drizzle ORM (`QuackAPI/shared/schema.ts`)
 - **WhatsApp**: @whiskeysockets/baileys for multi-device protocol
 - **Auth**: JWT-based authentication
 
-## Running
-- `cd QuackAPI && npm run dev` — starts the dev server on port 5000
-- `cd QuackAPI && npm run db:push` — push schema changes to the database
+## Environment Variables
+- `DATABASE_URL` — Replit's built-in PostgreSQL (auto-provisioned)
+- `SUPABASE_DATABASE_URL` — Optional Supabase override (takes priority if set)
+- `JWT_SECRET` — Secret for JWT token signing
+- `SESSION_SECRET` — Session secret
+- `STRIPE_SECRET_KEY` — Stripe payments
+- `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET` — PayPal payments
+- `SMTP_*` — Email configuration for Nodemailer
 
-## Key Environment Variables
-- `SUPABASE_DATABASE_URL` — Supabase PostgreSQL pooler connection string (takes priority over DATABASE_URL)
-- `DATABASE_URL` — Fallback PostgreSQL connection string (auto-provisioned by Replit)
-- `JWT_SECRET` — secret for JWT token signing
-- `SESSION_SECRET` — session secret
+## Database
+- Replit's built-in PostgreSQL is provisioned and connected via `DATABASE_URL`
+- Schema is managed with Drizzle ORM: `cd QuackAPI && npm run db:push`
 
-## Project Structure
-```
-QuackAPI/
-├── client/src/       — React frontend
-├── server/           — Express backend
-├── shared/           — Shared schemas and types
-├── script/           — Build scripts
-└── drizzle.config.ts — Drizzle ORM config
-```
+## Key Files
+- `QuackAPI/server/index.ts` — Entry point, starts on port 5000
+- `QuackAPI/server/routes.ts` — All API route definitions
+- `QuackAPI/server/baileys.ts` — WhatsApp integration logic
+- `QuackAPI/server/db.ts` — Database connection
+- `QuackAPI/shared/schema.ts` — Drizzle schema definitions
+- `QuackAPI/vite.config.ts` — Vite configuration
