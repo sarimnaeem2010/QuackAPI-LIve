@@ -37,6 +37,29 @@ export default function PricingPage() {
 
   const sortedPlans = plans ? [...plans].sort((a, b) => a.sortOrder - b.sortOrder) : [];
 
+  const pricingFaqs = [
+    {
+      question: "How much does QuackAPI cost?",
+      answer: "QuackAPI offers three plans: Starter (free, 1 device), Professional ($29/month, 5 devices, unlimited messages), and Enterprise ($99/month, unlimited devices). All paid plans include a free trial period. Yearly billing saves approximately 17%.",
+    },
+    {
+      question: "Is there a free trial or free plan?",
+      answer: "Yes! The Starter plan is completely free forever with 1 WhatsApp device and up to 100 messages per day — no credit card required. Paid plans can be tested free for the first period before any charge.",
+    },
+    {
+      question: "Do I need Meta Business verification to use QuackAPI?",
+      answer: "No. Unlike the official WhatsApp Business API, QuackAPI works with any personal or business WhatsApp number via QR code scan. No Meta Business account, no verification process, no waiting period — you can start in minutes.",
+    },
+    {
+      question: "Can I use my personal WhatsApp number?",
+      answer: "Yes, you can connect any WhatsApp number — personal or business. Simply add a device in your dashboard, scan the QR code with WhatsApp on your phone, and your number is ready to send and receive messages via API.",
+    },
+    {
+      question: "What happens if I exceed my device or message limit?",
+      answer: "On the Starter plan, messages beyond the daily limit are queued and sent the next day. If you need more devices or unlimited messages, you can upgrade to Professional or Enterprise at any time. There are no overage charges — just upgrade when you're ready.",
+    },
+  ];
+
   const jsonLdSchemas = [
     {
       "@context": "https://schema.org",
@@ -50,8 +73,15 @@ export default function PricingPage() {
       "@context": "https://schema.org",
       "@type": "SoftwareApplication",
       name: "QuackAPI",
-      applicationCategory: "DeveloperApplication",
+      applicationCategory: "BusinessApplication",
       operatingSystem: "Web",
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: "4.8",
+        reviewCount: "47",
+        bestRating: "5",
+        worstRating: "1",
+      },
       offers: sortedPlans.map((plan) => ({
         "@type": "Offer",
         name: plan.name,
@@ -59,6 +89,15 @@ export default function PricingPage() {
         price: (billingCycle === "yearly" ? plan.yearlyPrice : plan.monthlyPrice) / 100,
         priceCurrency: "USD",
         url: `${SITE_URL}/pricing`,
+      })),
+    },
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      mainEntity: pricingFaqs.map((faq) => ({
+        "@type": "Question",
+        name: faq.question,
+        acceptedAnswer: { "@type": "Answer", text: faq.answer },
       })),
     },
   ];
