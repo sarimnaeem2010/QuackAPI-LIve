@@ -898,7 +898,19 @@ export async function registerRoutes(
     }
   });
 
+  function resolvePayPalCredentials(settings: any) {
+    const mode = (settings.paypalMode || paypalConfig.mode) as "sandbox" | "live";
+    const sandboxClientId = settings.paypalSandboxClientId || paypalConfig.sandboxClientId || "";
+    const sandboxClientSecret = settings.paypalSandboxClientSecret || paypalConfig.sandboxClientSecret || "";
+    const liveClientId = settings.paypalLiveClientId || paypalConfig.liveClientId || "";
+    const liveClientSecret = settings.paypalLiveClientSecret || paypalConfig.liveClientSecret || "";
+    const clientId = mode === "live" ? liveClientId : sandboxClientId;
+    const clientSecret = mode === "live" ? liveClientSecret : sandboxClientSecret;
+    return { mode, clientId, clientSecret, sandboxClientId, sandboxClientSecret, liveClientId, liveClientSecret };
+  }
+
   function buildSettingsResponse(settings: any) {
+    const pp = resolvePayPalCredentials(settings);
     return {
       id: settings.id,
       requireEmailOtp: settings.requireEmailOtp,
@@ -907,11 +919,11 @@ export async function registerRoutes(
       smtpUser: settings.smtpUser || smtpConfig.user,
       smtpPassSet: !!(settings.smtpPass || smtpConfig.pass),
       notificationEmail: settings.notificationEmail || notificationConfig.email || null,
-      paypalMode: paypalConfig.mode,
-      paypalSandboxClientId: paypalConfig.sandboxClientId || null,
-      paypalSandboxSecretSet: !!paypalConfig.sandboxClientSecret,
-      paypalLiveClientId: paypalConfig.liveClientId || null,
-      paypalLiveSecretSet: !!paypalConfig.liveClientSecret,
+      paypalMode: pp.mode,
+      paypalSandboxClientId: pp.sandboxClientId || null,
+      paypalSandboxSecretSet: !!pp.sandboxClientSecret,
+      paypalLiveClientId: pp.liveClientId || null,
+      paypalLiveSecretSet: !!pp.liveClientSecret,
       paypalClientId: null,
       paypalSecretSet: false,
     };
