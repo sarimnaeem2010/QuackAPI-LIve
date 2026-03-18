@@ -2604,7 +2604,7 @@ app.post('/webhooks/shopify/order-created', async (req, res) => {
         content: [
           "Most WhatsApp WooCommerce plugins cost $50–200/year and add bloat to your WordPress installation. QuackAPI lets you integrate directly using WooCommerce action hooks — a few lines of PHP in your theme's functions.php or a tiny custom plugin.",
           "This approach gives you full control, no recurring plugin fees, and works on any WordPress hosting. The only external cost is [QuackAPI's subscription](/pricing) (free tier available).",
-          "For similar integration with Shopify, see our [WhatsApp Shopify integration guide](/blog/whatsapp-api-shopify-integration). For bulk messaging beyond order notifications, see [sending bulk WhatsApp messages](/blog/send-bulk-whatsapp-messages).",
+          "Before building, review the [WhatsApp messaging best practices guide](/blog/whatsapp-api-messaging-best-practices) for compliance tips and anti-ban guidelines. For webhook event handling and delivery receipts, see the [WhatsApp webhook setup guide](/blog/whatsapp-webhook-setup-guide). For a Shopify equivalent, see our [WhatsApp Shopify integration guide](/blog/whatsapp-api-shopify-integration).",
         ],
       },
       {
