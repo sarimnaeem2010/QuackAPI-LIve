@@ -2162,12 +2162,42 @@ def on_cart_abandoned(cart):
         ],
       },
       {
+        heading: "WhatsApp API Pricing Comparison Table (2026)",
+        headingLevel: "h2",
+        content: [
+          "The table below compares the most popular WhatsApp API providers on pricing, limits, and key capabilities to help you choose the right plan for your volume and budget.",
+        ],
+        table: {
+          headers: ["Provider", "Free Tier", "Entry Paid Plan", "Per-Message Fee", "Devices", "Meta Approval?"],
+          rows: [
+            ["QuackAPI Starter", "100 msg/day, 1 device", "—", "None", "1", "No"],
+            ["QuackAPI Professional", "—", "$29/month", "None", "5", "No"],
+            ["QuackAPI Enterprise", "—", "$99/month", "None", "Unlimited", "No"],
+            ["Meta Cloud API", "1,000 service conv/mo", "Meta fee only", "$0.01–$0.05/conv", "N/A (Business ID)", "Yes"],
+            ["Twilio WhatsApp", "None", "~$15/month base", "$0.005–$0.05/msg", "N/A (Business ID)", "Yes"],
+            ["UltraMsg", "None", "$14/month", "None", "1", "No"],
+            ["Evolution API (self-host)", "Unlimited (self-hosted)", "Free", "None", "Unlimited", "No"],
+          ],
+        },
+      },
+      {
         heading: "Hidden Costs to Watch For",
         headingLevel: "h2",
         content: [
           "With Meta API providers: conversation fees stack up quickly during marketing campaigns. A single blast to 10,000 contacts in the US costs ~$250 in Meta fees alone, before BSP markup.",
           "With self-hosted solutions (Evolution API): server costs, SSL certificate management, database backups, monitoring, and software update time are real costs that rarely show up in comparisons.",
           "With flat-rate providers: watch the message/day limits. Sending 1,001 messages on a 1,000/day plan may throttle or block your account depending on the provider. QuackAPI queues excess messages for the next day.",
+        ],
+      },
+      {
+        heading: "ROI: When Does WhatsApp API Pay for Itself?",
+        headingLevel: "h2",
+        content: [
+          "For e-commerce: a store with 200 orders/month and a 70% cart abandonment rate has ~140 abandoned carts. Recovering 15% of those via WhatsApp at an average order value of $85 generates $1,785 in additional revenue — against a $29/month API cost. The ROI is over 60x.",
+          "For customer support: a support team handling 500 tickets/month via WhatsApp instead of phone calls reduces average handle time by 40% because agents can manage multiple conversations simultaneously. If each agent handles 20% more tickets per day, the team effectively gains 1 additional FTE of capacity.",
+          "For appointment-based businesses: WhatsApp appointment reminders reduce no-shows by 30–50%. For a dentist with 200 appointments/month at $150 each and a 20% no-show rate, reducing no-shows by half saves 20 appointments — $3,000/month in recovered revenue against $29 API cost.",
+          "For SaaS onboarding: automated WhatsApp sequences for new trial users that prompt feature adoption and offer live support convert 12–18% higher than email-only onboarding flows, according to internal data from QuackAPI customers on the Professional plan.",
+          "See [WhatsApp automation use cases](/use-cases/automation) for more ROI examples across industries.",
         ],
       },
       {
