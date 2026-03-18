@@ -24,6 +24,10 @@ export async function registerRoutes(
 
   app.get("/health", (_req, res) => res.status(200).json({ status: "ok" }));
 
+  app.get("/api/config", (_req, res) => {
+    res.json({ appUrl: process.env.APP_URL || "https://quackapi.com" });
+  });
+
   app.use((req, res, next) => {
     if (req.hostname === "www.quackapi.com") {
       return res.redirect(301, `https://quackapi.com${req.originalUrl}`);
