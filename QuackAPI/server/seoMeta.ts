@@ -262,6 +262,7 @@ export function resolveRouteMeta(pathname: string): PageMeta | null {
 }
 
 export function injectSeoMeta(html: string, pathname: string): string {
+  if (pathname.startsWith("/api/")) return html;
   const meta = resolveRouteMeta(pathname);
   if (!meta) return html;
 
