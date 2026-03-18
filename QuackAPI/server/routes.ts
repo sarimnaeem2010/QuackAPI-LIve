@@ -977,7 +977,8 @@ export async function registerRoutes(
 
   app.post("/api/admin/paypal/test", requireAdmin, async (_req: any, res) => {
     try {
-      const { mode, clientId, clientSecret } = getPayPalCredentials();
+      const settings = await storage.getAdminSettings();
+      const { mode, clientId, clientSecret } = resolvePayPalCredentials(settings);
       if (!clientId || !clientSecret) {
         return res.status(400).json({ success: false, error: `PayPal ${mode} credentials are not configured` });
       }
