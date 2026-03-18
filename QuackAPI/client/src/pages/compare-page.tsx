@@ -7,6 +7,34 @@ import SEO from "@/components/seo";
 import Navbar from "@/components/navbar";
 import { SITE_URL } from "@/lib/config";
 
+function CompareTopBanner({ competitorName }: { competitorName: string }) {
+  return (
+    <div className="bg-primary/10 border-b border-primary/20" data-testid="compare-top-banner">
+      <div className="max-w-5xl mx-auto px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
+        <p className="text-sm font-medium text-foreground">
+          Looking for a {competitorName} alternative? QuackAPI starts free — no Meta approval needed.
+        </p>
+        <div className="flex items-center gap-3 flex-shrink-0">
+          <a
+            href="/pricing"
+            className="text-sm text-muted-foreground hover:text-foreground transition-colors"
+            data-testid="banner-link-pricing"
+          >
+            See Pricing
+          </a>
+          <a
+            href="/auth"
+            className="inline-flex items-center gap-1.5 bg-primary text-primary-foreground text-sm font-semibold px-4 py-1.5 rounded-lg hover:opacity-90 transition-opacity"
+            data-testid="banner-link-signup"
+          >
+            Switch to QuackAPI →
+          </a>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 interface ComparisonRow {
   feature: string;
   quackapi: string;
