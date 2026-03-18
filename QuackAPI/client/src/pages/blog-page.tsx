@@ -2417,7 +2417,7 @@ scheduler.start()`,
         headingLevel: "h2",
         content: [
           "The integration works via Shopify Webhooks → your server → QuackAPI. Shopify fires an HTTP webhook to your server whenever an order is placed, shipped, or cancelled, and whenever a cart is abandoned. Your server receives the webhook, extracts the customer's phone number, and calls QuackAPI to send a WhatsApp message.",
-          "You need: a QuackAPI account (free tier works for testing), a connected WhatsApp device, and a server to receive Shopify webhooks (Node.js, Python, PHP — all work). The [QuackAPI REST API](/docs) makes sending the message a single HTTP POST request.",
+          "You need: a QuackAPI account (free tier works for testing), a connected WhatsApp device, and a server to receive Shopify webhooks (Node.js, Python, PHP — all work). The [QuackAPI REST API](/docs) makes sending the message a single HTTP POST request. Before going live, review the [WhatsApp messaging best practices guide](/blog/whatsapp-api-messaging-best-practices) to minimize ban risk, and read the [WhatsApp webhook setup guide](/blog/whatsapp-webhook-setup-guide) for advanced event handling.",
         ],
       },
       {
