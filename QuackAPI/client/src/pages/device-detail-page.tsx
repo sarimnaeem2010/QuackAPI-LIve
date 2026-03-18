@@ -152,7 +152,7 @@ export default function DeviceDetailPage() {
 
 function DeviceInfoBar({ device, apiKey }: { device: any; apiKey: string }) {
   const [copied, setCopied] = useState<string | null>(null);
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const baseUrl = useAppUrl();
 
   const copyToClipboard = (text: string, label: string) => {
     navigator.clipboard.writeText(text);
