@@ -251,6 +251,7 @@ function ComparisonView({ data }: { data: ComparisonData }) {
         jsonLd={[breadcrumbJsonLd, faqJsonLd]}
       />
       <Navbar />
+      <CompareTopBanner competitorName={data.name} />
 
       <div className="max-w-5xl mx-auto px-6 py-8">
         <nav className="flex items-center gap-2 text-sm text-muted-foreground mb-8 flex-wrap" aria-label="Breadcrumb" data-testid="breadcrumb">
