@@ -2242,15 +2242,24 @@ function ArticlePage({ slug }: { slug: string }) {
                 )}
                 {section.content.map((paragraph, pIdx) => (
                   <p key={pIdx} className="text-muted-foreground leading-relaxed mb-4">
-                    {paragraph.split(/(`[^`]+`)/).map((part, partIdx) =>
-                      part.startsWith("`") && part.endsWith("`") ? (
-                        <code key={partIdx} className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground">
-                          {part.slice(1, -1)}
-                        </code>
-                      ) : (
-                        <span key={partIdx}>{part}</span>
-                      )
-                    )}
+                    {paragraph.split(/(`[^`]+`|\[[^\]]+\]\([^)]+\))/).map((part, partIdx) => {
+                      if (part.startsWith("`") && part.endsWith("`")) {
+                        return (
+                          <code key={partIdx} className="bg-muted px-1.5 py-0.5 rounded text-sm font-mono text-foreground">
+                            {part.slice(1, -1)}
+                          </code>
+                        );
+                      }
+                      const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+                      if (linkMatch) {
+                        return (
+                          <a key={partIdx} href={linkMatch[2]} className="text-primary underline hover:no-underline">
+                            {linkMatch[1]}
+                          </a>
+                        );
+                      }
+                      return <span key={partIdx}>{part}</span>;
+                    })}
                   </p>
                 ))}
                 {section.code && (
