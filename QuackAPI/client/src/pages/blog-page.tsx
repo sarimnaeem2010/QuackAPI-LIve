@@ -2361,6 +2361,27 @@ scheduler.start()`,
         },
       },
       {
+        heading: "High-Converting Bulk Message Templates",
+        headingLevel: "h2",
+        content: [
+          "The message template you use dramatically affects delivery, open, and conversion rates. Generic broadcast messages get reported and ignored. Personalized, relevant, well-timed messages convert 3–5x better.",
+          "Abandoned cart recovery template (highest ROI): 'Hi {first_name}! You left {product} in your cart. It's still available for the next 24 hours: {cart_url}. Reply HELP for assistance.' This template converts at 25–35% — far higher than email equivalents. Use the [QuackAPI API](/docs) to send this immediately when your cart abandonment webhook fires.",
+          "Order confirmation template: 'Hi {first_name}! Order #{order_id} confirmed. Total: {currency}{amount}. We'll message you when it ships! — {store_name}.' Customers actually read these — 98% open rate means nearly every confirmation is seen.",
+          "Promotional announcement template: 'Hi {first_name}! {discount}% off today only for members. Use code {promo_code} at checkout: {link}. Reply STOP to unsubscribe.' Always include an opt-out mechanism. This alone reduces your report rate by 60% versus messages without it.",
+          "Reactivation campaign template: 'Hi {first_name}! It's been 30 days since your last visit. Here's 15% off to welcome you back: {link}. Expires in 48 hours.' Reactivation campaigns via WhatsApp see 20–30% conversion rates versus 3–5% via email.",
+        ],
+      },
+      {
+        heading: "Monitoring and Rate Limit Management",
+        headingLevel: "h2",
+        content: [
+          "Configure a QuackAPI webhook to receive delivery receipts for every sent message. A delivery receipt tells you whether the message was delivered to the device and read. Track these metrics: delivery rate (target 95%+), read rate (WhatsApp averages 80%+), and reply rate.",
+          "If delivery rate drops below 90%, slow down your send rate — WhatsApp may be throttling your number. If you see a spike in undelivered messages, check whether the recipient numbers are valid WhatsApp accounts before sending. See [WhatsApp notification use cases](/use-cases/notifications) for monitoring dashboard examples.",
+          "For the QuackAPI Professional plan (5 devices, 1,000 msg/day/device), the maximum daily throughput is 5,000 messages. Spread sends evenly across devices using round-robin selection in your code. If you exceed the daily limit, QuackAPI queues the overflow for the following day rather than dropping messages — this protects your campaigns without data loss.",
+          "Set up alerting in your application for failed sends. Log each API response and alert your team if the failure rate exceeds 5% over a 30-minute window. This indicates a potential account issue that needs prompt attention.",
+        ],
+      },
+      {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
         content: [],
