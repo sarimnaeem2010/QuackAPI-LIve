@@ -628,7 +628,8 @@ export async function registerRoutes(
       const { orderId, paymentId, plan, billingCycle } = req.body;
       if (!orderId) return res.status(400).json({ message: "orderId is required" });
 
-      const { mode, clientId, clientSecret } = getPayPalCredentials();
+      const settings = await storage.getAdminSettings();
+      const { mode, clientId, clientSecret } = resolvePayPalCredentials(settings);
       if (!clientId || !clientSecret) {
         return res.status(400).json({ message: `PayPal ${mode} credentials are not configured` });
       }
