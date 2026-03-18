@@ -3049,6 +3049,30 @@ if (text.includes('urgent') || text.includes('emergency')) {
         ],
       },
       {
+        heading: "Escalation Workflow Design",
+        headingLevel: "h2",
+        content: [
+          "Not every support request can be automated. Design your escalation workflow before you launch, so customers always reach a human when needed. Here is a proven 3-tier escalation framework for WhatsApp support:",
+          "Tier 1 — Automated response (0–30 seconds): Your webhook server immediately replies with a keyword-matched answer or a structured menu. Example: 'Hi! I'm a QuackDuck assistant. Reply: 1 for order status, 2 for returns, 3 for billing, 4 to speak with a human.'",
+          "Tier 2 — Senior bot or FAQ lookup (30 seconds–2 minutes): For requests that don't match keywords, query your knowledge base or FAQ database and return the best match. If confidence is below 80%, escalate to Tier 3. This tier handles approximately 20% of contacts.",
+          "Tier 3 — Live agent handoff (2–10 minute response): Create a ticket in your CRM and notify the appropriate agent via Slack or email. The agent replies directly through your support platform, which sends the message via QuackAPI. The customer sees a seamless WhatsApp conversation.",
+          "Key design principle: never leave a customer in limbo. If escalation takes more than 5 minutes, send an intermediate message: 'Thanks for your patience, {name}. A member of our team will be with you shortly.' This single message reduces CSAT impact from long waits by 40%.",
+          "Track escalation rates per tier over time. If Tier 1 is escalating more than 40% of contacts, your keyword library needs expansion. If Tier 3 wait times exceed 10 minutes during business hours, you need more agent capacity. See [WhatsApp customer support use cases](/use-cases/customer-support) for real-world benchmarks.",
+        ],
+      },
+      {
+        heading: "WhatsApp Support Metrics and Reporting",
+        headingLevel: "h2",
+        content: [
+          "Measure the right metrics from day one to prove ROI and continuously improve your WhatsApp support operation. The five most important metrics are: first response time (FRT), resolution time, CSAT score, automation rate, and cost per ticket.",
+          "First response time target: under 3 minutes for automated responses, under 10 minutes for human responses during business hours. WhatsApp sets a high expectation — customers expect faster replies than email. Track FRT per channel and per agent.",
+          "Resolution time: measure from first customer message to marked-resolved. WhatsApp support should resolve 80% of tickets in under 1 hour versus 80% in under 24 hours for email. Any ticket open longer than 4 hours should trigger an escalation alert.",
+          "Automation rate: the percentage of contacts resolved without human intervention. A healthy automated WhatsApp support system should reach 40–60% automation within 3 months of launch. Above 60% often means you are deflecting contacts that would benefit from human touch.",
+          "Cost per ticket: total support cost divided by tickets resolved. WhatsApp typically reduces cost per ticket by 30–50% versus phone support because agents handle more concurrent conversations. Track this monthly to demonstrate ROI to stakeholders.",
+          "Use QuackAPI's webhook delivery receipts and the [WhatsApp webhook guide](/blog/whatsapp-webhook-setup-guide) to capture the data needed for these reports. Store raw events in your database and build a simple dashboard in your preferred BI tool.",
+        ],
+      },
+      {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
         content: [],
