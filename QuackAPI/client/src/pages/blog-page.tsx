@@ -2148,7 +2148,7 @@ def on_cart_abandoned(cart):
         headingLevel: "h2",
         content: [
           "Yes. QuackAPI offers a permanent free Starter plan — not a trial — with 100 messages/day and 1 device. This is enough to build and test your integration, run low-volume use cases like OTP verification, or send alerts to a small team.",
-          "Meta also offers free service conversations (1,000/month) for inbound-initiated conversations, but this requires completing the Meta Business verification process first.",
+          "Meta also offers free service conversations (1,000/month) for inbound-initiated conversations, but this requires completing the Meta Business verification process first. If you want to skip the Meta approval process entirely, see our [WhatsApp API without Meta approval guide](/blog/whatsapp-api-without-meta-approval). For a comparison of all free and low-cost options, see [WhatsApp API free alternatives](/blog/whatsapp-api-free-alternatives).",
           "Evolution API is free open-source software with no message limits, but you pay for your own server (typically $5–20/month for a VPS) and handle all infrastructure yourself.",
         ],
       },
