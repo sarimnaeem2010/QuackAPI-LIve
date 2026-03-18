@@ -2064,11 +2064,12 @@ def on_cart_abandoned(cart):
       {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
-        content: [
-          "Q: Is there a free WhatsApp API? Yes — QuackAPI offers a permanent free Starter plan with 100 messages/day and 1 device. No credit card required. See our [WhatsApp API pricing guide](/blog/whatsapp-api-pricing-2026) for the full breakdown.",
-          "Q: Do I need a Meta Business account? Not with QuackAPI, UltraMsg, or Evolution API. These providers use the WhatsApp Web protocol, so you connect any personal or business WhatsApp number via QR code. Twilio, WATI, and AiSensy require Meta Business verification.",
-          "Q: How reliable are non-official WhatsApp API providers? QuackAPI, UltraMsg, and Evolution API all use the same WhatsApp Web protocol your browser uses. Reliability depends on the provider's infrastructure. QuackAPI maintains 99.9% uptime on its Enterprise plan.",
-          "Q: Can I send bulk messages via WhatsApp API? Yes, but you should follow anti-spam best practices to avoid account bans. Read our [bulk WhatsApp messaging guide](/blog/send-bulk-whatsapp-messages) for safe limits and best practices.",
+        content: [],
+        faq: [
+          { question: "Is there a free WhatsApp API?", answer: "Yes — QuackAPI offers a permanent free Starter plan with 100 messages/day and 1 device. No credit card required. See our [WhatsApp API pricing guide](/blog/whatsapp-api-pricing-2026) for the full breakdown." },
+          { question: "Do I need a Meta Business account?", answer: "Not with QuackAPI, UltraMsg, or Evolution API. These providers use the WhatsApp Web protocol, so you connect any personal or business WhatsApp number via QR code. Twilio, WATI, and AiSensy require Meta Business verification." },
+          { question: "How reliable are non-official WhatsApp API providers?", answer: "QuackAPI, UltraMsg, and Evolution API all use the same WhatsApp Web protocol your browser uses. Reliability depends on the provider's infrastructure. QuackAPI maintains 99.9% uptime on its Enterprise plan. See [WhatsApp automation use cases](/use-cases/automation) for real-world deployments." },
+          { question: "Can I send bulk messages via WhatsApp API?", answer: "Yes, but you should follow anti-spam best practices to avoid account bans. Read our [bulk WhatsApp messaging guide](/blog/send-bulk-whatsapp-messages) for safe limits and best practices." },
         ],
       },
     ],
