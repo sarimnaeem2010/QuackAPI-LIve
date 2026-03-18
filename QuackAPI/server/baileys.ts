@@ -225,6 +225,7 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           try {
             const qrDataUrl = await QRCode.toDataURL(qr, { width: 300, margin: 2 });
             await storage.updateDeviceStatusAndQR(deviceId, "pending", qrDataUrl);
+            qrGeneratedDevices.add(deviceId);
             console.log(`[Baileys] QR code generated for device ${deviceId}`);
           } catch (err) {
             console.error(`[Baileys] QR generation error for device ${deviceId}:`, err);
