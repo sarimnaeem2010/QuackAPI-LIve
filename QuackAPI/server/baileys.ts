@@ -330,8 +330,6 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           const prevDurationMs = prevConnectedAt ? (Date.now() - prevConnectedAt) : Infinity;
           if (prevDurationMs >= STABLE_CONNECTION_MS) {
             reconnectAttempts.delete(deviceId);
-            // Reset the consecutive 440 counter once a connection is stable.
-            consecutive440s.delete(deviceId);
           }
 
           console.log(`[Baileys] Device ${deviceId} connected! (autoReconnect=${wasAutoReconnect})`);
