@@ -34,6 +34,12 @@ const STABLE_CONNECTION_MS = 30_000;
 // Used to enforce an escalating backoff to break out of conflict loops.
 const consecutive440s: Map<number, number> = new Map();
 
+// Devices that connected via QR scan (not session restore). Used to gate connect emails.
+const qrGeneratedDevices = new Set<number>();
+// Pending disconnect notification timers — cancelled if device reconnects in time.
+const pendingDisconnectNotifications: Map<number, ReturnType<typeof setTimeout>> = new Map();
+const DISCONNECT_EMAIL_DELAY_MS = 5 * 60 * 1000; // 5 minutes
+
 const RETRY_WINDOW_MS = 5 * 60 * 1000;
 
 interface RetryEntry {
