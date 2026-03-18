@@ -2300,11 +2300,12 @@ scheduler.start()`,
       {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
-        content: [
-          "Q: How many WhatsApp messages can I send per day? QuackAPI's Professional plan allows 1,000 messages/day per device. With 5 devices, that is 5,000 messages/day. Enterprise allows unlimited sends.",
-          "Q: Will WhatsApp ban my account for bulk messaging? Only if you send to non-opted-in recipients, send at inhuman speeds, or receive high report rates. Follow the best practices above and the risk is low.",
-          "Q: Can I send the same message to 10,000 people? Yes, but spread it over multiple days for new accounts. Established accounts with good engagement history can send more per day.",
-          "Q: Do I need separate WhatsApp numbers for bulk sends? Using multiple numbers (devices) distributes load and reduces per-device volume. The [Professional plan at $29/month](/pricing) includes 5 devices — enough for most bulk campaigns.",
+        content: [],
+        faq: [
+          { question: "How many WhatsApp messages can I send per day?", answer: "QuackAPI's Professional plan allows 1,000 messages/day per device. With 5 devices, that is 5,000 messages/day. Enterprise allows unlimited sends. See [WhatsApp notification use cases](/use-cases/notifications) for typical volume benchmarks." },
+          { question: "Will WhatsApp ban my account for bulk messaging?", answer: "Only if you send to non-opted-in recipients, send at inhuman speeds, or receive high report rates. Follow the best practices above and the risk is low." },
+          { question: "Can I send the same message to 10,000 people?", answer: "Yes, but spread it over multiple days for new accounts. Established accounts with good engagement history can send more per day." },
+          { question: "Do I need separate WhatsApp numbers for bulk sends?", answer: "Using multiple numbers (devices) distributes load and reduces per-device volume. The [Professional plan at $29/month](/pricing) includes 5 devices — enough for most bulk campaigns." },
         ],
       },
     ],
