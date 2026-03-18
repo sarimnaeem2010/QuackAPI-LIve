@@ -243,6 +243,15 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
               statusCode === DisconnectReason.timedOut ||
               statusCode == null);
 
+          // Check if the just-ended connection was stable (lasted >= 30s).
+          // If so, reset the consecutive 440 counter — the conflict that caused previous
+          // 440s is resolved. We measure from the last recorded open time to now (close time).
+          const connOpenedAt = lastConnectedAt.get(deviceId);
+          const connDurationMs = connOpenedAt ? (Date.now() - connOpenedAt) : 0;
+          if (connDurationMs >= STABLE_CONNECTION_MS) {
+            consecutive440s.delete(deviceId);
+          }
+
           if (is440Conflict) {
             consecutive440s.set(deviceId, (consecutive440s.get(deviceId) ?? 0) + 1);
           }
