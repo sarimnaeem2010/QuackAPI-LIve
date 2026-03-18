@@ -3189,6 +3189,28 @@ function ArticlePage({ slug }: { slug: string }) {
                     })}
                   </p>
                 ))}
+                {section.table && (
+                  <div className="overflow-x-auto mt-4 rounded-lg border border-border/50">
+                    <table className="w-full text-sm">
+                      <thead>
+                        <tr className="bg-muted/60 border-b border-border/50">
+                          {section.table.headers.map((h, hIdx) => (
+                            <th key={hIdx} className="text-left px-4 py-3 font-semibold text-foreground whitespace-nowrap">{h}</th>
+                          ))}
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {section.table.rows.map((row, rIdx) => (
+                          <tr key={rIdx} className={rIdx % 2 === 0 ? "bg-background" : "bg-muted/20"}>
+                            {row.map((cell, cIdx) => (
+                              <td key={cIdx} className="px-4 py-3 text-muted-foreground border-b border-border/30 last:border-b-0">{cell}</td>
+                            ))}
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                )}
                 {section.code && (
                   <CodeBlock code={section.code.snippet} language={section.code.language} />
                 )}
