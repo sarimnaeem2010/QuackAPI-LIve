@@ -555,7 +555,8 @@ export async function registerRoutes(
   // PayPal: create order and return approval URL
   app.get("/api/paypal/client-id", async (_req: any, res) => {
     try {
-      const { mode, clientId } = getPayPalCredentials();
+      const settings = await storage.getAdminSettings();
+      const { mode, clientId } = resolvePayPalCredentials(settings);
       if (!clientId) {
         return res.status(503).json({ message: `PayPal ${mode} credentials are not configured` });
       }
