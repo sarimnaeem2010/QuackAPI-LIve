@@ -3188,7 +3188,11 @@ function ArticlePage({ slug }: { slug: string }) {
                           <ChevronRight className="w-4 h-4 flex-shrink-0 transition-transform group-open:rotate-90 text-muted-foreground" />
                         </summary>
                         <div className="px-4 pb-4 pt-2 text-sm text-muted-foreground leading-relaxed border-t border-border/30">
-                          {item.answer}
+                          {item.answer.split(/(\[[^\]]+\]\([^)]+\))/).map((part, idx) => {
+                            const linkMatch = part.match(/^\[([^\]]+)\]\(([^)]+)\)$/);
+                            if (linkMatch) return <a key={idx} href={linkMatch[2]} className="text-primary underline hover:no-underline">{linkMatch[1]}</a>;
+                            return <span key={idx}>{part}</span>;
+                          })}
                         </div>
                       </details>
                     ))}
