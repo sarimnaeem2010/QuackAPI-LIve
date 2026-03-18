@@ -47,6 +47,15 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } f
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Message } from "@shared/schema";
 
+function useAppUrl(): string {
+  const { data } = useQuery<{ appUrl: string }>({
+    queryKey: ["/api/config"],
+    queryFn: () => fetch("/api/config").then((r) => r.json()),
+    staleTime: Infinity,
+  });
+  return data?.appUrl ?? "https://quackapi.com";
+}
+
 const sendTestSchema = z.object({
   toNumber: z.string().min(1, "Phone number is required"),
   content: z.string().default(""),
