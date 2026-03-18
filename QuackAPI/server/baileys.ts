@@ -276,6 +276,12 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
           if (isLoggedOut) {
             console.log(`[Baileys] Device ${deviceId} was logged out by WhatsApp. Clearing session.`);
             reconnectAttempts.delete(deviceId);
+            qrGeneratedDevices.delete(deviceId);
+            const pendingTimer = pendingDisconnectNotifications.get(deviceId);
+            if (pendingTimer) {
+              clearTimeout(pendingTimer);
+              pendingDisconnectNotifications.delete(deviceId);
+            }
             const sessionDir = getSessionPath(deviceId);
             if (fs.existsSync(sessionDir)) {
               fs.rmSync(sessionDir, { recursive: true, force: true });
@@ -291,6 +297,30 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
               }
             }
             return;
+          }
+
+          // For non-logout disconnects, schedule a delayed email alert.
+          // If the device reconnects before the delay expires the timer is cancelled.
+          if (!pendingDisconnectNotifications.has(deviceId)) {
+            const timer = setTimeout(async () => {
+              pendingDisconnectNotifications.delete(deviceId);
+              try {
+                const device = await storage.getDevice(deviceId);
+                if (!device) return;
+                const currentDevice = await storage.getDevice(deviceId);
+                if (currentDevice?.status === "connected") return;
+                const user = await storage.getUser(device.userId);
+                if (user?.email) {
+                  sendDeviceDisconnectNotification(user.email, user.name, device.deviceName).catch((err) =>
+                    console.error("[Email] Disconnect alert failed:", err)
+                  );
+                  console.log(`[Baileys] Sent disconnect alert email for device ${deviceId} after ${DISCONNECT_EMAIL_DELAY_MS / 1000}s offline`);
+                }
+              } catch (err) {
+                console.error(`[Baileys] Failed to send disconnect alert for device ${deviceId}:`, err);
+              }
+            }, DISCONNECT_EMAIL_DELAY_MS);
+            pendingDisconnectNotifications.set(deviceId, timer);
           }
 
           const attempts = reconnectAttempts.get(deviceId) || 0;
