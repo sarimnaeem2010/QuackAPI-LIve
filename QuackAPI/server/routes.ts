@@ -13,7 +13,7 @@ import { eq } from "drizzle-orm";
 import jwt from "jsonwebtoken";
 import { getStripe, isStripeConfigured, STRIPE_PRICE_MAP } from "./stripe";
 import { sendWelcomeEmail, sendEmailVerificationOTP, sendPasswordResetOTP, sendAdminRegistrationNotification } from "./email";
-import { getPayPalCredentials, notificationConfig, smtpConfig, paypalConfig } from "./config";
+import { notificationConfig, smtpConfig, paypalConfig } from "./config";
 
 const JWT_SECRET = process.env.JWT_SECRET || "supersecret";
 
