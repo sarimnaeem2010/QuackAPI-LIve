@@ -2868,6 +2868,30 @@ for sub in subscribers:
         ],
       },
       {
+        heading: "Building Your WhatsApp Subscriber List",
+        headingLevel: "h2",
+        content: [
+          "The most valuable WhatsApp marketing asset is a list of opted-in subscribers. Unlike email lists which degrade at 22% annually, WhatsApp numbers are tied to SIM cards — they stay valid much longer. Here's how to grow your list compliantly.",
+          "Website opt-in widget: Add a 'Get updates on WhatsApp' widget to your homepage, pricing page, and blog posts. Include a phone number field and a clear consent checkbox: 'I agree to receive WhatsApp messages from {brand}. Reply STOP to unsubscribe.' This typically converts at 3–7% of page visitors.",
+          "Post-purchase enrollment: After an e-commerce order is placed, send a confirmation email that says 'Prefer WhatsApp updates? Click here to receive your shipping notifications via WhatsApp.' This captures 15–25% of buyers who missed the checkout checkbox.",
+          "Lead magnets: Offer a valuable download (e-book, coupon, checklist) in exchange for a WhatsApp opt-in. These convert at 10–30% because the value exchange is explicit. Use a dedicated landing page with a simple form.",
+          "Existing customer import: If you have phone numbers from previous purchases, you can message them once with an opt-in invitation: 'Hi {name}, {brand} here. We're launching WhatsApp updates. Want to join? Reply YES to subscribe, NO to opt out.' Never assume consent — always ask explicitly.",
+          "Track subscriber acquisition source in your database. This lets you measure which opt-in channel produces the highest-value subscribers — a critical insight for optimizing your growth strategy. For automation use case examples, see [WhatsApp marketing automation](/use-cases/automation).",
+        ],
+      },
+      {
+        heading: "WhatsApp Marketing Campaign Calendar",
+        headingLevel: "h2",
+        content: [
+          "Consistency beats intensity in WhatsApp marketing. A subscriber who receives one high-value message per week for 3 months is worth more than one who receives 20 messages in a week and then unsubscribes. Here's a sustainable campaign calendar framework:",
+          "Week 1 after opt-in — Welcome sequence: Send a 3-message welcome sequence over 3 days. Day 1: warm welcome and what to expect. Day 3: your best content or offer. Day 7: a question to engage ('What are you trying to achieve with {product}?').",
+          "Ongoing — Weekly value: Send one valuable message per week. Alternate between promotions (40%), education (40%), and community/behind-the-scenes (20%). This 40/40/20 ratio keeps engagement high while preventing list fatigue.",
+          "Seasonal — Campaign bursts: During high-intent periods (Black Friday, New Year, seasonal sales), increase frequency to 3x per week for 2 weeks. Subscribers who have been engaged for 60+ days tolerate higher frequency without unsubscribing.",
+          "Monthly — Re-engagement: At the end of each month, identify subscribers who have not opened or replied in 30 days. Send a re-engagement message: 'Hi {name}! It's been a while. Are you still interested in WhatsApp updates from us? Reply YES to stay, or NO to unsubscribe.' Remove non-responders after 7 days.",
+          "Use the [QuackAPI scheduling API](/docs) to automate this entire calendar. Pair it with a simple CRM or database to track subscription date, last interaction date, and campaign preferences.",
+        ],
+      },
+      {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
         content: [],
