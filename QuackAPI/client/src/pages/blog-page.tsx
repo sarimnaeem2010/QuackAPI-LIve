@@ -2473,11 +2473,12 @@ app.post('/webhooks/shopify/order-created', async (req, res) => {
       {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
-        content: [
-          "Q: Does Shopify send customer phone numbers in webhooks? Shopify includes the phone number from the shipping or billing address if the customer provided it. You cannot message customers who did not provide a phone number.",
-          "Q: Is a Shopify app needed? No — you can register webhooks directly in Shopify Admin without installing any third-party app. Your own Node.js or Python server handles the messages via [QuackAPI's REST API](/docs).",
-          "Q: What about GDPR and customer consent? Only message customers who have opted in to WhatsApp communications during checkout. Add a checkbox to your checkout flow: 'Send me shipping updates via WhatsApp.'",
-          "Q: How many messages can I send with the free plan? QuackAPI's free Starter plan allows 100 messages/day — fine for testing and small stores. A store getting 50–100 orders/day should use the [$29/month Professional plan](/pricing).",
+        content: [],
+        faq: [
+          { question: "Does Shopify send customer phone numbers in webhooks?", answer: "Shopify includes the phone number from the shipping or billing address if the customer provided it. You cannot message customers who did not provide a phone number. See our [WhatsApp marketing guide](/blog/whatsapp-marketing-api-guide) for opt-in best practices." },
+          { question: "Is a Shopify app needed?", answer: "No — you can register webhooks directly in Shopify Admin without installing any third-party app. Your own Node.js or Python server handles the messages via [QuackAPI's REST API](/docs). Check our [e-commerce use cases](/use-cases/ecommerce) for full implementation examples." },
+          { question: "What about GDPR and customer consent?", answer: "Only message customers who have opted in to WhatsApp communications during checkout. Add a checkbox to your checkout flow: 'Send me shipping updates via WhatsApp.'" },
+          { question: "How many messages can I send with the free plan?", answer: "QuackAPI's free Starter plan allows 100 messages/day — fine for testing and small stores. A store getting 50–100 orders/day should use the [$29/month Professional plan](/pricing)." },
         ],
       },
     ],
