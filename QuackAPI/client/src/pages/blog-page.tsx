@@ -2059,6 +2059,33 @@ def on_cart_abandoned(cart):
         ],
       },
       {
+        heading: "Provider Comparison at a Glance",
+        headingLevel: "h2",
+        content: [
+          "The table below summarizes the most important dimensions across the five providers covered in this guide. Use it to make a quick decision before reading the detailed sections.",
+        ],
+        table: {
+          headers: ["Provider", "Setup Time", "Meta Approval?", "Pricing Model", "Best For"],
+          rows: [
+            ["QuackAPI", "< 2 min (QR code)", "No", "Flat $0–$99/mo", "Developers, SMBs, agencies"],
+            ["Twilio", "1–3 days (API key)", "Yes (required)", "Per-conversation", "Enterprise, high compliance"],
+            ["UltraMsg", "~5 min (QR code)", "No", "Flat $14–$57/mo", "Single-device, budget use"],
+            ["WATI", "2–5 days (Meta)", "Yes (required)", "Per-seat + Meta fees", "Sales/support teams"],
+            ["Evolution API", "1–2 hours (self-host)", "No", "Free (self-hosted)", "DevOps teams, cost-zero"],
+          ],
+        },
+      },
+      {
+        heading: "How to Get Started with QuackAPI in Under 5 Minutes",
+        headingLevel: "h2",
+        content: [
+          "The fastest path to a working WhatsApp API in 2026 is QuackAPI. Here is the exact process: (1) Create a free account at quackapi.com — no credit card required. (2) Click 'Add Device' and scan the QR code with WhatsApp on your phone or business number. (3) Copy your API key from the dashboard. (4) Send your first message with a single HTTP POST request.",
+          "The API follows REST conventions with JSON request and response bodies. Authentication uses an API key in the `x-api-key` header. Message sending, receiving webhooks, multi-device management, and media uploads are all covered in the [API documentation](/docs).",
+          "Most developers have their integration sending real messages within 10 minutes of account creation. Compare that with the 1–5 day approval process required for Twilio and Meta-based providers. For e-commerce automation use cases, see [WhatsApp e-commerce flows](/use-cases/ecommerce).",
+          "Once your integration is validated on the free tier, upgrading to Professional ($29/month) takes one click — there is no re-approval process, no new QR scan required, and your existing device and API key continue working at the higher limits.",
+        ],
+      },
+      {
         heading: "Our Recommendation",
         headingLevel: "h2",
         content: [
