@@ -3179,6 +3179,21 @@ function ArticlePage({ slug }: { slug: string }) {
                 {section.code && (
                   <CodeBlock code={section.code.snippet} language={section.code.language} />
                 )}
+                {section.faq && section.faq.length > 0 && (
+                  <div className="space-y-2 mt-4">
+                    {section.faq.map((item, fIdx) => (
+                      <details key={fIdx} className="group border border-border/50 rounded-lg overflow-hidden">
+                        <summary className="flex items-center justify-between gap-3 px-4 py-3 cursor-pointer font-medium text-sm list-none hover:bg-muted/50 transition-colors">
+                          <span>{item.question}</span>
+                          <ChevronRight className="w-4 h-4 flex-shrink-0 transition-transform group-open:rotate-90 text-muted-foreground" />
+                        </summary>
+                        <div className="px-4 pb-4 pt-2 text-sm text-muted-foreground leading-relaxed border-t border-border/30">
+                          {item.answer}
+                        </div>
+                      </details>
+                    ))}
+                  </div>
+                )}
               </section>
             ))}
           </div>
