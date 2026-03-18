@@ -2270,7 +2270,27 @@ function ArticlePage({ slug }: { slug: string }) {
           </div>
         </article>
 
-        <section className="mt-16 pt-12 border-t border-border/50" data-testid="section-related-articles">
+        <section className="mt-16 pt-12 border-t border-border/50" data-testid="section-conversion-cta">
+          <div className="rounded-2xl bg-gradient-to-br from-primary/10 via-primary/5 to-background border border-primary/20 p-8 text-center">
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Ready to get started?</p>
+            <h2 className="font-display text-2xl md:text-3xl font-bold mb-3">
+              Send WhatsApp Messages via API — Free
+            </h2>
+            <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
+              No Meta Business verification. No credit card. Connect your WhatsApp in under 2 minutes and start sending messages through the REST API.
+            </p>
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+              <a href="/auth" className="inline-flex items-center justify-center rounded-lg bg-primary text-primary-foreground font-semibold px-6 py-3 text-sm shadow-lg shadow-primary/25 hover:opacity-90 transition-opacity" data-testid="cta-get-started">
+                Get Started Free →
+              </a>
+              <a href="/pricing" className="inline-flex items-center justify-center rounded-lg border border-border bg-background px-6 py-3 text-sm font-medium hover:bg-muted transition-colors" data-testid="cta-view-pricing">
+                View Pricing →
+              </a>
+            </div>
+          </div>
+        </section>
+
+        <section className="mt-12 pt-12 border-t border-border/50" data-testid="section-related-articles">
           <h2 className="font-display text-2xl font-bold mb-6">Related Articles</h2>
           <div className="grid md:grid-cols-3 gap-6">
             {relatedArticles.map((related) => (
