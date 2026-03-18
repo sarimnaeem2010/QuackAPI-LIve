@@ -1,10 +1,9 @@
 import express, { type Express } from "express";
 import fs from "fs";
 import path from "path";
+import { injectSeoMeta } from "./seoMeta";
 
 export function serveStatic(app: Express) {
-  // In the CJS production bundle, __dirname is the dist/ folder.
-  // dist/public sits right next to dist/index.cjs, so resolve from __dirname first.
   const candidates = [
     path.resolve(__dirname, "public"),
     path.resolve(process.cwd(), "dist", "public"),
@@ -19,8 +18,19 @@ export function serveStatic(app: Express) {
   console.log(`Serving static files from: ${distPath}`);
   app.use(express.static(distPath));
 
-  // fall through to index.html if the file doesn't exist
-  app.use("/{*path}", (_req, res) => {
-    res.sendFile(path.resolve(distPath, "index.html"));
+  const indexHtmlPath = path.resolve(distPath, "index.html");
+  let cachedIndexHtml = "";
+  try {
+    cachedIndexHtml = fs.readFileSync(indexHtmlPath, "utf-8");
+  } catch {
+    console.warn("[static] index.html not found at:", indexHtmlPath);
+  }
+
+  app.use("/{*path}", (req, res) => {
+    if (!cachedIndexHtml) {
+      return res.status(404).send("Not found");
+    }
+    const injected = injectSeoMeta(cachedIndexHtml, req.path);
+    res.status(200).type("text/html").send(injected);
   });
 }
