@@ -2622,11 +2622,12 @@ $key = defined('QUACKAPI_KEY') ? QUACKAPI_KEY : '';`,
       {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
-        content: [
-          "Q: Does this work on any WordPress hosting? Yes. The `wp_remote_post` function is built into WordPress and uses your server's HTTP capabilities — it works on shared hosting, VPS, and managed WordPress hosts like WP Engine or Kinsta.",
-          "Q: What WooCommerce version is required? WooCommerce 3.0+ supports the action hooks used above. Any site running WooCommerce in 2024 or later should work.",
-          "Q: Can I send WhatsApp messages for subscription renewals? Yes — hook into `woocommerce_subscription_renewal_payment_complete` or similar subscription hooks. The `send_whatsapp_via_quackapi` function works for any event.",
-          "Q: What is the cost? QuackAPI's free Starter plan (100 messages/day) is enough for stores with fewer than 100 orders/day. For larger stores, [see pricing options](/pricing).",
+        content: [],
+        faq: [
+          { question: "Does this work on any WordPress hosting?", answer: "Yes. The `wp_remote_post` function is built into WordPress and uses your server's HTTP capabilities — it works on shared hosting, VPS, and managed WordPress hosts like WP Engine or Kinsta. See our [Shopify integration guide](/blog/whatsapp-api-shopify-integration) for a similar approach on Shopify." },
+          { question: "What WooCommerce version is required?", answer: "WooCommerce 3.0+ supports the action hooks used above. Any site running WooCommerce in 2024 or later should work. See [e-commerce WhatsApp use cases](/use-cases/ecommerce) for more implementation ideas." },
+          { question: "Can I send WhatsApp messages for subscription renewals?", answer: "Yes — hook into `woocommerce_subscription_renewal_payment_complete` or similar subscription hooks. The `send_whatsapp_via_quackapi` function works for any event." },
+          { question: "What is the cost?", answer: "QuackAPI's free Starter plan (100 messages/day) is enough for stores with fewer than 100 orders/day. For larger stores, [see pricing options](/pricing)." },
         ],
       },
     ],
