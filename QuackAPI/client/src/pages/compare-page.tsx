@@ -9,7 +9,7 @@ import { SITE_URL } from "@/lib/config";
 
 function CompareTopBanner({ competitorName }: { competitorName: string }) {
   return (
-    <div className="bg-primary/10 border-b border-primary/20" data-testid="compare-top-banner">
+    <div className="sticky top-0 z-50 bg-primary/10 border-b border-primary/20 backdrop-blur-sm" data-testid="compare-top-banner">
       <div className="max-w-5xl mx-auto px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
         <p className="text-sm font-medium text-foreground">
           Looking for a {competitorName} alternative? QuackAPI starts free — no Meta approval needed.
