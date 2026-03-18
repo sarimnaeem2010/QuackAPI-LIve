@@ -70,10 +70,17 @@ const _keepAlive = setInterval(() => {
 
 // Pre-cache index.html in memory at startup so "/" is purely synchronous
 let cachedIndexHtml = "";
+let cachedHomeHtml = "";
 const indexHtmlPath = path.resolve(process.cwd(), "dist", "public", "index.html");
 try {
   cachedIndexHtml = fs.readFileSync(indexHtmlPath, "utf-8");
   console.log("index.html cached from:", indexHtmlPath);
+  // Pre-inject SEO meta for home page so it's ready synchronously
+  import("./seoMeta").then(({ injectSeoMeta }) => {
+    cachedHomeHtml = injectSeoMeta(cachedIndexHtml, "/");
+  }).catch(() => {
+    cachedHomeHtml = cachedIndexHtml;
+  });
 } catch {
   console.log("index.html not found at startup (non-fatal):", indexHtmlPath);
 }
@@ -84,7 +91,7 @@ app.get("/healthz", (_req, res) => res.status(200).json({ status: "ok" }));
 
 if (process.env.NODE_ENV === "production") {
   app.get("/", (_req, res) => {
-    const html = cachedIndexHtml;
+    const html = cachedHomeHtml || cachedIndexHtml;
     if (html) {
       res.status(200).type("html").send(html);
     } else {
