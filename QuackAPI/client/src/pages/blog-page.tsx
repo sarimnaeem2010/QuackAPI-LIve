@@ -2140,11 +2140,12 @@ def on_cart_abandoned(cart):
       {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
-        content: [
-          "Q: What is the cheapest WhatsApp API for a startup? QuackAPI's free Starter plan (100 msg/day) is the cheapest entry point. For higher volumes, $29/month Professional beats Meta API costs for most use cases.",
-          "Q: Does WhatsApp charge per message? The official Meta API charges per conversation (24-hour window), not per individual message. Third-party providers like QuackAPI charge a flat monthly fee with no per-message costs.",
-          "Q: Can I use WhatsApp API for free forever? Yes, with QuackAPI's free tier (100 messages/day, 1 device). There is no expiry or forced trial conversion.",
-          "Q: Is WhatsApp API worth the cost? For businesses, yes — WhatsApp messages have a 98% open rate versus 21% for email. A single recovered abandoned cart or confirmed appointment often covers the entire monthly API cost. See our [WhatsApp marketing guide](/blog/whatsapp-marketing-api-guide) for ROI data.",
+        content: [],
+        faq: [
+          { question: "What is the cheapest WhatsApp API for a startup?", answer: "QuackAPI's free Starter plan (100 msg/day) is the cheapest entry point. For higher volumes, $29/month Professional beats Meta API costs for most use cases. See [e-commerce WhatsApp use cases](/use-cases/ecommerce) for how businesses justify the cost." },
+          { question: "Does WhatsApp charge per message?", answer: "The official Meta API charges per conversation (24-hour window), not per individual message. Third-party providers like QuackAPI charge a flat monthly fee with no per-message costs." },
+          { question: "Can I use WhatsApp API for free forever?", answer: "Yes, with QuackAPI's free tier (100 messages/day, 1 device). There is no expiry or forced trial conversion." },
+          { question: "Is WhatsApp API worth the cost?", answer: "For businesses, yes — WhatsApp messages have a 98% open rate versus 21% for email. A single recovered abandoned cart or confirmed appointment often covers the entire monthly API cost. See our [WhatsApp marketing guide](/blog/whatsapp-marketing-api-guide) for ROI data." },
         ],
       },
     ],
