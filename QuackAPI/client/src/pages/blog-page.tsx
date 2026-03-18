@@ -3258,6 +3258,17 @@ function ArticlePage({ slug }: { slug: string }) {
               </Link>
             ))}
           </div>
+          <div className="mt-8 p-5 bg-muted/40 rounded-xl border border-border/50" data-testid="section-compare-usecases">
+            <h3 className="font-semibold text-sm mb-3 text-muted-foreground uppercase tracking-wide">Compare &amp; Use Cases</h3>
+            <div className="flex flex-wrap gap-3">
+              <a href="/compare/twilio" className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-background border border-border/60 hover:border-primary/40 hover:text-primary transition-colors" data-testid="link-compare-twilio">QuackAPI vs Twilio →</a>
+              <a href="/compare/ultramsg" className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-background border border-border/60 hover:border-primary/40 hover:text-primary transition-colors" data-testid="link-compare-ultramsg">QuackAPI vs UltraMsg →</a>
+              <a href="/compare/evolution-api" className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-background border border-border/60 hover:border-primary/40 hover:text-primary transition-colors" data-testid="link-compare-evolution">QuackAPI vs Evolution API →</a>
+              <a href="/use-cases/ecommerce" className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-background border border-border/60 hover:border-primary/40 hover:text-primary transition-colors" data-testid="link-usecase-ecommerce">E-commerce Use Cases →</a>
+              <a href="/use-cases/automation" className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-background border border-border/60 hover:border-primary/40 hover:text-primary transition-colors" data-testid="link-usecase-automation">Automation Use Cases →</a>
+              <a href="/use-cases/customer-support" className="inline-flex items-center gap-1.5 text-sm px-3 py-1.5 rounded-lg bg-background border border-border/60 hover:border-primary/40 hover:text-primary transition-colors" data-testid="link-usecase-support">Customer Support →</a>
+            </div>
+          </div>
         </section>
       </div>
 
