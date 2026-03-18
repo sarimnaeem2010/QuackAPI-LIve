@@ -358,8 +358,15 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
 
         } else if (connection === "open") {
           activeSockets.set(deviceId, sock);
-          const wasAutoReconnect = autoReconnecting.has(deviceId);
           autoReconnecting.delete(deviceId);
+
+          // Cancel any pending disconnect notification — device is back online.
+          const pendingTimer = pendingDisconnectNotifications.get(deviceId);
+          if (pendingTimer) {
+            clearTimeout(pendingTimer);
+            pendingDisconnectNotifications.delete(deviceId);
+          }
+
           const prevConnectedAt = lastConnectedAt.get(deviceId);
           lastConnectedAt.set(deviceId, Date.now());
           // Only reset backoff counter if previous connection was stable (or first connect).
@@ -369,7 +376,10 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
             reconnectAttempts.delete(deviceId);
           }
 
-          console.log(`[Baileys] Device ${deviceId} connected! (autoReconnect=${wasAutoReconnect})`);
+          const wasQrConnection = qrGeneratedDevices.has(deviceId);
+          qrGeneratedDevices.delete(deviceId);
+
+          console.log(`[Baileys] Device ${deviceId} connected! (qrConnection=${wasQrConnection})`);
 
           const phoneNumber = sock.user?.id?.split(":")[0] || sock.user?.id?.split("@")[0] || null;
           await storage.updateDeviceStatusAndQR(deviceId, "connected", null);
@@ -395,7 +405,8 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
             }
           }
 
-          if (!wasAutoReconnect) {
+          // Send connect notification only when the user scanned a QR code.
+          if (wasQrConnection) {
             const device = await storage.getDevice(deviceId);
             if (device) {
               const user = await storage.getUser(device.userId);
@@ -403,6 +414,7 @@ export async function setupBaileys(deviceId: number, isReconnect: boolean = fals
                 sendDeviceConnectNotification(user.email, user.name, device.deviceName, phoneNumber).catch((err) =>
                   console.error("[Email] Connect notification failed:", err)
                 );
+                console.log(`[Baileys] Sent QR connect email to ${user.email} for device ${deviceId}`);
               }
             }
           }
