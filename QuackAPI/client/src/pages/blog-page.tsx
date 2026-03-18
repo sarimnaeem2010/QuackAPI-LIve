@@ -2336,7 +2336,7 @@ async function sendBulk(recipients, message) {
           "Honor opt-outs immediately. Include a reply keyword like 'STOP' and remove anyone who uses it from future sends.",
           "Spread sends across devices. The [QuackAPI Professional plan](/pricing) supports 5 devices — use all of them to distribute your daily volume.",
           "Avoid sending at unusual hours. Local daytime hours (9am–7pm in the recipient's timezone) have lower report rates than middle-of-night sends.",
-          "For the complete technical rate limits by plan (messages per second, queue behavior, and burst limits), see our [WhatsApp API rate limits guide](/blog/whatsapp-api-rate-limits). For compliance and messaging etiquette, the [WhatsApp API messaging best practices guide](/blog/whatsapp-api-messaging-best-practices) covers everything you need to stay safe.",
+          "For tips on safe send rates and account protection, see our [avoid WhatsApp number ban guide](/blog/avoid-whatsapp-number-ban). For compliance and messaging etiquette, the [WhatsApp API messaging best practices guide](/blog/whatsapp-api-messaging-best-practices) covers everything you need to stay safe.",
         ],
       },
       {
