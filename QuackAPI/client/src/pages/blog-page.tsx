@@ -2741,11 +2741,12 @@ for sub in subscribers:
       {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
-        content: [
-          "Q: Is WhatsApp marketing legal? Yes, if recipients have explicitly opted in. Unsolicited messages violate WhatsApp ToS and applicable laws (GDPR, TCPA). Always get consent first.",
-          "Q: What open rate can I expect? Industry data consistently shows 94–98% open rates for WhatsApp business messages sent to opted-in subscribers.",
-          "Q: Can I send promotional images via WhatsApp API? Yes — QuackAPI supports image, video, PDF, and audio message types in addition to text. See the [API documentation](/docs) for all supported formats.",
-          "Q: How do I avoid my account being banned? Only message opted-in contacts, include opt-out instructions, use realistic send rates, and personalize messages. See our [WhatsApp messaging best practices guide](/blog/whatsapp-api-messaging-best-practices) for full guidelines.",
+        content: [],
+        faq: [
+          { question: "Is WhatsApp marketing legal?", answer: "Yes, if recipients have explicitly opted in. Unsolicited messages violate WhatsApp ToS and applicable laws (GDPR, TCPA). Always get consent first. See [WhatsApp automation use cases](/use-cases/automation) for compliant campaign examples." },
+          { question: "What open rate can I expect?", answer: "Industry data consistently shows 94–98% open rates for WhatsApp business messages sent to opted-in subscribers." },
+          { question: "Can I send promotional images via WhatsApp API?", answer: "Yes — QuackAPI supports image, video, PDF, and audio message types in addition to text. See the [API documentation](/docs) for all supported formats." },
+          { question: "How do I avoid my account being banned?", answer: "Only message opted-in contacts, include opt-out instructions, use realistic send rates, and personalize messages. See our [WhatsApp messaging best practices guide](/blog/whatsapp-api-messaging-best-practices) for full guidelines." },
         ],
       },
     ],
