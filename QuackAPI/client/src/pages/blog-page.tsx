@@ -2555,6 +2555,28 @@ app.post('/webhooks/shopify/order-created', async (req, res) => {
         },
       },
       {
+        heading: "WhatsApp Message Templates for Shopify",
+        headingLevel: "h2",
+        content: [
+          "Your message copy is as important as the technical integration. Here are proven templates for each Shopify notification type, optimized for WhatsApp's conversational format.",
+          "Order confirmation: 'Hi {first_name}! Your order #{order_number} has been confirmed. Total: {currency} {total}. We will message you when it ships. Thank you for shopping with {store_name}!'",
+          "Shipping notification with tracking: 'Hi {first_name}! Great news — your order has shipped! Track your package here: {tracking_url}. Expected delivery: {estimated_date}. Questions? Just reply to this message.'",
+          "Abandoned cart recovery (sent 1 hour after abandonment): 'Hi {first_name}! You left something in your cart. Your {product_name} is still available: {cart_url}. Need help choosing? Reply and we'll assist. This link expires in 24 hours.'",
+          "Post-purchase review request (sent 7 days after delivery): 'Hi {first_name}! We hope you are loving your {product_name}! Would you mind leaving us a quick review? It takes 30 seconds and really helps: {review_url}. Thank you!'",
+          "Keep messages under 1,024 characters for optimal display. Test templates in the [WhatsApp preview tool](/docs) before deploying to production. See [WhatsApp marketing best practices](/blog/whatsapp-marketing-api-guide) for additional template guidance.",
+        ],
+      },
+      {
+        heading: "Compliance: GDPR, TCPA, and WhatsApp ToS",
+        headingLevel: "h2",
+        content: [
+          "Before sending any WhatsApp messages to Shopify customers, you need explicit opt-in consent. The safest approach is to add a checkbox to your Shopify checkout: 'Send me order updates and offers via WhatsApp' — unchecked by default. Store the consent timestamp in your order metadata.",
+          "Under GDPR (EU/UK), you must be able to prove consent on request. Under TCPA (US), you must honor opt-outs within 24 hours. Under WhatsApp ToS, messaging contacts who have not opted in can result in your WhatsApp number being banned.",
+          "Implement a simple opt-out flow: if a customer replies 'STOP', 'UNSUBSCRIBE', or 'OPT OUT', immediately add them to a do-not-contact list and reply with 'You have been unsubscribed and will receive no further messages from {store_name} on WhatsApp.' Remove them from all future campaign lists. See [e-commerce use cases](/use-cases/ecommerce) for fully compliant workflow examples.",
+          "Store opt-in status in your database alongside the order. Before sending any message, check the opt-in status. This single check prevents the vast majority of compliance issues.",
+        ],
+      },
+      {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
         content: [],
