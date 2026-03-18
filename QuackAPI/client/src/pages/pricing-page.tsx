@@ -238,7 +238,44 @@ export default function PricingPage() {
             All plans include REST API access. No credit card required for the free plan.
           </p>
         </div>
+
+        <div className="mt-24 max-w-3xl mx-auto" data-testid="section-pricing-faq">
+          <h2 className="text-3xl font-display font-bold text-center mb-3">Frequently Asked Questions</h2>
+          <p className="text-center text-muted-foreground mb-10">Everything you need to know about QuackAPI pricing and plans.</p>
+          <div className="divide-y divide-border rounded-xl border border-border overflow-hidden">
+            {pricingFaqs.map((faq, i) => (
+              <PricingFaqItem key={i} question={faq.question} answer={faq.answer} />
+            ))}
+          </div>
+          <p className="text-center text-sm text-muted-foreground mt-8">
+            Still have questions?{" "}
+            <a href="/contact" className="text-primary hover:underline font-medium">
+              Contact our team →
+            </a>
+          </p>
+        </div>
       </main>
+    </div>
+  );
+}
+
+function PricingFaqItem({ question, answer }: { question: string; answer: string }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="bg-card">
+      <button
+        className="w-full flex items-center justify-between px-6 py-5 text-left gap-4 hover:bg-muted/30 transition-colors"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+      >
+        <span className="font-medium text-foreground">{question}</span>
+        <ChevronDown className={`w-5 h-5 text-muted-foreground shrink-0 transition-transform ${open ? "rotate-180" : ""}`} />
+      </button>
+      {open && (
+        <div className="px-6 pb-5 text-muted-foreground leading-relaxed text-sm">
+          {answer}
+        </div>
+      )}
     </div>
   );
 }
