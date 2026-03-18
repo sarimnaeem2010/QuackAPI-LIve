@@ -2898,11 +2898,12 @@ if (text.includes('urgent') || text.includes('emergency')) {
       {
         heading: "Frequently Asked Questions",
         headingLevel: "h2",
-        content: [
-          "Q: Can multiple support agents share one WhatsApp number? Yes — with QuackAPI's webhook system, all incoming messages come to your server, which can route them to the right agent dashboard. Multiple agents can send replies via the same QuackAPI device.",
-          "Q: Does this work with existing CRM software? Yes — any CRM with a REST API (Freshdesk, Zendesk, HubSpot, Salesforce) can receive ticket creation calls from the webhook handler shown above.",
-          "Q: How do I handle non-text messages (images, voice notes)? The QuackAPI webhook includes the message type. For image and audio messages, store the media URL and create a ticket for an agent to review. See the [API documentation](/docs) for all webhook payload fields.",
-          "Q: What is the cost to run WhatsApp customer support? QuackAPI's [Professional plan at $29/month](/pricing) supports 1,000 messages/day and 5 devices — enough for a small to medium support team. Enterprise is $99/month for unlimited volume.",
+        content: [],
+        faq: [
+          { question: "Can multiple support agents share one WhatsApp number?", answer: "Yes — with QuackAPI's webhook system, all incoming messages come to your server, which can route them to the right agent dashboard. Multiple agents can send replies via the same QuackAPI device. See [customer support use cases](/use-cases/customer-support) for architecture examples." },
+          { question: "Does this work with existing CRM software?", answer: "Yes — any CRM with a REST API (Freshdesk, Zendesk, HubSpot, Salesforce) can receive ticket creation calls from the webhook handler shown above." },
+          { question: "How do I handle non-text messages (images, voice notes)?", answer: "The QuackAPI webhook includes the message type. For image and audio messages, store the media URL and create a ticket for an agent to review. See the [API documentation](/docs) for all webhook payload fields." },
+          { question: "What is the cost to run WhatsApp customer support?", answer: "QuackAPI's [Professional plan at $29/month](/pricing) supports 1,000 messages/day and 5 devices — enough for a small to medium support team. Enterprise is $99/month for unlimited volume." },
         ],
       },
     ],
