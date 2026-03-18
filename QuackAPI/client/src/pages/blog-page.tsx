@@ -342,6 +342,7 @@ app.post("/webhook/whatsapp", (req, res) => {
         content: [
           "During development, use tools like ngrok to expose your local server to the internet. This lets you test webhook delivery without deploying to a production server. Run ngrok http 3000 and use the generated HTTPS URL as your webhook endpoint.",
           "Configure your webhook URL in the QuackAPI device settings. Send a test message to the connected WhatsApp number and verify that your endpoint receives the payload correctly. Check your server logs to confirm the data structure matches your expectations.",
+          "Evaluating which provider to use for your webhook integration? See [how QuackAPI compares to UltraMsg](/compare/ultramsg) — including webhook reliability and multi-device support differences.",
         ],
         code: {
           language: "bash",
