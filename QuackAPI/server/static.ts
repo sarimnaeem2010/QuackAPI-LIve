@@ -30,7 +30,8 @@ export function serveStatic(app: Express) {
     if (!cachedIndexHtml) {
       return res.status(404).send("Not found");
     }
-    const injected = injectSeoMeta(cachedIndexHtml, req.path);
+    const pathname = (req.originalUrl || "/").split("?")[0].split("#")[0] || "/";
+    const injected = injectSeoMeta(cachedIndexHtml, pathname);
     res.status(200).type("text/html").send(injected);
   });
 }
