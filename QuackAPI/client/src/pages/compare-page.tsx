@@ -361,11 +361,11 @@ function ComparisonView({ data }: { data: ComparisonData }) {
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
               <Button size="lg" onClick={() => setLocation("/auth")} className="shadow-lg shadow-primary/25" data-testid="button-cta-signup">
-                Start Free Trial
+                Start Free — No Card Required
                 <ArrowRight className="ml-2 w-5 h-5" />
               </Button>
-              <Button size="lg" variant="outline" onClick={() => setLocation("/docs")} data-testid="button-cta-docs">
-                View API Docs
+              <Button size="lg" variant="outline" onClick={() => setLocation("/pricing")} data-testid="button-cta-pricing">
+                See Pricing →
               </Button>
             </div>
           </div>
