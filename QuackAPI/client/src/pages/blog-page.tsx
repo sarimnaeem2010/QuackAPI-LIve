@@ -12,12 +12,18 @@ interface FaqItem {
   answer: string;
 }
 
+interface ArticleTable {
+  headers: string[];
+  rows: string[][];
+}
+
 interface ArticleSection {
   heading: string;
   headingLevel: "h2" | "h3";
   content: string[];
   code?: { language: string; snippet: string };
   faq?: FaqItem[];
+  table?: ArticleTable;
 }
 
 interface Article {
