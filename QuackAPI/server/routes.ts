@@ -941,7 +941,10 @@ export async function registerRoutes(
 
   app.patch("/api/admin/settings", requireAdmin, async (req: any, res) => {
     try {
-      const { requireEmailOtp, smtpHost, smtpPort, smtpUser, smtpPass, notificationEmail, paypalMode } = req.body;
+      const {
+        requireEmailOtp, smtpHost, smtpPort, smtpUser, smtpPass, notificationEmail,
+        paypalMode, paypalSandboxClientId, paypalSandboxClientSecret, paypalLiveClientId, paypalLiveClientSecret,
+      } = req.body;
       const updates: Record<string, any> = {};
       if (typeof requireEmailOtp === "boolean") updates.requireEmailOtp = requireEmailOtp;
       if (typeof smtpHost === "string") updates.smtpHost = smtpHost;
@@ -950,6 +953,10 @@ export async function registerRoutes(
       if (typeof smtpPass === "string" && smtpPass) updates.smtpPass = smtpPass;
       if (typeof notificationEmail === "string") updates.notificationEmail = notificationEmail;
       if (typeof paypalMode === "string") updates.paypalMode = paypalMode;
+      if (typeof paypalSandboxClientId === "string" && paypalSandboxClientId) updates.paypalSandboxClientId = paypalSandboxClientId;
+      if (typeof paypalSandboxClientSecret === "string" && paypalSandboxClientSecret) updates.paypalSandboxClientSecret = paypalSandboxClientSecret;
+      if (typeof paypalLiveClientId === "string" && paypalLiveClientId) updates.paypalLiveClientId = paypalLiveClientId;
+      if (typeof paypalLiveClientSecret === "string" && paypalLiveClientSecret) updates.paypalLiveClientSecret = paypalLiveClientSecret;
 
       const updated = Object.keys(updates).length > 0
         ? await storage.updateAdminSettings(updates)
