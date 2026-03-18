@@ -2919,7 +2919,7 @@ for sub in subscribers:
         content: [
           "The average customer support ticket takes 12 hours to resolve via email. Via WhatsApp, the same issue resolves in under 2 hours — because messages are seen immediately, responses feel more personal, and the back-and-forth happens in real time.",
           "Businesses that move even 30% of support volume to WhatsApp report a 40–60% reduction in average resolution time and a measurable increase in customer satisfaction scores (CSAT). More importantly, WhatsApp support reduces repeat contacts — customers who get a fast WhatsApp reply rarely email again.",
-          "This guide covers how to build a WhatsApp customer support system using QuackAPI's webhook API. For multi-agent setups with shared numbers, see our [multi-device WhatsApp API guide](/blog/multi-device-whatsapp-api). For the messaging best practices to keep your account compliant, read the [WhatsApp API messaging best practices guide](/blog/whatsapp-api-messaging-best-practices).",
+          "This guide covers how to build a WhatsApp customer support system using QuackAPI's webhook API. For connecting WhatsApp to your CRM and routing tickets, see our [WhatsApp CRM integration guide](/blog/connect-whatsapp-api-crm-integration). For messaging best practices to keep your account compliant, read the [WhatsApp API messaging best practices guide](/blog/whatsapp-api-messaging-best-practices).",
         ],
       },
       {
