@@ -573,7 +573,8 @@ export async function registerRoutes(
         return res.status(400).json({ message: "Invalid plan" });
       }
 
-      const { mode, clientId, clientSecret } = getPayPalCredentials();
+      const settings = await storage.getAdminSettings();
+      const { mode, clientId, clientSecret } = resolvePayPalCredentials(settings);
       if (!clientId || !clientSecret) {
         return res.status(400).json({ message: `PayPal ${mode} credentials are not configured. Please contact support.` });
       }
