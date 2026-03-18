@@ -1987,6 +1987,911 @@ def on_cart_abandoned(cart):
       },
     ],
   },
+  {
+    slug: "best-whatsapp-api-provider-2026",
+    title: "Best WhatsApp API Provider in 2026: Full Comparison",
+    description: "We compared 6 WhatsApp API providers on pricing, setup speed, features, and reliability. Here is which platform wins for developers, startups, and growing businesses.",
+    category: "Comparison",
+    date: "2026-03-14",
+    readTime: "8 min read",
+    sections: [
+      {
+        heading: "What Makes a Great WhatsApp API Provider?",
+        headingLevel: "h2",
+        content: [
+          "Choosing the right WhatsApp API provider in 2026 comes down to four factors: how fast you can get started, how predictably it is priced, how well it handles multiple devices, and how much developer support you get. Most providers fail on at least two of these.",
+          "The Official WhatsApp Business API (via Meta) requires business verification that takes days or weeks, per-conversation pricing that scales unpredictably, and template approval for every message type. For small teams and startups, that is a conversion killer.",
+          "Alternative providers use the WhatsApp Web protocol — the same technology your browser uses — to offer instant setup, flat monthly pricing, and no Meta approval requirement. Let us compare the best options available right now.",
+        ],
+      },
+      {
+        heading: "Comparison Table: Top WhatsApp API Providers 2026",
+        headingLevel: "h2",
+        content: [
+          "Here is how the top providers compare across the criteria that matter most. Prices reflect the entry-level paid tier as of March 2026:",
+          "QuackAPI: $0 free / $29 Pro / $99 Enterprise — Setup in 2 minutes via QR — No Meta approval — 8 message types — 13+ language docs — Multi-device — Flat pricing",
+          "Twilio: Pay-per-message ($0.005–$0.05) — Requires Meta Business approval — Template restrictions — Excellent docs — No multi-device — Variable pricing",
+          "WATI: From $49/mo + conversation fees — Requires Meta approval — Good no-code tools — Limited API access — No multi-device",
+          "UltraMsg: From $13/mo — No free tier — 6 message types — Limited docs — Basic multi-device",
+          "AiSensy: From $19/mo + Meta conversation fees — Meta required — No-code marketing tools — Limited REST API",
+          "Evolution API: Free open-source — Self-hosted (you manage servers) — Community support — Full API — Multi-device",
+          "For developers who need a quick start, predictable billing, and solid API documentation, [QuackAPI](/pricing) consistently ranks first. For no-code marketers with existing Meta Business accounts, WATI or AiSensy may fit better.",
+        ],
+      },
+      {
+        heading: "QuackAPI: Best for Developers and Startups",
+        headingLevel: "h2",
+        content: [
+          "QuackAPI stands out as the best WhatsApp API for developers in 2026 because it eliminates the two biggest friction points: approval delays and variable pricing. You scan a QR code, get an API key, and start sending in under 2 minutes.",
+          "The free Starter plan (100 messages/day, 1 device) lets you build and validate before spending anything. The Professional plan at $29/month gives you 5 devices and 1,000 messages/day — enough for most production workloads. Enterprise at $99/month provides unlimited everything with a guaranteed SLA.",
+          "The API documentation covers 13 programming languages including Python, Node.js, PHP, Go, Ruby, Java, and more. See the [Python integration guide](/blog/send-whatsapp-messages-python) and [Node.js guide](/blog/send-whatsapp-messages-nodejs) for quick-start examples.",
+        ],
+      },
+      {
+        heading: "Twilio: Best for Enterprise With Existing Meta Approval",
+        headingLevel: "h2",
+        content: [
+          "Twilio's WhatsApp API is excellent if you already have Meta Business Manager approval and send high volumes where per-message costs are predictable. The platform documentation is world-class, and Twilio's reliability and global support are unmatched.",
+          "The downside: per-message pricing can hit $0.05+ per conversation in some regions, approval takes days, and you can only use pre-approved message templates until you reach certain usage tiers. For a direct cost analysis, see our [QuackAPI vs Twilio comparison](/compare/twilio).",
+        ],
+      },
+      {
+        heading: "Evolution API: Best for Self-Hosters",
+        headingLevel: "h2",
+        content: [
+          "Evolution API is the leading open-source WhatsApp API project in 2026. It is fully free, supports multiple devices, and has a growing community. The catch: you manage your own server, SSL, uptime, database backups, and software updates.",
+          "If you have DevOps capacity and want zero software cost, Evolution API is compelling. If you want managed infrastructure and support SLAs, QuackAPI is the better choice. Read our [QuackAPI vs Evolution API comparison](/compare/evolution-api) for the detailed breakdown.",
+        ],
+      },
+      {
+        heading: "Our Recommendation",
+        headingLevel: "h2",
+        content: [
+          "For most developers and startups in 2026: start with QuackAPI's free tier, validate your use case, then upgrade to Professional. The combination of instant setup, flat pricing, multi-device support, and 13-language API documentation makes it the most developer-friendly choice available.",
+          "For large enterprises with existing Meta Business verification who need SLA guarantees and are comfortable with per-message pricing: Twilio is the safe choice.",
+          "For technically capable teams that want full control and zero software cost: Evolution API, knowing you will invest engineering time in infrastructure management.",
+        ],
+      },
+      {
+        heading: "Frequently Asked Questions",
+        headingLevel: "h2",
+        content: [
+          "Q: Is there a free WhatsApp API? Yes — QuackAPI offers a permanent free Starter plan with 100 messages/day and 1 device. No credit card required. See our [WhatsApp API pricing guide](/blog/whatsapp-api-pricing-2026) for the full breakdown.",
+          "Q: Do I need a Meta Business account? Not with QuackAPI, UltraMsg, or Evolution API. These providers use the WhatsApp Web protocol, so you connect any personal or business WhatsApp number via QR code. Twilio, WATI, and AiSensy require Meta Business verification.",
+          "Q: How reliable are non-official WhatsApp API providers? QuackAPI, UltraMsg, and Evolution API all use the same WhatsApp Web protocol your browser uses. Reliability depends on the provider's infrastructure. QuackAPI maintains 99.9% uptime on its Enterprise plan.",
+          "Q: Can I send bulk messages via WhatsApp API? Yes, but you should follow anti-spam best practices to avoid account bans. Read our [bulk WhatsApp messaging guide](/blog/send-bulk-whatsapp-messages) for safe limits and best practices.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-pricing-2026",
+    title: "WhatsApp API Pricing in 2026: Complete Cost Breakdown",
+    description: "Full breakdown of WhatsApp API costs in 2026. Covers official Meta pricing, third-party providers, free tiers, and which option is cheapest for your message volume.",
+    category: "Guide",
+    date: "2026-03-15",
+    readTime: "7 min read",
+    sections: [
+      {
+        heading: "The Two WhatsApp API Pricing Models",
+        headingLevel: "h2",
+        content: [
+          "There are two fundamentally different pricing models for WhatsApp API in 2026: conversation-based pricing (official Meta Business API) and flat monthly subscription pricing (third-party providers like QuackAPI).",
+          "Understanding which model fits your use case can save you thousands of dollars per year — especially as your message volume grows.",
+        ],
+      },
+      {
+        heading: "Official Meta WhatsApp Business API Pricing",
+        headingLevel: "h2",
+        content: [
+          "Meta charges per 24-hour conversation window, not per message. A conversation is opened when you send or receive a message and remains open for 24 hours. Additional messages within that window do not incur extra charges.",
+          "Pricing varies by country and conversation type (marketing, utility, authentication, service). In the US, marketing conversations cost approximately $0.025 each. In India, they cost approximately $0.004 each. Authentication conversations (OTP) cost approximately $0.014 in the US.",
+          "Meta also offers 1,000 free service conversations per month (when the customer initiates the conversation). Business-initiated conversations (marketing, utility, authentication) are not free.",
+          "For a business sending 10,000 marketing conversations per month in the US, the Meta API cost alone is ~$250/month — before Twilio or BSP markup, which typically adds 30–100% on top.",
+        ],
+      },
+      {
+        heading: "Third-Party WhatsApp API Pricing (Flat Monthly)",
+        headingLevel: "h2",
+        content: [
+          "Providers like QuackAPI use the WhatsApp Web protocol, which allows flat monthly pricing with no per-message or per-conversation fees. You pay a fixed amount per month regardless of how many messages you send (up to the plan limit).",
+          "QuackAPI pricing tiers in 2026: Free Starter ($0/month — 100 messages/day, 1 device), Professional ($29/month — 1,000 messages/day, 5 devices), Enterprise ($99/month — unlimited messages, unlimited devices).",
+          "For most small-to-medium businesses, $29/month flat covers far more usage than equivalent Meta API costs. A business sending 5,000 messages/month through the Meta API in the US would pay ~$125/month — versus $29/month with QuackAPI.",
+          "See our [full comparison of providers](/blog/best-whatsapp-api-provider-2026) for a side-by-side breakdown of all options.",
+        ],
+      },
+      {
+        heading: "Is There a Free WhatsApp API?",
+        headingLevel: "h2",
+        content: [
+          "Yes. QuackAPI offers a permanent free Starter plan — not a trial — with 100 messages/day and 1 device. This is enough to build and test your integration, run low-volume use cases like OTP verification, or send alerts to a small team.",
+          "Meta also offers free service conversations (1,000/month) for inbound-initiated conversations, but this requires completing the Meta Business verification process first.",
+          "Evolution API is free open-source software with no message limits, but you pay for your own server (typically $5–20/month for a VPS) and handle all infrastructure yourself.",
+        ],
+      },
+      {
+        heading: "Calculating Your WhatsApp API Cost",
+        headingLevel: "h2",
+        content: [
+          "To estimate your monthly cost: first determine your monthly message volume and device count. If you need fewer than 1,000 messages/day across up to 5 WhatsApp numbers, the [QuackAPI Professional plan at $29/month](/pricing) covers you with full REST API access and webhooks.",
+          "If you send fewer than 100 messages/day and only need 1 device, the free tier is sufficient. Start there and upgrade only when you hit the limits.",
+          "If your use case requires Meta Business API specifically (for template messages, green tick verification, or WhatsApp Pay), budget for Meta conversation fees plus a BSP (Business Solution Provider) fee, typically $50–500/month depending on volume.",
+        ],
+      },
+      {
+        heading: "Hidden Costs to Watch For",
+        headingLevel: "h2",
+        content: [
+          "With Meta API providers: conversation fees stack up quickly during marketing campaigns. A single blast to 10,000 contacts in the US costs ~$250 in Meta fees alone, before BSP markup.",
+          "With self-hosted solutions (Evolution API): server costs, SSL certificate management, database backups, monitoring, and software update time are real costs that rarely show up in comparisons.",
+          "With flat-rate providers: watch the message/day limits. Sending 1,001 messages on a 1,000/day plan may throttle or block your account depending on the provider. QuackAPI queues excess messages for the next day.",
+        ],
+      },
+      {
+        heading: "Frequently Asked Questions",
+        headingLevel: "h2",
+        content: [
+          "Q: What is the cheapest WhatsApp API for a startup? QuackAPI's free Starter plan (100 msg/day) is the cheapest entry point. For higher volumes, $29/month Professional beats Meta API costs for most use cases.",
+          "Q: Does WhatsApp charge per message? The official Meta API charges per conversation (24-hour window), not per individual message. Third-party providers like QuackAPI charge a flat monthly fee with no per-message costs.",
+          "Q: Can I use WhatsApp API for free forever? Yes, with QuackAPI's free tier (100 messages/day, 1 device). There is no expiry or forced trial conversion.",
+          "Q: Is WhatsApp API worth the cost? For businesses, yes — WhatsApp messages have a 98% open rate versus 21% for email. A single recovered abandoned cart or confirmed appointment often covers the entire monthly API cost. See our [WhatsApp marketing guide](/blog/whatsapp-marketing-api-guide) for ROI data.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "send-bulk-whatsapp-messages",
+    title: "How to Send Bulk WhatsApp Messages via API (2026 Guide)",
+    description: "Complete guide to bulk WhatsApp messaging via REST API. Covers rate limits, anti-ban best practices, code examples in Python and Node.js, and scheduling strategies.",
+    category: "Tutorial",
+    date: "2026-03-16",
+    readTime: "9 min read",
+    sections: [
+      {
+        heading: "What Is Bulk WhatsApp Messaging?",
+        headingLevel: "h2",
+        content: [
+          "Bulk WhatsApp messaging means sending a large number of messages — promotions, notifications, alerts, or updates — to many recipients in a short time. Unlike email blasts, WhatsApp messages have a 98% open rate and typically get read within 3 minutes.",
+          "However, WhatsApp actively monitors for spam behavior and will ban accounts that send bulk messages without following best practices. This guide covers how to send bulk messages safely and effectively using QuackAPI's REST API.",
+          "Before you start: read our [WhatsApp API pricing guide](/blog/whatsapp-api-pricing-2026) to understand the cost structure, and our [best practices guide](/blog/whatsapp-api-messaging-best-practices) for safe messaging.",
+        ],
+      },
+      {
+        heading: "Setting Up for Bulk Messaging",
+        headingLevel: "h2",
+        content: [
+          "You need a QuackAPI account and at least one connected WhatsApp device. For high-volume bulk sends (10,000+ messages/day), use the Professional or Enterprise plan with multiple devices — spreading messages across 5 devices reduces the per-device rate and lowers ban risk.",
+          "Get your API key from your QuackAPI dashboard and note your device IDs. You will rotate messages across devices in your bulk send script.",
+        ],
+        code: {
+          language: "python",
+          snippet: `import os
+import time
+import requests
+
+API_KEY = os.environ["QUACKAPI_KEY"]
+BASE_URL = "https://quackapi.com/api/messages/send"
+DEVICE_IDS = [1, 2, 3]  # Your connected device IDs
+
+headers = {
+    "Content-Type": "application/json",
+    "x-api-key": API_KEY
+}`,
+        },
+      },
+      {
+        heading: "Rate-Limited Bulk Send with Device Rotation",
+        headingLevel: "h2",
+        content: [
+          "The safest approach rotates messages across multiple devices and adds a small random delay between sends. WhatsApp's algorithm looks for unnaturally uniform send patterns — randomizing delays (1–5 seconds between messages) mimics human behavior and significantly reduces ban risk.",
+        ],
+        code: {
+          language: "python",
+          snippet: `import random
+
+def send_bulk(recipients: list[str], message: str):
+    """Send a message to a list of phone numbers with rate limiting."""
+    for i, phone in enumerate(recipients):
+        device_id = DEVICE_IDS[i % len(DEVICE_IDS)]
+        payload = {
+            "deviceId": device_id,
+            "to": phone,
+            "content": message,
+            "type": "text"
+        }
+        try:
+            resp = requests.post(BASE_URL, json=payload, headers=headers)
+            resp.raise_for_status()
+            print(f"Sent to {phone} via device {device_id}")
+        except Exception as e:
+            print(f"Failed for {phone}: {e}")
+
+        # Random delay: 1–5 seconds between messages
+        time.sleep(random.uniform(1, 5))
+
+# Example: send to 500 contacts
+contacts = ["+15551234567", "+15559876543"]  # your list
+send_bulk(contacts, "Hello! Your order has shipped.")`,
+        },
+      },
+      {
+        heading: "Node.js Bulk Messaging with Queue",
+        headingLevel: "h2",
+        content: [
+          "For production Node.js applications, use a queue-based approach to avoid overwhelming the API and to handle retries automatically. This example uses a simple promise chain for sequential sending:",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const axios = require('axios');
+
+const API_KEY = process.env.QUACKAPI_KEY;
+const BASE_URL = 'https://quackapi.com/api/messages/send';
+const DEVICE_IDS = [1, 2, 3];
+
+const sleep = (ms) => new Promise(r => setTimeout(r, ms));
+
+async function sendBulk(recipients, message) {
+  for (let i = 0; i < recipients.length; i++) {
+    const deviceId = DEVICE_IDS[i % DEVICE_IDS.length];
+    try {
+      await axios.post(BASE_URL, {
+        deviceId,
+        to: recipients[i],
+        content: message,
+        type: 'text'
+      }, {
+        headers: { 'x-api-key': API_KEY, 'Content-Type': 'application/json' }
+      });
+      console.log(\`Sent to \${recipients[i]}\`);
+    } catch (err) {
+      console.error(\`Failed: \${recipients[i]} — \${err.message}\`);
+    }
+    // Random delay 1–4 seconds
+    await sleep(1000 + Math.random() * 3000);
+  }
+}`,
+        },
+      },
+      {
+        heading: "Anti-Ban Best Practices for Bulk WhatsApp",
+        headingLevel: "h2",
+        content: [
+          "Only message people who have opted in to receive WhatsApp messages from you. Sending to cold lists is the fastest way to get reported and banned.",
+          "Start slowly: if you have a new WhatsApp number, warm it up by sending 50–100 messages on day 1, 200–300 on day 2, and gradually increasing. Do not send thousands of messages from a fresh number.",
+          "Personalize messages. Generic broadcast messages get reported at higher rates. Include the recipient's name at minimum.",
+          "Honor opt-outs immediately. Include a reply keyword like 'STOP' and remove anyone who uses it from future sends.",
+          "Spread sends across devices. The [QuackAPI Professional plan](/pricing) supports 5 devices — use all of them to distribute your daily volume.",
+          "Avoid sending at unusual hours. Local daytime hours (9am–7pm in the recipient's timezone) have lower report rates than middle-of-night sends.",
+        ],
+      },
+      {
+        heading: "Scheduling Bulk Sends with Cron",
+        headingLevel: "h2",
+        content: [
+          "For recurring bulk sends (daily promotions, weekly newsletters), schedule your bulk send function using a cron job. This approach ensures you stay within daily limits and sends at optimal times.",
+        ],
+        code: {
+          language: "python",
+          snippet: `# Using APScheduler for timed bulk sends
+from apscheduler.schedulers.blocking import BlockingScheduler
+
+scheduler = BlockingScheduler()
+
+@scheduler.scheduled_job('cron', hour=10, minute=0)
+def daily_promo():
+    """Run every day at 10am."""
+    contacts = load_contacts_from_db()
+    send_bulk(contacts, "Today's offer: 20% off all orders!")
+
+scheduler.start()`,
+        },
+      },
+      {
+        heading: "Frequently Asked Questions",
+        headingLevel: "h2",
+        content: [
+          "Q: How many WhatsApp messages can I send per day? QuackAPI's Professional plan allows 1,000 messages/day per device. With 5 devices, that is 5,000 messages/day. Enterprise allows unlimited sends.",
+          "Q: Will WhatsApp ban my account for bulk messaging? Only if you send to non-opted-in recipients, send at inhuman speeds, or receive high report rates. Follow the best practices above and the risk is low.",
+          "Q: Can I send the same message to 10,000 people? Yes, but spread it over multiple days for new accounts. Established accounts with good engagement history can send more per day.",
+          "Q: Do I need separate WhatsApp numbers for bulk sends? Using multiple numbers (devices) distributes load and reduces per-device volume. The [Professional plan at $29/month](/pricing) includes 5 devices — enough for most bulk campaigns.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-shopify-integration",
+    title: "WhatsApp API Shopify Integration: Order Notifications & Abandoned Cart",
+    description: "Step-by-step guide to integrating WhatsApp API with Shopify. Send order confirmations, shipping updates, and abandoned cart recovery messages via QuackAPI webhooks.",
+    category: "Integration",
+    date: "2026-03-17",
+    readTime: "10 min read",
+    sections: [
+      {
+        heading: "Why WhatsApp for Shopify?",
+        headingLevel: "h2",
+        content: [
+          "Email open rates for Shopify order notifications average 21%. WhatsApp open rates average 98%. Switching your order notifications to WhatsApp means your customers actually see their shipping updates, order confirmations, and delivery alerts.",
+          "More importantly, abandoned cart recovery via WhatsApp converts at 25–35% (vs 5–10% for email). For a store doing $50,000/month with a 70% cart abandonment rate, recovering even 10% of abandoned carts adds $5,000 in monthly revenue.",
+          "This guide shows you how to connect QuackAPI to Shopify using Shopify Webhooks — no extra app needed, just a few lines of code on your server. For full bulk messaging details, see [how to send bulk WhatsApp messages](/blog/send-bulk-whatsapp-messages).",
+        ],
+      },
+      {
+        heading: "Architecture Overview",
+        headingLevel: "h2",
+        content: [
+          "The integration works via Shopify Webhooks → your server → QuackAPI. Shopify fires an HTTP webhook to your server whenever an order is placed, shipped, or cancelled, and whenever a cart is abandoned. Your server receives the webhook, extracts the customer's phone number, and calls QuackAPI to send a WhatsApp message.",
+          "You need: a QuackAPI account (free tier works for testing), a connected WhatsApp device, and a server to receive Shopify webhooks (Node.js, Python, PHP — all work). The [QuackAPI REST API](/docs) makes sending the message a single HTTP POST request.",
+        ],
+      },
+      {
+        heading: "Step 1: Set Up Your Shopify Webhook Receiver",
+        headingLevel: "h2",
+        content: [
+          "Create a webhook endpoint on your server that Shopify can POST to. This Node.js example using Express handles order creation and sends a WhatsApp confirmation:",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const express = require('express');
+const axios = require('axios');
+const app = express();
+app.use(express.json());
+
+const QUACKAPI_KEY = process.env.QUACKAPI_KEY;
+const DEVICE_ID = process.env.QUACKAPI_DEVICE_ID;
+
+// Shopify sends order data to this endpoint
+app.post('/webhooks/shopify/order-created', async (req, res) => {
+  const order = req.body;
+
+  const phone = order.shipping_address?.phone
+    || order.billing_address?.phone;
+
+  if (!phone) {
+    return res.status(200).json({ skipped: 'no phone' });
+  }
+
+  const orderNumber = order.order_number;
+  const firstName = order.shipping_address?.first_name || 'there';
+  const total = order.total_price;
+  const currency = order.currency;
+
+  const message = \`Hi \${firstName}! Your order #\${orderNumber} has been confirmed. Total: \${currency} \${total}. We will send you tracking info as soon as it ships! — Your Store\`;
+
+  await axios.post('https://quackapi.com/api/messages/send', {
+    deviceId: parseInt(DEVICE_ID),
+    to: phone.replace(/[^0-9]/g, ''),
+    content: message,
+    type: 'text'
+  }, {
+    headers: { 'x-api-key': QUACKAPI_KEY }
+  });
+
+  res.status(200).json({ sent: true });
+});
+
+app.listen(3000);`,
+        },
+      },
+      {
+        heading: "Step 2: Register Webhooks in Shopify Admin",
+        headingLevel: "h2",
+        content: [
+          "Go to Shopify Admin → Settings → Notifications → Webhooks. Click 'Create webhook' and register these events pointing to your server's HTTPS endpoint:",
+          "orders/create → https://yourdomain.com/webhooks/shopify/order-created",
+          "orders/fulfilled → https://yourdomain.com/webhooks/shopify/order-fulfilled",
+          "checkouts/create → https://yourdomain.com/webhooks/shopify/cart-created (for abandoned cart tracking)",
+          "Make sure your server is accessible via HTTPS. If developing locally, use ngrok to expose your local port publicly for testing.",
+        ],
+      },
+      {
+        heading: "Step 3: Abandoned Cart Recovery",
+        headingLevel: "h2",
+        content: [
+          "Abandoned cart recovery requires a time-delayed message. When Shopify fires the `checkouts/create` webhook, store the cart data and phone number. After 1 hour without an order, send a recovery WhatsApp message.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const pendingCarts = new Map();
+
+app.post('/webhooks/shopify/cart-created', async (req, res) => {
+  const checkout = req.body;
+  const phone = checkout.shipping_address?.phone;
+  if (!phone) return res.json({ skipped: true });
+
+  // Store the cart, check back in 1 hour
+  pendingCarts.set(checkout.token, { phone, checkout });
+
+  setTimeout(async () => {
+    const pending = pendingCarts.get(checkout.token);
+    if (!pending) return; // Cart was purchased — cleared
+
+    const { phone, checkout } = pending;
+    const total = checkout.total_price;
+    const firstName = checkout.shipping_address?.first_name || 'there';
+
+    await axios.post('https://quackapi.com/api/messages/send', {
+      deviceId: parseInt(DEVICE_ID),
+      to: phone.replace(/[^0-9]/g, ''),
+      content: \`Hi \${firstName}, you left \${total} worth of items in your cart! Complete your order here: \${checkout.abandoned_checkout_url}\`,
+      type: 'text'
+    }, {
+      headers: { 'x-api-key': QUACKAPI_KEY }
+    });
+  }, 60 * 60 * 1000); // 1 hour delay
+
+  res.json({ queued: true });
+});
+
+// When an order is placed, cancel the recovery message
+app.post('/webhooks/shopify/order-created', async (req, res) => {
+  const token = req.body.checkout_token;
+  pendingCarts.delete(token); // Cancel recovery
+  // ... send confirmation message
+  res.json({ ok: true });
+});`,
+        },
+      },
+      {
+        heading: "Step 4: Shipping Notifications",
+        headingLevel: "h2",
+        content: [
+          "Register a webhook for `orders/fulfilled` and send a tracking link message. Shopify includes the tracking URL in the fulfillment data:",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `app.post('/webhooks/shopify/order-fulfilled', async (req, res) => {
+  const order = req.body;
+  const phone = order.shipping_address?.phone;
+  if (!phone) return res.json({ skipped: true });
+
+  const trackingUrl = order.fulfillments?.[0]?.tracking_url || '';
+  const firstName = order.shipping_address?.first_name || 'there';
+
+  await axios.post('https://quackapi.com/api/messages/send', {
+    deviceId: parseInt(DEVICE_ID),
+    to: phone.replace(/[^0-9]/g, ''),
+    content: \`Hi \${firstName}! Your order has shipped. Track it here: \${trackingUrl}\`,
+    type: 'text'
+  }, { headers: { 'x-api-key': QUACKAPI_KEY } });
+
+  res.json({ sent: true });
+});`,
+        },
+      },
+      {
+        heading: "Frequently Asked Questions",
+        headingLevel: "h2",
+        content: [
+          "Q: Does Shopify send customer phone numbers in webhooks? Shopify includes the phone number from the shipping or billing address if the customer provided it. You cannot message customers who did not provide a phone number.",
+          "Q: Is a Shopify app needed? No — you can register webhooks directly in Shopify Admin without installing any third-party app. Your own Node.js or Python server handles the messages via [QuackAPI's REST API](/docs).",
+          "Q: What about GDPR and customer consent? Only message customers who have opted in to WhatsApp communications during checkout. Add a checkbox to your checkout flow: 'Send me shipping updates via WhatsApp.'",
+          "Q: How many messages can I send with the free plan? QuackAPI's free Starter plan allows 100 messages/day — fine for testing and small stores. A store getting 50–100 orders/day should use the [$29/month Professional plan](/pricing).",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-wordpress-woocommerce",
+    title: "WhatsApp API for WordPress & WooCommerce (No Plugin Required)",
+    description: "Send WooCommerce order notifications via WhatsApp without a plugin. Complete PHP and Node.js code to integrate QuackAPI with WordPress webhooks.",
+    category: "Integration",
+    date: "2026-03-18",
+    readTime: "8 min read",
+    sections: [
+      {
+        heading: "WhatsApp + WooCommerce: The Plugin-Free Approach",
+        headingLevel: "h2",
+        content: [
+          "Most WhatsApp WooCommerce plugins cost $50–200/year and add bloat to your WordPress installation. QuackAPI lets you integrate directly using WooCommerce action hooks — a few lines of PHP in your theme's functions.php or a tiny custom plugin.",
+          "This approach gives you full control, no recurring plugin fees, and works on any WordPress hosting. The only external cost is [QuackAPI's subscription](/pricing) (free tier available).",
+          "For similar integration with Shopify, see our [WhatsApp Shopify integration guide](/blog/whatsapp-api-shopify-integration). For bulk messaging beyond order notifications, see [sending bulk WhatsApp messages](/blog/send-bulk-whatsapp-messages).",
+        ],
+      },
+      {
+        heading: "Method 1: PHP Hook in functions.php",
+        headingLevel: "h2",
+        content: [
+          "Add this code to your theme's functions.php or create a simple WordPress plugin. It hooks into WooCommerce's order status change events and sends a WhatsApp notification:",
+        ],
+        code: {
+          language: "php",
+          snippet: `<?php
+// Add to functions.php or a custom plugin file
+
+define('QUACKAPI_KEY', getenv('QUACKAPI_KEY') ?: 'your-api-key');
+define('QUACKAPI_DEVICE_ID', 1);
+
+function send_whatsapp_via_quackapi($phone, $message) {
+    $response = wp_remote_post('https://quackapi.com/api/messages/send', [
+        'headers' => [
+            'Content-Type' => 'application/json',
+            'x-api-key'    => QUACKAPI_KEY,
+        ],
+        'body' => json_encode([
+            'deviceId' => QUACKAPI_DEVICE_ID,
+            'to'       => preg_replace('/[^0-9]/', '', $phone),
+            'content'  => $message,
+            'type'     => 'text',
+        ]),
+        'timeout' => 10,
+    ]);
+    return !is_wp_error($response);
+}
+
+// Hook: order placed
+add_action('woocommerce_order_status_pending', function($order_id) {
+    $order = wc_get_order($order_id);
+    $phone = $order->get_billing_phone();
+    if (!$phone) return;
+
+    $name  = $order->get_billing_first_name();
+    $num   = $order->get_order_number();
+    $total = $order->get_formatted_order_total();
+
+    send_whatsapp_via_quackapi(
+        $phone,
+        "Hi {$name}! Your order #{$num} has been received. Total: {$total}. We'll notify you when it ships!"
+    );
+});
+
+// Hook: order shipped (processing → completed)
+add_action('woocommerce_order_status_completed', function($order_id) {
+    $order = wc_get_order($order_id);
+    $phone = $order->get_billing_phone();
+    if (!$phone) return;
+
+    $name = $order->get_billing_first_name();
+    $num  = $order->get_order_number();
+
+    send_whatsapp_via_quackapi(
+        $phone,
+        "Hi {$name}, great news! Order #{$num} has been shipped and is on its way to you!"
+    );
+});`,
+        },
+      },
+      {
+        heading: "Method 2: WooCommerce Webhooks → External Server",
+        headingLevel: "h2",
+        content: [
+          "If you prefer to keep the WhatsApp logic off your WordPress server, use WooCommerce's built-in Webhook system to forward order events to an external Node.js or Python server, which then calls QuackAPI.",
+          "Go to WooCommerce → Settings → Advanced → Webhooks → Add Webhook. Set Topic to 'Order Created', Delivery URL to your server endpoint, and Status to Active.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `// Node.js receiver for WooCommerce webhooks
+const express = require('express');
+const axios = require('axios');
+const app = express();
+app.use(express.json());
+
+app.post('/woo-webhook', async (req, res) => {
+  const order = req.body;
+  const phone = order.billing?.phone;
+  if (!phone) return res.json({ ok: true });
+
+  const name  = order.billing?.first_name;
+  const num   = order.number;
+  const total = order.total;
+
+  await axios.post('https://quackapi.com/api/messages/send', {
+    deviceId: 1,
+    to: phone.replace(/[^0-9]/g, ''),
+    content: \`Hi \${name}! Order #\${num} confirmed. Total: \${total}. We'll send tracking soon!\`,
+    type: 'text'
+  }, {
+    headers: { 'x-api-key': process.env.QUACKAPI_KEY }
+  });
+
+  res.json({ sent: true });
+});
+
+app.listen(3000);`,
+        },
+      },
+      {
+        heading: "Setting Your API Key Securely",
+        headingLevel: "h2",
+        content: [
+          "Never hardcode your QuackAPI API key in functions.php — it will be visible in version control. Use WordPress's environment variable support or a secrets plugin.",
+          "If you are on a hosting provider that supports .env files or server environment variables, set QUACKAPI_KEY there. Otherwise, store it in wp-config.php (which should be outside your web root) using `define('QUACKAPI_KEY', 'wa_your_key_here');`.",
+        ],
+        code: {
+          language: "php",
+          snippet: `// In wp-config.php (above the "That's all" comment):
+define('QUACKAPI_KEY', 'wa_your_actual_key_here');
+define('QUACKAPI_DEVICE_ID', 1);
+
+// Then in functions.php, use:
+$key = defined('QUACKAPI_KEY') ? QUACKAPI_KEY : '';`,
+        },
+      },
+      {
+        heading: "Frequently Asked Questions",
+        headingLevel: "h2",
+        content: [
+          "Q: Does this work on any WordPress hosting? Yes. The `wp_remote_post` function is built into WordPress and uses your server's HTTP capabilities — it works on shared hosting, VPS, and managed WordPress hosts like WP Engine or Kinsta.",
+          "Q: What WooCommerce version is required? WooCommerce 3.0+ supports the action hooks used above. Any site running WooCommerce in 2024 or later should work.",
+          "Q: Can I send WhatsApp messages for subscription renewals? Yes — hook into `woocommerce_subscription_renewal_payment_complete` or similar subscription hooks. The `send_whatsapp_via_quackapi` function works for any event.",
+          "Q: What is the cost? QuackAPI's free Starter plan (100 messages/day) is enough for stores with fewer than 100 orders/day. For larger stores, [see pricing options](/pricing).",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-marketing-api-guide",
+    title: "WhatsApp Marketing API Guide: 98% Open Rates in 2026",
+    description: "How to use WhatsApp as a marketing channel in 2026. Covers legal compliance, message templates, campaign strategy, open rates, and code examples via QuackAPI.",
+    category: "Guide",
+    date: "2026-03-18",
+    readTime: "8 min read",
+    sections: [
+      {
+        heading: "Why WhatsApp Is the Best Marketing Channel in 2026",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp has 3 billion active users as of 2026, making it the world's largest messaging platform. More importantly, messages are read. The average WhatsApp open rate is 98% — compared to 21% for email and 19% for SMS.",
+          "Response rates are equally impressive: WhatsApp gets a 45–60% response rate vs 6% for email. For marketing, this means a campaign to 1,000 people on WhatsApp will get 450–600 replies, versus 60 for email.",
+          "Businesses that switch even 20% of their email marketing to WhatsApp typically see a 3–4x increase in engagement and a significant improvement in conversion rates.",
+        ],
+      },
+      {
+        heading: "Legal Compliance: WhatsApp Marketing Rules",
+        headingLevel: "h2",
+        content: [
+          "WhatsApp marketing is legal and effective — but only when recipients have opted in. Sending unsolicited promotional messages violates WhatsApp's terms of service and risks account bans.",
+          "Collect opt-ins explicitly: add a checkbox to your signup forms ('I agree to receive WhatsApp marketing messages'), collect phone numbers at checkout with a WhatsApp marketing consent box, or run opt-in campaigns via SMS or email.",
+          "Include an easy opt-out in every message ('Reply STOP to unsubscribe') and honor it immediately. This is both legally required in most jurisdictions (GDPR, TCPA) and practically necessary for maintaining your WhatsApp account health.",
+        ],
+      },
+      {
+        heading: "WhatsApp Marketing Message Types",
+        headingLevel: "h2",
+        content: [
+          "QuackAPI supports 8 message types you can use in marketing campaigns: text (for promotions and announcements), image (product photos and banners), video (product demos and testimonials), PDF (catalogues and brochures), audio (voice messages), stickers (for engagement), location (for event invites with venue pins), and buttons (for interactive messages).",
+          "For highest conversion, use image messages with a compelling offer image and short descriptive text, followed by a URL in the next text message. Image + link combos get 2–3x higher clicks than text-only messages.",
+          "See our [bulk messaging guide](/blog/send-bulk-whatsapp-messages) for how to send campaigns efficiently without triggering spam filters.",
+        ],
+      },
+      {
+        heading: "Campaign Strategy: What to Send and When",
+        headingLevel: "h2",
+        content: [
+          "Promotional blasts: Flash sales, new product launches, and limited-time offers perform best on WhatsApp. Send these to your opted-in subscriber list. The 98% open rate means almost everyone sees your offer.",
+          "Welcome sequences: When someone opts in, send a welcome message immediately, a product highlight on day 3, and a discount code on day 7. This 3-message sequence typically converts 15–25% of new subscribers into buyers.",
+          "Re-engagement: Users who haven't purchased in 60+ days can be re-engaged with a 'We miss you' message and a personalized discount. WhatsApp re-engagement campaigns convert at 8–12% vs 1–2% for email.",
+          "Timing matters: Send between 10am and 6pm in the recipient's local timezone. Avoid Mondays and Sundays. Tuesday through Thursday between 11am and 3pm consistently shows the highest open and click rates.",
+        ],
+      },
+      {
+        heading: "Sending a Marketing Campaign via QuackAPI",
+        headingLevel: "h2",
+        content: [
+          "Here is a complete Python example that sends a promotional campaign to a list of opted-in subscribers, with image attachment and rate limiting:",
+        ],
+        code: {
+          language: "python",
+          snippet: `import time
+import random
+import requests
+
+API_KEY = "your-quackapi-key"
+DEVICE_ID = 1
+
+headers = {
+    "Content-Type": "application/json",
+    "x-api-key": API_KEY
+}
+
+# Personalized promo with image
+def send_promo(phone: str, name: str):
+    # Send image first
+    requests.post("https://quackapi.com/api/messages/send", json={
+        "deviceId": DEVICE_ID,
+        "to": phone,
+        "content": "https://yourstore.com/promo-banner.jpg",
+        "type": "image",
+        "caption": f"Hi {name}! Our biggest sale of the year is HERE. 40% off everything."
+    }, headers=headers)
+
+    time.sleep(1)  # Small gap between messages
+
+    # Follow up with link
+    requests.post("https://quackapi.com/api/messages/send", json={
+        "deviceId": DEVICE_ID,
+        "to": phone,
+        "content": f"Shop now: https://yourstore.com/sale?ref=whatsapp",
+        "type": "text"
+    }, headers=headers)
+
+# Send to subscriber list with rate limiting
+subscribers = [
+    {"phone": "15551234567", "name": "Alice"},
+    {"phone": "15559876543", "name": "Bob"},
+]
+
+for sub in subscribers:
+    send_promo(sub["phone"], sub["name"])
+    time.sleep(random.uniform(2, 5))  # 2-5 second delay`,
+        },
+      },
+      {
+        heading: "Measuring Campaign Performance",
+        headingLevel: "h2",
+        content: [
+          "Track WhatsApp marketing performance by setting up a QuackAPI webhook to receive delivery confirmations and replies. Measure delivery rate (should be 95%+), open rate (estimated from link clicks if you use UTM-tagged URLs), reply rate, and conversion rate.",
+          "Include unique UTM parameters in your WhatsApp links: `?utm_source=whatsapp&utm_medium=campaign&utm_campaign=spring-sale`. Google Analytics will then show you exactly how much revenue comes from each WhatsApp campaign.",
+          "See our [webhook setup guide](/blog/whatsapp-webhook-setup-guide) for how to configure reply and delivery status callbacks.",
+        ],
+      },
+      {
+        heading: "Frequently Asked Questions",
+        headingLevel: "h2",
+        content: [
+          "Q: Is WhatsApp marketing legal? Yes, if recipients have explicitly opted in. Unsolicited messages violate WhatsApp ToS and applicable laws (GDPR, TCPA). Always get consent first.",
+          "Q: What open rate can I expect? Industry data consistently shows 94–98% open rates for WhatsApp business messages sent to opted-in subscribers.",
+          "Q: Can I send promotional images via WhatsApp API? Yes — QuackAPI supports image, video, PDF, and audio message types in addition to text. See the [API documentation](/docs) for all supported formats.",
+          "Q: How do I avoid my account being banned? Only message opted-in contacts, include opt-out instructions, use realistic send rates, and personalize messages. See our [WhatsApp messaging best practices guide](/blog/whatsapp-api-messaging-best-practices) for full guidelines.",
+        ],
+      },
+    ],
+  },
+  {
+    slug: "whatsapp-api-customer-support-automation",
+    title: "WhatsApp API for Customer Support Automation",
+    description: "How businesses cut support tickets by 40% using WhatsApp API automation. Covers webhook-driven auto-replies, chatbot integration, CRM sync, and escalation workflows.",
+    category: "Use Case",
+    date: "2026-03-18",
+    readTime: "9 min read",
+    sections: [
+      {
+        heading: "The Customer Support Problem WhatsApp Solves",
+        headingLevel: "h2",
+        content: [
+          "The average customer support ticket takes 12 hours to resolve via email. Via WhatsApp, the same issue resolves in under 2 hours — because messages are seen immediately, responses feel more personal, and the back-and-forth happens in real time.",
+          "Businesses that move even 30% of support volume to WhatsApp report a 40–60% reduction in average resolution time and a measurable increase in customer satisfaction scores (CSAT). More importantly, WhatsApp support reduces repeat contacts — customers who get a fast WhatsApp reply rarely email again.",
+          "This guide covers how to build a WhatsApp customer support system using QuackAPI's webhook API. For the marketing side, see our [WhatsApp marketing guide](/blog/whatsapp-marketing-api-guide). For automating e-commerce specifically, see our [Shopify integration guide](/blog/whatsapp-api-shopify-integration).",
+        ],
+      },
+      {
+        heading: "Architecture: Receiving Support Messages via Webhook",
+        headingLevel: "h2",
+        content: [
+          "QuackAPI sends an HTTP POST to your webhook URL whenever a customer replies to your WhatsApp number. Your server processes the incoming message and decides how to respond — either with an automated reply, a CRM ticket creation, or a handoff to a live agent.",
+          "The webhook payload includes the sender's phone number, message content, message type, and device ID. This gives you everything you need to: look up the customer in your CRM, generate an automated response, create a support ticket, or route to the right team.",
+          "See our [webhook setup guide](/blog/whatsapp-webhook-setup-guide) for how to configure and validate webhook endpoints.",
+        ],
+      },
+      {
+        heading: "Setting Up the Webhook Receiver",
+        headingLevel: "h2",
+        content: [
+          "Register your webhook URL in the QuackAPI dashboard under Device Settings → Webhook URL. QuackAPI will POST all incoming messages to this URL in real time.",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `const express = require('express');
+const axios = require('axios');
+const app = express();
+app.use(express.json());
+
+const QUACKAPI_KEY = process.env.QUACKAPI_KEY;
+const DEVICE_ID = parseInt(process.env.QUACKAPI_DEVICE_ID);
+
+// Auto-reply with smart routing
+const AUTO_REPLIES = {
+  'order':   'To check your order status, reply with your order number (e.g., #12345).',
+  'refund':  'For refund requests, please visit https://yourstore.com/refunds or reply with your order number.',
+  'hours':   'We are open Monday-Friday 9am-6pm EST. For urgent issues, reply URGENT.',
+  'pricing': 'See our full pricing at https://yourstore.com/pricing',
+};
+
+app.post('/webhook/whatsapp', async (req, res) => {
+  const { from, body, type } = req.body;
+  if (type !== 'text') return res.json({ ok: true });
+
+  const text = body.toLowerCase().trim();
+
+  // Check for keyword match
+  const matchedKey = Object.keys(AUTO_REPLIES).find(k => text.includes(k));
+
+  if (matchedKey) {
+    // Send auto-reply
+    await axios.post('https://quackapi.com/api/messages/send', {
+      deviceId: DEVICE_ID,
+      to: from,
+      content: AUTO_REPLIES[matchedKey],
+      type: 'text'
+    }, { headers: { 'x-api-key': QUACKAPI_KEY } });
+  } else {
+    // No keyword match — create support ticket
+    await createSupportTicket(from, body);
+    await axios.post('https://quackapi.com/api/messages/send', {
+      deviceId: DEVICE_ID,
+      to: from,
+      content: "Thanks for reaching out! A support agent will respond within 2 hours.",
+      type: 'text'
+    }, { headers: { 'x-api-key': QUACKAPI_KEY } });
+  }
+
+  res.json({ ok: true });
+});`,
+        },
+      },
+      {
+        heading: "CRM Integration: Creating Tickets Automatically",
+        headingLevel: "h2",
+        content: [
+          "When a customer message does not match any auto-reply keyword, create a ticket in your CRM. This example integrates with a generic REST API CRM (works with Freshdesk, Zendesk, or any ticket system with an API):",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `async function createSupportTicket(phone, message) {
+  // Example: Freshdesk API
+  await axios.post('https://yourdomain.freshdesk.com/api/v2/tickets', {
+    name: \`WhatsApp: \${phone}\`,
+    phone: phone,
+    source: 7, // WhatsApp source
+    status: 2, // Open
+    priority: 1,
+    subject: \`WhatsApp Support Request from \${phone}\`,
+    description: message,
+    tags: ['whatsapp']
+  }, {
+    auth: { username: process.env.FRESHDESK_KEY, password: 'X' },
+    headers: { 'Content-Type': 'application/json' }
+  });
+}`,
+        },
+      },
+      {
+        heading: "Escalation to Live Agents",
+        headingLevel: "h2",
+        content: [
+          "When a customer replies URGENT or when a conversation has not been resolved after multiple exchanges, escalate to a live agent by sending an internal Slack or email notification:",
+        ],
+        code: {
+          language: "javascript",
+          snippet: `async function escalateToAgent(phone, message) {
+  // Notify agent via Slack
+  await axios.post(process.env.SLACK_WEBHOOK_URL, {
+    text: \`🚨 Urgent WhatsApp support request from \${phone}:\n\${message}\n\nReply at: https://yourdashboard.com/whatsapp/\${phone}\`
+  });
+}
+
+// In the webhook handler, check for URGENT keyword
+if (text.includes('urgent') || text.includes('emergency')) {
+  await escalateToAgent(from, body);
+  await axios.post('https://quackapi.com/api/messages/send', {
+    deviceId: DEVICE_ID,
+    to: from,
+    content: "Your request has been escalated to our senior support team. You will hear back within 30 minutes.",
+    type: 'text'
+  }, { headers: { 'x-api-key': QUACKAPI_KEY } });
+}`,
+        },
+      },
+      {
+        heading: "Results: What to Expect",
+        headingLevel: "h2",
+        content: [
+          "Based on QuackAPI customers who have deployed WhatsApp support automation: auto-reply keyword matching resolves 35–50% of inbound contacts without human intervention. Average response time drops from 12+ hours (email) to under 3 minutes (WhatsApp auto-reply).",
+          "CSAT scores typically improve by 15–25 points after switching support to WhatsApp, primarily because customers feel heard faster. Repeat contact rates (same customer opening multiple tickets for the same issue) drop by 60% because issues are resolved in the same conversation thread.",
+          "Start with [QuackAPI's free plan](/pricing) to handle up to 100 incoming/outgoing messages per day — enough for a small support team to validate the workflow before committing to a paid plan.",
+        ],
+      },
+      {
+        heading: "Frequently Asked Questions",
+        headingLevel: "h2",
+        content: [
+          "Q: Can multiple support agents share one WhatsApp number? Yes — with QuackAPI's webhook system, all incoming messages come to your server, which can route them to the right agent dashboard. Multiple agents can send replies via the same QuackAPI device.",
+          "Q: Does this work with existing CRM software? Yes — any CRM with a REST API (Freshdesk, Zendesk, HubSpot, Salesforce) can receive ticket creation calls from the webhook handler shown above.",
+          "Q: How do I handle non-text messages (images, voice notes)? The QuackAPI webhook includes the message type. For image and audio messages, store the media URL and create a ticket for an agent to review. See the [API documentation](/docs) for all webhook payload fields.",
+          "Q: What is the cost to run WhatsApp customer support? QuackAPI's [Professional plan at $29/month](/pricing) supports 1,000 messages/day and 5 devices — enough for a small to medium support team. Enterprise is $99/month for unlimited volume.",
+        ],
+      },
+    ],
+  },
 ];
 
 function formatDate(dateStr: string): string {
