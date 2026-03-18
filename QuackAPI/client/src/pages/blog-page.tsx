@@ -7,11 +7,17 @@ import { Badge } from "@/components/ui/badge";
 import SEO from "@/components/seo";
 import Navbar from "@/components/navbar";
 
+interface FaqItem {
+  question: string;
+  answer: string;
+}
+
 interface ArticleSection {
   heading: string;
   headingLevel: "h2" | "h3";
   content: string[];
   code?: { language: string; snippet: string };
+  faq?: FaqItem[];
 }
 
 interface Article {
