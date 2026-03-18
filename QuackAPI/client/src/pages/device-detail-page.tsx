@@ -686,7 +686,7 @@ function ApiDocumentation({ deviceId, apiKey }: { deviceId: number; apiKey: stri
   const [lang, setLang] = useState("curl");
   const [msgType, setMsgType] = useState("chat");
   const [showAllLangs, setShowAllLangs] = useState(false);
-  const baseUrl = typeof window !== "undefined" ? window.location.origin : "";
+  const baseUrl = useAppUrl();
 
   const endpoints = useMemo(() => getEndpoints(deviceId), [deviceId]);
   const currentEndpoint = endpoints[msgType];
