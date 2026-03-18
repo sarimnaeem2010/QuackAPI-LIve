@@ -230,6 +230,55 @@ const BLOG_META_MAP: Record<string, PageMeta> = {
     canonical: "/blog/whatsapp-abandoned-cart-recovery",
     ogType: "article",
   },
+  "best-whatsapp-api-provider-2026": {
+    title: "Best WhatsApp API Provider in 2026: Full Comparison",
+    description: "We compared 6 WhatsApp API providers on pricing, setup speed, features, and reliability. QuackAPI, Twilio, WATI, AiSensy, UltraMsg, and Evolution API — here is which one wins.",
+    ogImage: "/og-blog.png",
+    canonical: "/blog/best-whatsapp-api-provider-2026",
+    ogType: "article",
+  },
+  "whatsapp-api-pricing-2026": {
+    title: "WhatsApp API Pricing in 2026: Complete Cost Breakdown",
+    description: "Full breakdown of WhatsApp API costs in 2026. Compare Meta conversation-based pricing vs flat monthly plans. Find the cheapest WhatsApp API for your message volume.",
+    ogImage: "/og-blog.png",
+    canonical: "/blog/whatsapp-api-pricing-2026",
+    ogType: "article",
+  },
+  "send-bulk-whatsapp-messages": {
+    title: "How to Send Bulk WhatsApp Messages via API (2026 Guide)",
+    description: "Complete guide to bulk WhatsApp messaging via REST API. Covers rate limits, anti-ban best practices, code examples in Python and Node.js, and scheduling strategies.",
+    ogImage: "/og-blog.png",
+    canonical: "/blog/send-bulk-whatsapp-messages",
+    ogType: "article",
+  },
+  "whatsapp-api-shopify-integration": {
+    title: "WhatsApp API Shopify Integration: Order Notifications & Abandoned Cart",
+    description: "Step-by-step guide to integrating WhatsApp API with Shopify. Send order confirmations, shipping updates, and abandoned cart recovery messages via QuackAPI webhooks.",
+    ogImage: "/og-blog.png",
+    canonical: "/blog/whatsapp-api-shopify-integration",
+    ogType: "article",
+  },
+  "whatsapp-api-wordpress-woocommerce": {
+    title: "WhatsApp API for WordPress & WooCommerce (No Plugin Required)",
+    description: "Send WooCommerce order notifications via WhatsApp without a plugin. Complete PHP and Node.js code to integrate QuackAPI with WordPress using action hooks and webhooks.",
+    ogImage: "/og-blog.png",
+    canonical: "/blog/whatsapp-api-wordpress-woocommerce",
+    ogType: "article",
+  },
+  "whatsapp-marketing-api-guide": {
+    title: "WhatsApp Marketing API Guide: 98% Open Rates in 2026",
+    description: "Use WhatsApp as a marketing channel in 2026. Covers legal compliance, message templates, campaign strategy, 98% open rates, and complete code examples via QuackAPI.",
+    ogImage: "/og-blog.png",
+    canonical: "/blog/whatsapp-marketing-api-guide",
+    ogType: "article",
+  },
+  "whatsapp-api-customer-support-automation": {
+    title: "WhatsApp API for Customer Support Automation",
+    description: "How businesses cut support resolution time by 60% using WhatsApp API automation. Covers webhook-driven auto-replies, CRM integration, and agent escalation workflows.",
+    ogImage: "/og-blog.png",
+    canonical: "/blog/whatsapp-api-customer-support-automation",
+    ogType: "article",
+  },
 };
 
 function escapeAttr(str: string): string {
