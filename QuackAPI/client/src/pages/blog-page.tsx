@@ -140,6 +140,7 @@ except requests.exceptions.ConnectionError:
         headingLevel: "h2",
         content: [
           "Here is a complete, production-ready Python script that wraps the QuackAPI API in a reusable class. You can import this module into any Python project to start sending WhatsApp messages immediately.",
+          "If you are evaluating providers before setting up, see [how QuackAPI compares to Twilio for WhatsApp](/compare/twilio) — especially on pricing and whether Meta Business approval is required.",
         ],
         code: {
           language: "python",
